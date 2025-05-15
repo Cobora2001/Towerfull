@@ -3,6 +3,7 @@ package io.github.tower_defense.Prototype;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+
 public class Monster extends Killable {
     private int speed;
     private int damage;
@@ -10,23 +11,19 @@ public class Monster extends Killable {
     private int pathIndex = 0;
     private float speedMultiplier = 60f;
 
-    private Vector2 pixelPos; // position réelle en pixel pour le déplacement fluide
-
     public Monster(int pv, int maxPv, Vector2 logicalPos, int speed, int damage, int reward) {
         super(pv, maxPv, logicalPos, null);
         this.speed = speed;
         this.damage = damage;
         this.reward = reward;
-        this.pixelPos = null; // sera initialisée à la première update
     }
 
     public Monster(Monster m) {
-        super(m);
+        super(m); // Clone logique + sprite
         this.speed = m.speed;
         this.damage = m.damage;
         this.reward = m.reward;
         this.pathIndex = m.pathIndex;
-        this.pixelPos = m.pixelPos.cpy();
     }
 
     @Override
@@ -37,23 +34,19 @@ public class Monster extends Killable {
     public void update(float delta, Array<Vector2> path, GameArea area) {
         if (pathIndex >= path.size) return;
 
-        // Initialisation de la position pixel à la première frame
-        if (pixelPos == null) {
-            pixelPos = area.logicalToPixel(logicalPos);
-        }
-
         Vector2 targetLogical = path.get(pathIndex);
         Vector2 targetPixel = area.logicalToPixel(targetLogical);
+        Vector2 currentPixel = area.logicalToPixel(logicalPos);
 
-        Vector2 direction = targetPixel.cpy().sub(pixelPos);
+        Vector2 direction = targetPixel.cpy().sub(currentPixel);
         float distance = direction.len();
 
-        if (distance < 2f) { // Seuil de changement de case
+        if (distance < 1f) {
             pathIndex++;
         } else {
             direction.nor().scl(speed * delta * speedMultiplier);
-            pixelPos.add(direction);
-            this.logicalPos = area.pixelToLogical(pixelPos);
+            Vector2 newPixel = currentPixel.add(direction);
+            this.logicalPos = area.pixelToLogical(newPixel);
         }
     }
 

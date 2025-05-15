@@ -16,6 +16,11 @@ public class GameArea extends Prototype {
     private final OrthographicCamera camera;
     private final ArrayList<Monster> monsters = new ArrayList<>();
     private final ArrayList<Tower> towers = new ArrayList<>();
+    private final PrototypeFactory<Monster> prototypeFactory = new PrototypeFactory<>();
+
+    private Scenario scenario;
+    private float timeBetweenWaves = 3f;
+    private float waveCooldown = 0;
 
     private float x;
     private float y;
@@ -49,6 +54,10 @@ public class GameArea extends Prototype {
         towers.add(new Tower(10, 10, logicalPos, 100, 2, 1, 20));
     }
 
+    public void addMonster(Monster m) {
+        monsters.add(m);
+    }
+
     public void setLevel(Level level) {
         this.currentLevel = level;
         this.cols = level.getCols();
@@ -56,13 +65,25 @@ public class GameArea extends Prototype {
 
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        Array<Vector2> spots = TowerPlacementGenerator.generate(level);
-        for (Vector2 spot : spots) {
-            System.out.println("Tour générée en : " + spot);
+        // Enregistrement des prototypes
+        prototypeFactory.register("basic", new Monster(10, 10, new Vector2(0, 0), 1, 1, 1));
+        prototypeFactory.register("fast", new Monster(5, 5, new Vector2(0, 0), 2, 1, 2));
+
+        Wave wave1 = new Wave(prototypeFactory);
+        wave1.addMonster("basic", 3);
+        wave1.addMonster("fast", 2);
+
+        Wave wave2 = new Wave(prototypeFactory);
+        wave2.addMonster("fast", 4);
+
+        scenario = new Scenario();
+        scenario.addWave(wave1);
+        scenario.addWave(wave2);
+        scenario.startNextWave();
+
+        for (Vector2 spot : TowerPlacementGenerator.generate(level)) {
             placeTower(spot);
         }
-
-        spawnMonster(currentLevel.getPathPoints().first(), 5, 1, 1, 2);
     }
 
     public void resize(int availableWidth, int height) {
@@ -93,14 +114,16 @@ public class GameArea extends Prototype {
     public void update(float delta) {
         if (isPaused || cols == 0) return;
 
-        if (currentLevel != null) {
-            for (Monster monster : monsters) {
-                monster.update(delta, currentLevel.getPathPoints(), this);
-            }
+        if (scenario != null && currentLevel != null) {
+            scenario.update(delta, this, currentLevel);
+        }
 
-            for (Tower tower : towers) {
-                tower.update(delta, monsters, this);
-            }
+        for (Monster monster : monsters) {
+            monster.update(delta, currentLevel.getPathPoints(), this);
+        }
+
+        for (Tower tower : towers) {
+            tower.update(delta, monsters, this);
         }
     }
 
@@ -176,6 +199,7 @@ public class GameArea extends Prototype {
 
         shapeRenderer.end();
     }
+
 
     private void drawCell(ShapeRenderer renderer, int col, int row) {
         float px = x + col * cellWidth;

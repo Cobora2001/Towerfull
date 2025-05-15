@@ -2,7 +2,7 @@ package io.github.tower_defense.Prototype;
 
 import com.badlogic.gdx.math.Vector2;
 
-public abstract class Killable {
+public abstract class Killable extends Prototype {
     protected int pv;
     protected int maxPv;
     protected Vector2 logicalPos;
