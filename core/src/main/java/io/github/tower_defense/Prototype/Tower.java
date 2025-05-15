@@ -1,13 +1,17 @@
 package io.github.tower_defense.Prototype;
 
+import com.badlogic.gdx.math.Vector2;
+import java.util.ArrayList;
+
 public class Tower extends Killable {
     private int range;
     private int damage;
     private int attackSpeed;
     private int cost;
+    private float timeSinceLastShot = 0;
 
-    public Tower(int pv, int maxPv, int x, int y, int range, int damage, int attackSpeed, int cost) {
-        super(pv, maxPv, x, y, null);
+    public Tower(int pv, int maxPv, Vector2 logicalPos, int range, int damage, int attackSpeed, int cost) {
+        super(pv, maxPv, logicalPos, null);
         this.range = range;
         this.damage = damage;
         this.attackSpeed = attackSpeed;
@@ -16,10 +20,10 @@ public class Tower extends Killable {
 
     public Tower(Tower t) {
         super(t);
-        this.range = t.getRange();
-        this.damage = t.getDamage();
-        this.attackSpeed = t.getAttackSpeed();
-        this.cost = t.getCost();
+        this.range = t.range;
+        this.damage = t.damage;
+        this.attackSpeed = t.attackSpeed;
+        this.cost = t.cost;
     }
 
     @Override
@@ -27,35 +31,35 @@ public class Tower extends Killable {
         return new Tower(this);
     }
 
-    public int getRange() {
-        return range;
+    public void update(float delta, ArrayList<Monster> monsters, GameArea area) {
+        timeSinceLastShot += delta;
+        if (timeSinceLastShot < 1f / attackSpeed) return;
+
+        Vector2 myPixel = getPixelPos(area);
+
+        for (Monster monster : monsters) {
+            Vector2 monsterPixel = monster.getPixelPos(area);
+            if (myPixel.dst(monsterPixel) <= range) {
+                monster.takeDamage(damage);
+                timeSinceLastShot = 0;
+                break;
+            }
+        }
     }
 
-    public void setRange(int range) {
-        this.range = range;
+    public int getRange() {
+        return range;
     }
 
     public int getDamage() {
         return damage;
     }
 
-    public void setDamage(int damage) {
-        this.damage = damage;
-    }
-
     public int getAttackSpeed() {
         return attackSpeed;
     }
 
-    public void setAttackSpeed(int attackSpeed) {
-        this.attackSpeed = attackSpeed;
-    }
-
     public int getCost() {
         return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
     }
 }

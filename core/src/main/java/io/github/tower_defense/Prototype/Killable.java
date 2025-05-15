@@ -1,66 +1,62 @@
 package io.github.tower_defense.Prototype;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 
-public abstract class Killable extends Prototype {
-    private int pv;
-    private final int maxPv;
-    private int x, y;
+public abstract class Killable {
+    protected int pv;
+    protected int maxPv;
+    protected Vector2 logicalPos;
+    protected Object sprite; // Peut être null ou remplacé plus tard
 
-    private Texture texture;
-
-    public Killable(int pv, int maxPv, int x, int y, Texture texture) {
+    public Killable(int pv, int maxPv, Vector2 logicalPos, Object sprite) {
         this.pv = pv;
         this.maxPv = maxPv;
-        this.x = x;
-        this.y = y;
-        this.texture = texture;
+        this.logicalPos = logicalPos;
+        this.sprite = sprite;
     }
 
-    public Killable(Killable m) {
-        this(m.getPv(), m.getMaxPv(), m.getX(), m.getY(), m.getTexture());
+    public Killable(Killable other) {
+        this.pv = other.pv;
+        this.maxPv = other.maxPv;
+        this.logicalPos = new Vector2(other.logicalPos);
+        this.sprite = other.sprite;
     }
 
-    public abstract Killable clone();
-
-    public Texture getTexture() {
-        return texture;
-    }
-
-    public void setTexture(Texture texture) {
-        this.texture = texture;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    protected int getPv() {
+    public int getPv() {
         return pv;
     }
 
-    protected int getMaxPv() {
-        return maxPv;
-    }
-
-    protected void setPv(int pv) {
+    public void setPv(int pv) {
         this.pv = pv;
     }
 
-    @Override
-    public String toString() {
-        return "[" + getPv() + "/" + getMaxPv() + "] PV";
+    public int getMaxPv() {
+        return maxPv;
+    }
+
+    public void setMaxPv(int maxPv) {
+        this.maxPv = maxPv;
+    }
+
+    public void takeDamage(int amount) {
+        this.pv -= amount;
+        if (this.pv < 0) this.pv = 0;
+    }
+
+    public boolean isDead() {
+        return pv <= 0;
+    }
+
+    public Vector2 getLogicalPos() {
+        return logicalPos;
+    }
+
+    public void setLogicalPos(Vector2 logicalPos) {
+        this.logicalPos = logicalPos;
+    }
+
+    public Vector2 getPixelPos(GameArea area) {
+        return area.logicalToPixel(logicalPos);
     }
 }
+

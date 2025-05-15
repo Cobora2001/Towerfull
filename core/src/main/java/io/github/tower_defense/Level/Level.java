@@ -3,6 +3,8 @@ package io.github.tower_defense.Level;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.Vector;
+
 public class Level {
     private int cols, rows;
     private Array<Vector2> pathPoints;
@@ -12,6 +14,7 @@ public class Level {
         this.rows = rows;
         this.pathPoints = pathPoints;
     }
+
 
     public int getCols() {
         return cols;

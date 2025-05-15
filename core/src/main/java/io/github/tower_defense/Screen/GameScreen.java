@@ -115,7 +115,8 @@ public class GameScreen implements Screen {
         skin.dispose();
     }
 
-    @Override public void show() {}
+    @Override public void show() {
+    }
     @Override public void hide() {}
     @Override public void pause() {}
     @Override public void resume() {}

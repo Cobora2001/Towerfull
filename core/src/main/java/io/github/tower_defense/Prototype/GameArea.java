@@ -6,17 +6,20 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import io.github.tower_defense.Level.Level;
+import io.github.tower_defense.Level.TowerPlacementGenerator;
+import io.github.tower_defense.MonsterRenderer;
 
-public class GameArea extends Prototype{
+import java.util.ArrayList;
+
+public class GameArea extends Prototype {
     private final ShapeRenderer shapeRenderer;
     private final OrthographicCamera camera;
+    private final ArrayList<Monster> monsters = new ArrayList<>();
+    private final ArrayList<Tower> towers = new ArrayList<>();
 
     private float x;
     private float y;
     private float cellWidth, cellHeight;
-
-    private float redX = 0;
-    private float redY = 3;
 
     private boolean isPaused = false;
 
@@ -24,7 +27,7 @@ public class GameArea extends Prototype{
     private int cols, rows;
 
     public GameArea() {
-        shapeRenderer = new ShapeRenderer();
+        shapeRenderer = MonsterRenderer.getInstance().getShapeRenderer();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
@@ -36,18 +39,30 @@ public class GameArea extends Prototype{
         this.y = gameArea.y;
         this.cellWidth = gameArea.cellWidth;
         this.cellHeight = gameArea.cellHeight;
-        this.redX = gameArea.redX;
-        this.redY = gameArea.redY;
         this.isPaused = gameArea.isPaused;
         this.currentLevel = gameArea.currentLevel;
         this.cols = gameArea.cols;
         this.rows = gameArea.rows;
     }
 
+    public void placeTower(Vector2 logicalPos) {
+        towers.add(new Tower(10, 10, logicalPos, 100, 2, 1, 20));
+    }
+
     public void setLevel(Level level) {
         this.currentLevel = level;
         this.cols = level.getCols();
         this.rows = level.getRows();
+
+        resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        Array<Vector2> spots = TowerPlacementGenerator.generate(level);
+        for (Vector2 spot : spots) {
+            System.out.println("Tour générée en : " + spot);
+            placeTower(spot);
+        }
+
+        spawnMonster(currentLevel.getPathPoints().first(), 5, 1, 1, 2);
     }
 
     public void resize(int availableWidth, int height) {
@@ -58,17 +73,15 @@ public class GameArea extends Prototype{
 
         float size;
         if (availableAspect >= levelAspect) {
-            // Screen is wider than level → height is limiting factor
             size = height;
             cellHeight = size / rows;
-            cellWidth = cellHeight; // Keep square cells
-            size = cellWidth * cols; // Full width of game area
+            cellWidth = cellHeight;
+            size = cellWidth * cols;
         } else {
-            // Screen is taller than level → width is limiting factor
             size = availableWidth;
             cellWidth = size / cols;
             cellHeight = cellWidth;
-            size = cellHeight * rows; // Full height of game area
+            size = cellHeight * rows;
         }
 
         x = (availableWidth - (cellWidth * cols)) / 2f;
@@ -80,8 +93,15 @@ public class GameArea extends Prototype{
     public void update(float delta) {
         if (isPaused || cols == 0) return;
 
-        redX += delta * 2f; // Move 2 cells per second
-        if (redX >= cols) redX = 0;
+        if (currentLevel != null) {
+            for (Monster monster : monsters) {
+                monster.update(delta, currentLevel.getPathPoints(), this);
+            }
+
+            for (Tower tower : towers) {
+                tower.update(delta, monsters, this);
+            }
+        }
     }
 
     public void render() {
@@ -90,7 +110,19 @@ public class GameArea extends Prototype{
 
         renderBorder();
         renderPath();
-        renderMovingSquare();
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.MAGENTA);
+        for (Tower tower : towers) {
+            Vector2 pos = tower.getPixelPos(this);
+            shapeRenderer.circle(pos.x, pos.y, 10);
+        }
+        shapeRenderer.setColor(Color.RED);
+        for (Monster monster : monsters) {
+            Vector2 pos = monster.getPixelPos(this);
+            shapeRenderer.circle(pos.x, pos.y, 8);
+        }
+        shapeRenderer.end();
     }
 
     private void renderBorder() {
@@ -108,7 +140,6 @@ public class GameArea extends Prototype{
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        // Fill full path
         for (int i = 0; i < path.size - 1; i++) {
             Vector2 start = path.get(i);
             Vector2 end = path.get(i + 1);
@@ -132,32 +163,17 @@ public class GameArea extends Prototype{
             }
         }
 
-        // Draw final point
         Vector2 endPoint = path.peek();
         shapeRenderer.setColor(Color.YELLOW);
         drawCell(shapeRenderer, (int) endPoint.x, (int) endPoint.y);
 
-        // Draw start in green
         Vector2 startPoint = path.first();
         shapeRenderer.setColor(Color.GREEN);
         drawCell(shapeRenderer, (int) startPoint.x, (int) startPoint.y);
 
-        // Draw end in blue
         shapeRenderer.setColor(Color.BLUE);
         drawCell(shapeRenderer, (int) endPoint.x, (int) endPoint.y);
 
-        shapeRenderer.end();
-    }
-
-    private void renderMovingSquare() {
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rect(
-            x + redX * cellWidth,
-            y + redY * cellHeight,
-            cellWidth,
-            cellHeight
-        );
         shapeRenderer.end();
     }
 
@@ -186,4 +202,22 @@ public class GameArea extends Prototype{
     public GameArea clone() {
         return new GameArea(this);
     }
+
+    public void spawnMonster(Vector2 logicalPosition, int pv, int speed, int damage, int reward) {
+        Monster m = new Monster(pv, pv, logicalPosition, speed, damage, reward);
+        monsters.add(m);
+    }
+
+    public Vector2 logicalToPixel(Vector2 logical) {
+        float px = x + (logical.x + 0.5f) * cellWidth;
+        float py = y + (logical.y + 0.5f) * cellHeight;
+        return new Vector2(px, py);
+    }
+
+    public Vector2 pixelToLogical(Vector2 pixel) {
+        float lx = (pixel.x - x) / cellWidth - 0.5f;
+        float ly = (pixel.y - y) / cellHeight - 0.5f;
+        return new Vector2(lx, ly);
+    }
+
 }
