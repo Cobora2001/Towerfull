@@ -37,6 +37,7 @@ public class LevelSelectScreen implements Screen {
         // Level buttons
         addLevelButton("Level 1", LevelFactory.makeLevel1());
         addLevelButton("Level 2", LevelFactory.makeLevel2());
+        addLevelButton("Generated Level", LevelFactory.createGeneratedLevel(20, 20));
 
         // Back button
         TextButton backButton = new TextButton("Back", skin);

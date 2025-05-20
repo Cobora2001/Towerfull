@@ -22,4 +22,10 @@ public class LevelFactory {
 
         return new Level(10, 20, path);
     }
+
+    public static Level createGeneratedLevel(int cols, int rows) {
+        Array<Vector2> path = LevelGenerator.generatePath(cols, rows);
+        return new Level(cols, rows, path);
+    }
+
 }

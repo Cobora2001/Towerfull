@@ -12,13 +12,13 @@ public class TowerPlacementGenerator {
         int rows = level.getRows();
         Array<Vector2> path = level.getPathPoints();
 
-        // Set des positions du chemin, coordonnées entières
+        // Set des positions du chemin (coordonnées entières)
         HashSet<Vector2> pathCells = new HashSet<>();
         for (Vector2 p : path) {
             pathCells.add(new Vector2((int) p.x, (int) p.y));
         }
 
-        // Positions autour de l'entrée/sortie à exclure
+        // Exclure les zones autour de l'entrée et de la sortie
         HashSet<Vector2> entryExit = new HashSet<>();
         Vector2 start = path.first();
         Vector2 end = path.peek();
@@ -32,7 +32,7 @@ public class TowerPlacementGenerator {
 
         Array<Vector2> validSpots = new Array<>();
 
-        // Pour chaque voisin du chemin
+        // Générer des spots autour du chemin
         for (Vector2 point : path) {
             int x = (int) point.x;
             int y = (int) point.y;
@@ -57,8 +57,12 @@ public class TowerPlacementGenerator {
             }
         }
 
+        // 🔁 Limiter le nombre de tours en fonction du chemin
+        int pathLength = path.size;
+        int maxSpots = Math.min(Math.max(4, pathLength / 4), 20); // entre 4 et 20
+
         validSpots.shuffle();
-        if (validSpots.size > 4) validSpots.truncate(4);
+        validSpots.truncate(maxSpots);
 
         return validSpots;
     }
