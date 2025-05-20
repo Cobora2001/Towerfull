@@ -1,0 +1,5 @@
+[
+  { "type": "SHAMAN", "spawnTime": 0 },
+  { "type": "SKELETON", "spawnTime": 1 },
+  { "type": "GOLEM", "spawnTime": 2 }
+]

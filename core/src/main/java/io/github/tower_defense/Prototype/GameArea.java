@@ -7,25 +7,25 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import io.github.tower_defense.Level.Level;
 import io.github.tower_defense.Level.TowerPlacementGenerator;
+import io.github.tower_defense.Loader.Assets;
 import io.github.tower_defense.MonsterRenderer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameArea extends Prototype {
+
     private final ShapeRenderer shapeRenderer;
     private final OrthographicCamera camera;
-    private final ArrayList<Monster> monsters = new ArrayList<>();
-    private final ArrayList<Tower> towers = new ArrayList<>();
-    private final PrototypeFactory<Monster> prototypeFactory = new PrototypeFactory<>();
 
+    private final Array<Monster> monsters = new Array<>();
+    private final Array<Tower> towers = new Array<>();
+
+    private final PrototypeFactory<MonsterType, Monster> prototypeFactory = new PrototypeFactory<>();
     private Scenario scenario;
-    private float timeBetweenWaves = 3f;
-    private float waveCooldown = 0;
 
-    private float x;
-    private float y;
+    private float x, y;
     private float cellWidth, cellHeight;
-
     private boolean isPaused = false;
 
     private Level currentLevel;
@@ -62,23 +62,25 @@ public class GameArea extends Prototype {
         this.currentLevel = level;
         this.cols = level.getCols();
         this.rows = level.getRows();
-
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        // Enregistrement des prototypes
-        prototypeFactory.register("basic", new Monster(10, 10, new Vector2(0, 0), 1, 1, 1));
-        prototypeFactory.register("fast", new Monster(5, 5, new Vector2(0, 0), 2, 1, 2));
+        Vector2 spawn = currentLevel.getPathPoints().first();
 
-        Wave wave1 = new Wave(prototypeFactory);
-        wave1.addMonster("basic", 3);
-        wave1.addMonster("fast", 2);
+        Assets.get().loadMonsterPrototypes("monsters/monsters.json", prototypeFactory);
 
-        Wave wave2 = new Wave(prototypeFactory);
-        wave2.addMonster("fast", 4);
+        List<WaveEntry> wave1 = Assets.get().getWaveEntries("wave1");
+        List<WaveEntry> wave2 = Assets.get().getWaveEntries("wave2");
 
-        scenario = new Scenario();
-        scenario.addWave(wave1);
-        scenario.addWave(wave2);
+        Wave w1 = new Wave(wave1, prototypeFactory, monsters, spawn);
+        Wave w2 = new Wave(wave2, prototypeFactory, monsters, spawn);
+
+        scenario = new Scenario(monsters);
+        scenario.addWave(w1);
+        scenario.addWave(w2);
+
+        scenario = new Scenario(monsters);
+        scenario.addWave(w1);
+        scenario.addWave(w2);
         scenario.startNextWave();
 
         for (Vector2 spot : TowerPlacementGenerator.generate(level)) {
@@ -115,11 +117,19 @@ public class GameArea extends Prototype {
         if (isPaused || cols == 0) return;
 
         if (scenario != null && currentLevel != null) {
-            scenario.update(delta, this, currentLevel);
+            scenario.update(delta);
         }
 
-        for (Monster monster : monsters) {
+        // 🔁 Mise à jour des monstres + nettoyage si arrivée
+        for (int i = monsters.size - 1; i >= 0; i--) {
+            Monster monster = monsters.get(i);
             monster.update(delta, currentLevel.getPathPoints(), this);
+
+            if (monster.hasReachedEnd()) {
+                monsters.removeIndex(i);
+                System.out.println("❌ Monstre arrivé à la fin du chemin !");
+                // TODO : Déduire vie au joueur ou afficher une animation
+            }
         }
 
         for (Tower tower : towers) {
@@ -135,16 +145,19 @@ public class GameArea extends Prototype {
         renderPath();
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
         shapeRenderer.setColor(Color.MAGENTA);
         for (Tower tower : towers) {
             Vector2 pos = tower.getPixelPos(this);
             shapeRenderer.circle(pos.x, pos.y, 10);
         }
+
         shapeRenderer.setColor(Color.RED);
         for (Monster monster : monsters) {
             Vector2 pos = monster.getPixelPos(this);
             shapeRenderer.circle(pos.x, pos.y, 8);
         }
+
         shapeRenderer.end();
     }
 

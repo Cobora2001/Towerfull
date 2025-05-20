@@ -1,6 +1,8 @@
 package io.github.tower_defense.Prototype;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+
 import java.util.ArrayList;
 
 public class Tower extends Killable {
@@ -31,7 +33,7 @@ public class Tower extends Killable {
         return new Tower(this);
     }
 
-    public void update(float delta, ArrayList<Monster> monsters, GameArea area) {
+    public void update(float delta, Array<Monster> monsters, GameArea area) {
         timeSinceLastShot += delta;
         if (timeSinceLastShot < 1f / attackSpeed) return;
 

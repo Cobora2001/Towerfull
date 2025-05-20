@@ -10,6 +10,8 @@ public class Monster extends Killable {
     private int reward;
     private int pathIndex = 0;
     private float speedMultiplier = 60f;
+    private boolean hasReachedEnd = false;
+
 
     public Monster(int pv, int maxPv, Vector2 logicalPos, int speed, int damage, int reward) {
         super(pv, maxPv, logicalPos, null);
@@ -32,7 +34,7 @@ public class Monster extends Killable {
     }
 
     public void update(float delta, Array<Vector2> path, GameArea area) {
-        if (pathIndex >= path.size) return;
+        if (hasReachedEnd || pathIndex >= path.size) return;
 
         Vector2 targetLogical = path.get(pathIndex);
         Vector2 targetPixel = area.logicalToPixel(targetLogical);
@@ -43,11 +45,18 @@ public class Monster extends Killable {
 
         if (distance < 1f) {
             pathIndex++;
+            if (pathIndex >= path.size) {
+                hasReachedEnd = true;
+            }
         } else {
             direction.nor().scl(speed * delta * speedMultiplier);
             Vector2 newPixel = currentPixel.add(direction);
             this.logicalPos = area.pixelToLogical(newPixel);
         }
+    }
+
+    public boolean hasReachedEnd() {
+        return hasReachedEnd;
     }
 
     public int getSpeed() {

@@ -1,26 +1,27 @@
 package io.github.tower_defense.Prototype;
 
+import com.badlogic.gdx.utils.Array;
 import io.github.tower_defense.Level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Scenario extends Prototype {
+    private final Array<Monster> activeMonsters;
+    private final List<Wave> waves = new ArrayList<>();
 
-    private final List<Wave> waves;
     private Wave currentWave;
-    private boolean finished = false;
+    private int currentWaveIndex = 0;
 
-    public Scenario() {
-        this.waves = new ArrayList<>();
+    public Scenario(Array<Monster> activeMonsters) {
+        this.activeMonsters = activeMonsters;
     }
 
     public Scenario(Scenario other) {
-        this.waves = new ArrayList<>();
-        for (Wave w : other.waves) {
-            this.waves.add(w.clone());
-        }
-        this.finished = other.finished;
+        this.activeMonsters = other.activeMonsters;
+        this.waves.addAll(other.waves);
+        this.currentWave = other.currentWave != null ? other.currentWave.clone() : null;
+        this.currentWaveIndex = other.currentWaveIndex;
     }
 
     @Override
@@ -32,37 +33,27 @@ public class Scenario extends Prototype {
         waves.add(wave);
     }
 
-    public void update(float delta, GameArea area, Level level) {
-        if (finished) return;
-
-        if (currentWave == null || currentWave.isFinished()) {
-            if (!waves.isEmpty()) {
-                currentWave = waves.remove(0);
-            } else {
-                finished = true;
-                return;
-            }
+    public void startNextWave() {
+        if (currentWaveIndex < waves.size()) {
+            currentWave = waves.get(currentWaveIndex);
+            currentWaveIndex++;
+        } else {
+            currentWave = null;
         }
+    }
 
-        currentWave.update(delta, area, level);
+    public void update(float deltaTime) {
+        if (currentWave != null) {
+            currentWave.update(deltaTime);
+        }
     }
 
     public Wave getCurrentWave() {
         return currentWave;
     }
 
-    public boolean isFinished() {
-        return finished;
-    }
-
     public boolean hasNextWave() {
         return !waves.isEmpty();
-    }
-
-    public void startNextWave() {
-        if (!waves.isEmpty()) {
-            currentWave = waves.remove(0);
-        }
     }
 
     public int getTotalWaves() {
