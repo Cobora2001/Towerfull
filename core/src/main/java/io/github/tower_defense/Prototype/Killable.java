@@ -1,18 +1,22 @@
 package io.github.tower_defense.Prototype;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public abstract class Killable extends Prototype {
     protected int pv;
     protected int maxPv;
     protected Vector2 logicalPos;
-    protected Object sprite; // Peut être null ou remplacé plus tard
+    protected Actor sprite; // Peut être null ou remplacé plus tard
 
-    public Killable(int pv, int maxPv, Vector2 logicalPos, Object sprite) {
+    private KillableAppearance appearance;
+
+    public Killable(int pv, int maxPv, Vector2 logicalPos, Actor sprite, KillableAppearance appearance) {
         this.pv = pv;
         this.maxPv = maxPv;
         this.logicalPos = logicalPos;
         this.sprite = sprite;
+        this.appearance = appearance;
     }
 
     public Killable(Killable other) {
@@ -20,6 +24,11 @@ public abstract class Killable extends Prototype {
         this.maxPv = other.maxPv;
         this.logicalPos = new Vector2(other.logicalPos);
         this.sprite = other.sprite;
+        this.appearance = other.appearance != null ? other.appearance : null;
+    }
+
+    public KillableAppearance getAppearance() {
+        return appearance;
     }
 
     public int getPv() {

@@ -13,8 +13,10 @@ public class Monster extends Killable {
     private boolean hasReachedEnd = false;
 
 
-    public Monster(int pv, int maxPv, Vector2 logicalPos, int speed, int damage, int reward) {
-        super(pv, maxPv, logicalPos, null);
+    public Monster(int pv, int maxPv, Vector2 logicalPos,
+                   int speed, int damage, int reward,
+                   KillableAppearance appearance) {
+        super(pv, maxPv, logicalPos, null, appearance);
         this.speed = speed;
         this.damage = damage;
         this.reward = reward;
@@ -26,6 +28,8 @@ public class Monster extends Killable {
         this.damage = m.damage;
         this.reward = m.reward;
         this.pathIndex = m.pathIndex;
+        this.speedMultiplier = m.speedMultiplier;
+        this.hasReachedEnd = m.hasReachedEnd;
     }
 
     @Override

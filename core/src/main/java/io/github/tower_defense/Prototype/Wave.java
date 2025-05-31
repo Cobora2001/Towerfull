@@ -6,7 +6,6 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class Wave extends Prototype {
     private final List<WaveEntry> entries;
@@ -54,7 +53,7 @@ public class Wave extends Prototype {
 
             System.out.println("👾 Spawned: " + entry.getType() + " at " + elapsedTime);
 
-            currentIndex++;
+            ++currentIndex;
         }
 
         if (currentIndex >= entries.size()) {

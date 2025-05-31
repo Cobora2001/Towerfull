@@ -9,39 +9,37 @@ public class LevelGenerator {
         Array<Vector2> path = new Array<>();
 
         int x = 0;
-        int y = 1; // start bas gauche
+        int y = MathUtils.random(1, rows - 2); // start somewhere vertically in the left column
         path.add(new Vector2(x, y));
 
-        int maxHeight = rows - 2;
-        int minHeight = 1;
-
         while (x < cols - 1) {
-            // ➤ Phase horizontale (2 à 4 cases)
-            int horSteps = MathUtils.random(2, 4);
-            for (int i = 0; i < horSteps && x < cols - 1; i++) {
-                x++;
-                path.add(new Vector2(x, y));
+            // ➤ Move horizontally
+            int maxHorSteps = Math.min(4, cols - x - 1); // stay in bounds
+
+            int horSteps;
+            if (maxHorSteps >= 2) {
+                horSteps = MathUtils.random(2, maxHorSteps);
+            } else if (maxHorSteps >= 1) {
+                horSteps = 1;
+            } else {
+                break; // no room to move
             }
 
-            // ➤ Phase verticale (montée ou descente 2 à 3 cases)
-            int vertDir = MathUtils.randomBoolean() ? 1 : -1; // 1 = up, -1 = down
-            int vertSteps = MathUtils.random(2, 3);
+            x += horSteps;
+            path.add(new Vector2(x, y));
 
-            for (int i = 0; i < vertSteps; i++) {
-                int newY = y + vertDir;
-                if (newY >= minHeight && newY <= maxHeight) {
+            // ➤ Move vertically (optional step if space allows)
+            boolean doVertical = MathUtils.randomBoolean();
+            if (doVertical) {
+                int dir = MathUtils.randomBoolean() ? 1 : -1; // up or down
+                int vertSteps = MathUtils.random(1, 3);
+                int newY = MathUtils.clamp(y + dir * vertSteps, 1, rows - 2);
+
+                if (newY != y) {
                     y = newY;
                     path.add(new Vector2(x, y));
-                } else {
-                    break; // arrête si on sort des limites
                 }
             }
-        }
-
-        // termine à la hauteur maximale si pas atteint
-        while (y < maxHeight && x < cols - 1) {
-            y++;
-            path.add(new Vector2(x, y));
         }
 
         return path;

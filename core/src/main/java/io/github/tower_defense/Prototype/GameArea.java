@@ -2,16 +2,17 @@ package io.github.tower_defense.Prototype;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import io.github.tower_defense.Level.BuildSpot;
 import io.github.tower_defense.Level.Level;
 import io.github.tower_defense.Level.TowerPlacementGenerator;
 import io.github.tower_defense.Listener.GameOverListener;
-import io.github.tower_defense.Loader.Assets;
-import io.github.tower_defense.MonsterRenderer;
+import io.github.tower_defense.Loader.JavaLoader;
+import io.github.tower_defense.AssetRenderer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GameArea extends Prototype {
@@ -20,7 +21,7 @@ public class GameArea extends Prototype {
     private final OrthographicCamera camera;
 
     private final Array<Monster> monsters = new Array<>();
-    private final Array<Tower> towers = new Array<>();
+    private Array<BuildSpot> buildSpots = new Array<>();
 
     private final PrototypeFactory<MonsterType, Monster> prototypeFactory = new PrototypeFactory<>();
     private Scenario scenario;
@@ -43,7 +44,7 @@ public class GameArea extends Prototype {
     }
 
     public GameArea() {
-        shapeRenderer = MonsterRenderer.getInstance().getShapeRenderer();
+        shapeRenderer = new ShapeRenderer();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
@@ -61,10 +62,6 @@ public class GameArea extends Prototype {
         this.rows = gameArea.rows;
     }
 
-    public void placeTower(Vector2 logicalPos) {
-        towers.add(new Tower(10, 10, logicalPos, 100, 2, 1, 20));
-    }
-
     public void addMonster(Monster m) {
         monsters.add(m);
     }
@@ -77,10 +74,10 @@ public class GameArea extends Prototype {
 
         Vector2 spawn = currentLevel.getPathPoints().first();
 
-        Assets.get().loadMonsterPrototypes("monsters/monsters.json", prototypeFactory);
+        JavaLoader.get().loadMonsterPrototypes("monsters/monsters.json", prototypeFactory);
 
-        List<WaveEntry> wave1 = Assets.get().getWaveEntries("wave1");
-        List<WaveEntry> wave2 = Assets.get().getWaveEntries("wave2");
+        List<WaveEntry> wave1 = JavaLoader.get().getWaveEntries("wave1");
+        List<WaveEntry> wave2 = JavaLoader.get().getWaveEntries("wave2");
 
         Wave w1 = new Wave(wave1, prototypeFactory, monsters, spawn);
         Wave w2 = new Wave(wave2, prototypeFactory, monsters, spawn);
@@ -94,8 +91,8 @@ public class GameArea extends Prototype {
         scenario.addWave(w2);
         scenario.startNextWave();
 
-        for (Vector2 spot : TowerPlacementGenerator.generate(level)) {
-            placeTower(spot);
+        for(Vector2 pos : TowerPlacementGenerator.generate(level)) {
+            buildSpots.add(new BuildSpot(pos));
         }
     }
 
@@ -124,6 +121,16 @@ public class GameArea extends Prototype {
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
+    public Array<Tower> getBuiltTowers() {
+        Array<Tower> towers = new Array<>();
+        for (BuildSpot spot : buildSpots) {
+            if (spot.hasTower()) {
+                towers.add(spot.getTower());
+            }
+        }
+        return towers;
+    }
+
     public void update(float delta) {
         if (isPaused || cols == 0) return;
 
@@ -143,7 +150,7 @@ public class GameArea extends Prototype {
             }
         }
 
-        for (Tower tower : towers) {
+        for (Tower tower : getBuiltTowers()) {
             tower.update(delta, monsters, this);
         }
     }
@@ -173,18 +180,31 @@ public class GameArea extends Prototype {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         shapeRenderer.setColor(Color.MAGENTA);
-        for (Tower tower : towers) {
-            Vector2 pos = tower.getPixelPos(this);
-            shapeRenderer.circle(pos.x, pos.y, 10);
+        for (BuildSpot spot : buildSpots) {
+            if (spot.isUsed()) {
+                Tower tower = spot.getTower();
+                Vector2 pos = tower.getPixelPos(this);
+                shapeRenderer.rect(pos.x - 8, pos.y - 8, 16, 16);
+            } else {
+                Vector2 pos = spot.getPixelPos(this);
+                shapeRenderer.circle(pos.x, pos.y, 8);
+            }
         }
 
-        shapeRenderer.setColor(Color.RED);
+        SpriteBatch spriteBatch = new SpriteBatch();
+
+        spriteBatch.setProjectionMatrix(camera.combined);
+        spriteBatch.begin();
+
+        AssetRenderer renderer = new AssetRenderer(spriteBatch);
         for (Monster monster : monsters) {
-            Vector2 pos = monster.getPixelPos(this);
-            shapeRenderer.circle(pos.x, pos.y, 8);
+            Vector2 pixelPos = logicalToPixel(monster.getLogicalPos());
+            renderer.renderKillable(monster.getAppearance(), pixelPos);
         }
 
-        shapeRenderer.end();
+        spriteBatch.end(); // ✅ closes the batch properly
+
+        shapeRenderer.end(); // ✅ ends shapeRenderer separately
     }
 
     private void renderBorder() {
@@ -282,8 +302,8 @@ public class GameArea extends Prototype {
         return new GameArea(this);
     }
 
-    public void spawnMonster(Vector2 logicalPosition, int pv, int speed, int damage, int reward) {
-        Monster m = new Monster(pv, pv, logicalPosition, speed, damage, reward);
+    public void spawnMonster(Vector2 logicalPosition, int pv, int speed, int damage, int reward, KillableAppearance appearance) {
+        Monster m = new Monster(pv, pv, logicalPosition, speed, damage, reward, appearance);
         monsters.add(m);
     }
 

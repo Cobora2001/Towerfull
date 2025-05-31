@@ -1,14 +1,26 @@
 package io.github.tower_defense.Prototype;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.Texture;
 
-public class MonsterAppearance {
-    public TextureRegion texture;
-    public float width, height;
+public class KillableAppearance {
+    private final Texture texture;
+    private final float width, height;
 
-    public MonsterAppearance(TextureRegion texture, float width, float height) {
+    public KillableAppearance(Texture texture, float width, float height) {
         this.texture = texture;
         this.width = width;
         this.height = height;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
     }
 }

@@ -1,7 +1,6 @@
 package io.github.tower_defense.Prototype;
 
 import com.badlogic.gdx.utils.Array;
-import io.github.tower_defense.Level.Level;
 
 import java.util.ArrayList;
 import java.util.List;

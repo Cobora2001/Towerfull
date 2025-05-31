@@ -12,8 +12,8 @@ public class Tower extends Killable {
     private int cost;
     private float timeSinceLastShot = 0;
 
-    public Tower(int pv, int maxPv, Vector2 logicalPos, int range, int damage, int attackSpeed, int cost) {
-        super(pv, maxPv, logicalPos, null);
+    public Tower(int pv, int maxPv, Vector2 logicalPos, int range, int damage, int attackSpeed, int cost, KillableAppearance appearance) {
+        super(pv, maxPv, logicalPos, null, appearance);
         this.range = range;
         this.damage = damage;
         this.attackSpeed = attackSpeed;
