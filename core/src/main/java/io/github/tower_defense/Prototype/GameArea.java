@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import io.github.tower_defense.Level.Level;
 import io.github.tower_defense.Level.TowerPlacementGenerator;
+import io.github.tower_defense.Listener.GameOverListener;
 import io.github.tower_defense.Loader.Assets;
 import io.github.tower_defense.MonsterRenderer;
 
@@ -30,6 +31,16 @@ public class GameArea extends Prototype {
 
     private Level currentLevel;
     private int cols, rows;
+
+    private int gold = 100; // Starting gold
+
+    private int life = 20; // Starting life
+
+    private GameOverListener gameOverListener;
+
+    public void setGameOverListener(GameOverListener listener) {
+        this.gameOverListener = listener;
+    }
 
     public GameArea() {
         shapeRenderer = MonsterRenderer.getInstance().getShapeRenderer();
@@ -128,12 +139,27 @@ public class GameArea extends Prototype {
             if (monster.hasReachedEnd()) {
                 monsters.removeIndex(i);
                 System.out.println("❌ Monstre arrivé à la fin du chemin !");
-                // TODO : Déduire vie au joueur ou afficher une animation
+                loseLife(monster.getDamage());
             }
         }
 
         for (Tower tower : towers) {
             tower.update(delta, monsters, this);
+        }
+    }
+
+    public int getLife() {
+        return life;
+    }
+
+    public void loseLife(int amount) {
+        life -= amount;
+        if (life <= 0) {
+            life = 0;
+            System.out.println("💀 Game Over!");
+            if (gameOverListener != null) {
+                gameOverListener.onGameOver();
+            }
         }
     }
 
@@ -211,6 +237,22 @@ public class GameArea extends Prototype {
         drawCell(shapeRenderer, (int) endPoint.x, (int) endPoint.y);
 
         shapeRenderer.end();
+    }
+
+    public int getGold() {
+        return gold;
+    }
+
+    public void addGold(int amount) {
+        gold += amount;
+    }
+
+    public boolean spendGold(int amount) {
+        if (gold >= amount) {
+            gold -= amount;
+            return true;
+        }
+        return false; // Not enough gold
     }
 
 

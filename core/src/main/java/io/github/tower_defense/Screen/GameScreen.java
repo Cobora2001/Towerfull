@@ -23,6 +23,9 @@ public class GameScreen implements Screen {
     private TextButton pauseButton;
     private TextButton resumeButton;
 
+    private Label goldLabel;
+    private Label lifeLabel;
+
     private final int SIDEBAR_WIDTH = 200;
 
     public GameScreen(Main game, Level level) {
@@ -33,6 +36,10 @@ public class GameScreen implements Screen {
 
         setupUI();
         gameArea.resize(Gdx.graphics.getWidth() - SIDEBAR_WIDTH, Gdx.graphics.getHeight());
+
+        gameArea.setGameOverListener(() -> Gdx.app.postRunnable(() -> {
+            game.setScreen(new MainMenuScreen(game));
+        }));
     }
 
     private void setupUI() {
@@ -47,6 +54,12 @@ public class GameScreen implements Screen {
 
         sidebarTable = new Table();
         sidebarTable.top().pad(10);
+
+        lifeLabel = new Label("Life: 20", skin);
+        sidebarTable.add(lifeLabel).padBottom(10).row();
+
+        goldLabel = new Label("Gold: 0", skin);
+        sidebarTable.add(goldLabel).padBottom(20).row();
 
         pauseButton = new TextButton("Pause", skin);
         resumeButton = new TextButton("Resume", skin);
@@ -97,6 +110,9 @@ public class GameScreen implements Screen {
 
         gameArea.update(delta);
         gameArea.render();
+
+        lifeLabel.setText("Life: " + gameArea.getLife());
+        goldLabel.setText("Gold: " + gameArea.getGold());
 
         uiStage.act(delta);
         uiStage.draw();
