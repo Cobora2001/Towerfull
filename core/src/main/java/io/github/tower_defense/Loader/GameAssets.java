@@ -17,6 +17,9 @@ public class GameAssets {
         manager.load("monsters/wolf.PNG", Texture.class);
 
         // Load tower textures
+        manager.load("towers/castle.png", Texture.class);
+        manager.load("towers/sniper.png", Texture.class);
+        manager.load("towers/spot.png", Texture.class);
     }
 
     public static Texture getTexture(String path, Class<Texture> textureClass) {

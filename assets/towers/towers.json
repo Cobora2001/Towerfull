@@ -1,0 +1,16 @@
+{
+  "CASTLE": {
+    "damage": 5,
+    "range": 3,
+    "cost": 50,
+    "cooldown": 1.5,
+    "appearance": "CASTLE"
+  },
+  "SNIPER": {
+    "damage": 15,
+    "range": 6,
+    "cost": 100,
+    "cooldown": 3.0,
+    "appearance": "SNIPER"
+  }
+}

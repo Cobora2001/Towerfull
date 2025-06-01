@@ -1,5 +1,6 @@
 package io.github.tower_defense.Prototype;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
@@ -8,11 +9,12 @@ import java.util.List;
 public class Scenario extends Prototype {
     private final Array<Monster> activeMonsters;
     private final List<Wave> waves = new ArrayList<>();
+    private Vector2 startPosition;
 
     private Wave currentWave;
     private int currentWaveIndex = 0;
 
-    public Scenario(Array<Monster> activeMonsters) {
+    public Scenario(Array<Monster> activeMonsters, Vector2 startPosition) {
         this.activeMonsters = activeMonsters;
     }
 
@@ -21,6 +23,7 @@ public class Scenario extends Prototype {
         this.waves.addAll(other.waves);
         this.currentWave = other.currentWave != null ? other.currentWave.clone() : null;
         this.currentWaveIndex = other.currentWaveIndex;
+        this.startPosition = other.startPosition;
     }
 
     @Override
@@ -29,7 +32,12 @@ public class Scenario extends Prototype {
     }
 
     public void addWave(Wave wave) {
-        waves.add(wave);
+        if (wave == null) {
+            throw new IllegalArgumentException("Wave cannot be null");
+        }
+
+        Wave clonedWave = wave.clone();
+        waves.add(clonedWave);
     }
 
     public void startNextWave() {

@@ -5,6 +5,8 @@ import com.badlogic.gdx.utils.Array;
 
 
 public class Monster extends Killable {
+    private int pv;
+    private int maxPv;
     private int speed;
     private int damage;
     private int reward;
@@ -16,10 +18,12 @@ public class Monster extends Killable {
     public Monster(int pv, int maxPv, Vector2 logicalPos,
                    int speed, int damage, int reward,
                    KillableAppearance appearance) {
-        super(pv, maxPv, logicalPos, null, appearance);
+        super(logicalPos, appearance);
         this.speed = speed;
         this.damage = damage;
         this.reward = reward;
+        this.pv = pv;
+        this.maxPv = maxPv;
     }
 
     public Monster(Monster m) {
@@ -30,6 +34,8 @@ public class Monster extends Killable {
         this.pathIndex = m.pathIndex;
         this.speedMultiplier = m.speedMultiplier;
         this.hasReachedEnd = m.hasReachedEnd;
+        this.pv = m.pv;
+        this.maxPv = m.maxPv;
     }
 
     @Override
@@ -53,7 +59,8 @@ public class Monster extends Killable {
                 hasReachedEnd = true;
             }
         } else {
-            direction.nor().scl(speed * delta * speedMultiplier);
+            float pixelsPerSecond = speed * area.getCellWidth();
+            direction.nor().scl(pixelsPerSecond * delta);
             Vector2 newPixel = currentPixel.add(direction);
             this.logicalPos = area.pixelToLogical(newPixel);
         }
@@ -78,4 +85,30 @@ public class Monster extends Killable {
     public int getPathIndex() {
         return pathIndex;
     }
+
+    public int getPv() {
+        return pv;
+    }
+
+    public void setPv(int pv) {
+        this.pv = pv;
+    }
+
+    public int getMaxPv() {
+        return maxPv;
+    }
+
+    public void setMaxPv(int maxPv) {
+        this.maxPv = maxPv;
+    }
+
+    public void takeDamage(int amount) {
+        this.pv -= amount;
+        if (this.pv < 0) this.pv = 0;
+    }
+
+    public boolean isDead() {
+        return pv <= 0;
+    }
+
 }

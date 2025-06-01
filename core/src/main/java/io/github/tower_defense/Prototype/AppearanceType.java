@@ -1,6 +1,6 @@
 package io.github.tower_defense.Prototype;
 
-public enum MonsterType {
+public enum AppearanceType {
 
     // 🧱 Mobs de base
     GOBLIN,
@@ -16,5 +16,11 @@ public enum MonsterType {
 
     // 🔥 Spéciaux
     SHAMAN,
-    WIZARD;
+    WIZARD,
+
+    // 🏰 Tours
+    CASTLE,
+    SNIPER
+
 }
+

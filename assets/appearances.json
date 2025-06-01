@@ -1,0 +1,52 @@
+{
+  "CASTLE": {
+    "width": 1,
+    "height": 1,
+    "appearance": "towers/castle.png"
+  },
+  "SNIPER": {
+    "width": 0.8,
+    "height": 0.8,
+    "appearance": "towers/sniper.png"
+  },
+  "SPOT": {
+    "width": 1,
+    "height": 1,
+    "appearance": "towers/spot.png"
+  },
+  "ORC": {
+    "width": 1,
+    "height": 1,
+    "appearance": "monsters/orc.png"
+  },
+  "WOLF": {
+    "width": 1,
+    "height": 0.6,
+    "appearance": "monsters/wolf.PNG"
+  },
+  "GOBLIN": {
+    "width": 0.5,
+    "height": 0.5,
+    "appearance": "monsters/goblin.PNG"
+  },
+  "SHAMAN": {
+    "width": 0.8,
+    "height": 0.8,
+    "appearance": "monsters/shaman.PNG"
+  },
+  "SKELETON": {
+    "width": 0.8,
+    "height": 0.8,
+    "appearance": "monsters/skeleton.png"
+  },
+  "GOLEM": {
+    "width": 1.1,
+    "height": 1.1,
+    "appearance": "monsters/golem.png"
+  },
+  "WIZARD": {
+    "width": 0.8,
+    "height": 0.8,
+    "appearance": "monsters/wizard.png"
+  }
+}

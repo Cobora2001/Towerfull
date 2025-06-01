@@ -3,10 +3,11 @@ package io.github.tower_defense.Prototype;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PrototypeFactory<M, T extends Prototype> {
-    private final Map<Enum<?>, T> prototypes = new HashMap<>();
+public class PrototypeFactory<M extends Enum<M>, T extends Prototype> extends Prototype {
 
-    public void register(Enum<?> key, T prototype) {
+    private final Map<M, T> prototypes = new HashMap<>();
+
+    public void register(M key, T prototype) {
         prototypes.put(key, prototype);
     }
 
@@ -15,15 +16,28 @@ public class PrototypeFactory<M, T extends Prototype> {
         return proto != null ? (T) proto.clone() : null;
     }
 
-    public void unregister(Enum<?> key) {
+    public void unregister(M key) {
         prototypes.remove(key);
     }
 
-    public boolean contains(Enum<?> key) {
+    public boolean contains(M key) {
         return prototypes.containsKey(key);
     }
 
     public void clear() {
         prototypes.clear();
+    }
+
+    public T getPrototype(M key) {
+        return prototypes.get(key);
+    }
+
+    @Override
+    public PrototypeFactory<M, T> clone() {
+        PrototypeFactory<M, T> clone = new PrototypeFactory<>();
+        for (Map.Entry<M, T> entry : prototypes.entrySet()) {
+            clone.register(entry.getKey(), (T) entry.getValue().clone());
+        }
+        return clone;
     }
 }

@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import io.github.tower_defense.Level.BuildSpot;
 import io.github.tower_defense.Level.Level;
 import io.github.tower_defense.Level.TowerPlacementGenerator;
 import io.github.tower_defense.Listener.GameOverListener;
-import io.github.tower_defense.Loader.JavaLoader;
+import io.github.tower_defense.Loader.AppearanceAssets;
+import io.github.tower_defense.Loader.JsonLoader;
 import io.github.tower_defense.AssetRenderer;
 
 import java.util.List;
@@ -21,9 +21,11 @@ public class GameArea extends Prototype {
     private final OrthographicCamera camera;
 
     private final Array<Monster> monsters = new Array<>();
-    private Array<BuildSpot> buildSpots = new Array<>();
+    private final Array<BuildSpot> buildSpots = new Array<>();
 
-    private final PrototypeFactory<MonsterType, Monster> prototypeFactory = new PrototypeFactory<>();
+    private PrototypeFactory<MonsterType, Monster> prototypeFactory = new PrototypeFactory<>();
+    private PrototypeFactory<TowerType, Tower> towerFactory = new PrototypeFactory<>();
+
     private Scenario scenario;
 
     private float x, y;
@@ -50,16 +52,35 @@ public class GameArea extends Prototype {
     }
 
     public GameArea(GameArea gameArea) {
-        this.shapeRenderer = gameArea.shapeRenderer;
-        this.camera = gameArea.camera;
+        this.shapeRenderer = new ShapeRenderer();
+        this.camera = new OrthographicCamera();
+        this.camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
         this.x = gameArea.x;
         this.y = gameArea.y;
         this.cellWidth = gameArea.cellWidth;
         this.cellHeight = gameArea.cellHeight;
         this.isPaused = gameArea.isPaused;
-        this.currentLevel = gameArea.currentLevel;
         this.cols = gameArea.cols;
         this.rows = gameArea.rows;
+        this.gold = gameArea.gold;
+        this.life = gameArea.life;
+
+        // Deep copy build spots
+        for (BuildSpot spot : gameArea.buildSpots) {
+            this.buildSpots.add(spot.clone());
+        }
+
+        // Deep copy monsters
+        for (Monster m : gameArea.monsters) {
+            this.monsters.add(m.clone()); // Assuming Monster has a copy constructor
+        }
+
+        // Clone prototype factory (assuming it’s OK to share, or deep copy it if needed)
+        this.prototypeFactory = gameArea.prototypeFactory.clone(); // You might need to implement this
+
+        // Clone level if needed (you can share it if it’s immutable)
+        this.currentLevel = gameArea.currentLevel;
     }
 
     public void addMonster(Monster m) {
@@ -74,19 +95,17 @@ public class GameArea extends Prototype {
 
         Vector2 spawn = currentLevel.getPathPoints().first();
 
-        JavaLoader.get().loadMonsterPrototypes("monsters/monsters.json", prototypeFactory);
+        JsonLoader.get().loadAppearancePrototypes("appearances.json");
+        JsonLoader.get().loadMonsterPrototypes("monsters/monsters.json", prototypeFactory);
+        JsonLoader.get().loadTowerPrototypes("towers/towers.json", towerFactory);
 
-        List<WaveEntry> wave1 = JavaLoader.get().getWaveEntries("wave1");
-        List<WaveEntry> wave2 = JavaLoader.get().getWaveEntries("wave2");
+        List<WaveEntry> wave1 = JsonLoader.get().getWaveEntries("wave1");
+        List<WaveEntry> wave2 = JsonLoader.get().getWaveEntries("wave2");
 
         Wave w1 = new Wave(wave1, prototypeFactory, monsters, spawn);
         Wave w2 = new Wave(wave2, prototypeFactory, monsters, spawn);
 
-        scenario = new Scenario(monsters);
-        scenario.addWave(w1);
-        scenario.addWave(w2);
-
-        scenario = new Scenario(monsters);
+        scenario = new Scenario(monsters, spawn);
         scenario.addWave(w1);
         scenario.addWave(w2);
         scenario.startNextWave();
@@ -94,41 +113,49 @@ public class GameArea extends Prototype {
         for(Vector2 pos : TowerPlacementGenerator.generate(level)) {
             buildSpots.add(new BuildSpot(pos));
         }
+
+        // For testing purposes, set the spots to be used
+        for (int i = 0; i < buildSpots.size; i++) {
+            if (!buildSpots.get(i).isUsed() && i % 2 == 0) { // Just an example condition
+                buildSpots.get(i).setTower(towerFactory.create(TowerType.CASTLE));
+            }
+        }
     }
 
-    public void resize(int availableWidth, int height) {
+    public void resize(int availableWidth, int availableHeight) {
         if (cols <= 0 || rows <= 0) return;
 
         float levelAspect = (float) cols / rows;
-        float availableAspect = (float) availableWidth / height;
+        float screenAspect = (float) availableWidth / availableHeight;
 
-        float size;
-        if (availableAspect >= levelAspect) {
-            size = height;
-            cellHeight = size / rows;
+        if (screenAspect >= levelAspect) {
+            // Screen is wider — height is limiting factor
+            cellHeight = (float) availableHeight / rows;
             cellWidth = cellHeight;
-            size = cellWidth * cols;
         } else {
-            size = availableWidth;
-            cellWidth = size / cols;
+            // Screen is taller — width is limiting factor
+            cellWidth = (float) availableWidth / cols;
             cellHeight = cellWidth;
-            size = cellHeight * rows;
         }
 
-        x = (availableWidth - (cellWidth * cols)) / 2f;
-        y = (height - (cellHeight * rows)) / 2f;
+        // Center the level
+        float totalWidth = cellWidth * cols;
+        float totalHeight = cellHeight * rows;
+
+        x = (availableWidth - totalWidth) / 2f;
+        y = (availableHeight - totalHeight) / 2f;
 
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
-    public Array<Tower> getBuiltTowers() {
-        Array<Tower> towers = new Array<>();
+    public Array<BuildSpot> getBuiltSpots() {
+        Array<BuildSpot> builtSpots = new Array<>();
         for (BuildSpot spot : buildSpots) {
-            if (spot.hasTower()) {
-                towers.add(spot.getTower());
+            if (spot.isUsed()) {
+                builtSpots.add(spot);
             }
         }
-        return towers;
+        return builtSpots;
     }
 
     public void update(float delta) {
@@ -150,8 +177,10 @@ public class GameArea extends Prototype {
             }
         }
 
-        for (Tower tower : getBuiltTowers()) {
-            tower.update(delta, monsters, this);
+        for (BuildSpot spot : getBuiltSpots()) {
+            if (spot.getTower() != null) {
+                spot.getTower().update(delta, monsters, this, spot.getLogicalPos());
+            }
         }
     }
 
@@ -177,34 +206,26 @@ public class GameArea extends Prototype {
         renderBorder();
         renderPath();
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        shapeRenderer.setColor(Color.MAGENTA);
-        for (BuildSpot spot : buildSpots) {
-            if (spot.isUsed()) {
-                Tower tower = spot.getTower();
-                Vector2 pos = tower.getPixelPos(this);
-                shapeRenderer.rect(pos.x - 8, pos.y - 8, 16, 16);
-            } else {
-                Vector2 pos = spot.getPixelPos(this);
-                shapeRenderer.circle(pos.x, pos.y, 8);
-            }
-        }
-
-        SpriteBatch spriteBatch = new SpriteBatch();
-
+        // --- Start sprite rendering ---
+        SpriteBatch spriteBatch = new SpriteBatch(); // Ideally move this outside render()
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
 
-        AssetRenderer renderer = new AssetRenderer(spriteBatch);
+        AssetRenderer renderer = new AssetRenderer(spriteBatch, cellWidth, cellHeight);
+
+        // Render monsters
         for (Monster monster : monsters) {
             Vector2 pixelPos = logicalToPixel(monster.getLogicalPos());
             renderer.renderKillable(monster.getAppearance(), pixelPos);
         }
 
-        spriteBatch.end(); // ✅ closes the batch properly
+        // Render towers on build spots
+        for (BuildSpot spot : buildSpots) {
+            Vector2 pixelPos = logicalToPixel(spot.getLogicalPos());
+            renderer.renderKillable(spot.getAppearance(), pixelPos);
+        }
 
-        shapeRenderer.end(); // ✅ ends shapeRenderer separately
+        spriteBatch.end(); // ✅ Close batch
     }
 
     private void renderBorder() {
@@ -317,6 +338,10 @@ public class GameArea extends Prototype {
         float lx = (pixel.x - x) / cellWidth - 0.5f;
         float ly = (pixel.y - y) / cellHeight - 0.5f;
         return new Vector2(lx, ly);
+    }
+
+    public float getCellWidth() {
+        return cellWidth;
     }
 
 }

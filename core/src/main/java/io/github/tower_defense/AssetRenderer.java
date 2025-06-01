@@ -5,15 +5,26 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.tower_defense.Prototype.KillableAppearance;
 
 public class AssetRenderer {
-    private SpriteBatch batch;
+    private final SpriteBatch batch;
+    private final float cellWidth, cellHeight;
 
-    public AssetRenderer(SpriteBatch batch) {
+    public AssetRenderer(SpriteBatch batch, float cellWidth, float cellHeight) {
         this.batch = batch;
+        this.cellWidth = cellWidth;
+        this.cellHeight = cellHeight;
     }
 
-    public void renderKillable(KillableAppearance appearance, Vector2 pixelPos) {
+    public void renderKillable(KillableAppearance appearance, Vector2 pixelCenterPos) {
         if (appearance == null) return;
-        batch.draw(appearance.getTexture(), pixelPos.x, pixelPos.y, appearance.getWidth(), appearance.getHeight());
-    }
 
+        // Convert appearance width/height from logical units to pixels
+        float width = appearance.getWidth() * cellWidth;
+        float height = appearance.getHeight() * cellHeight;
+
+        // Center the image
+        float drawX = pixelCenterPos.x - width / 2f;
+        float drawY = pixelCenterPos.y - height / 2f;
+
+        batch.draw(appearance.getTexture(), drawX, drawY, width, height);
+    }
 }

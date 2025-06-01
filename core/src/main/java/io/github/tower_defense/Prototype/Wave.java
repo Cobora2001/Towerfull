@@ -1,6 +1,5 @@
 package io.github.tower_defense.Prototype;
 
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -78,14 +77,17 @@ public class Wave extends Prototype {
         finished = false;
     }
 
+    public Array<Monster> getActiveMonsters() {
+        return activeMonsters;
+    }
 
     @Override
     public Wave clone() {
         return new Wave(
-                new ArrayList<>(entries), // ou copie plus profonde si nécessaire
-                factory,
-                activeMonsters,// même référence (attention si besoin d’isoler)
-                spawnPoint
+            new ArrayList<>(entries), // entries cloned
+            factory,
+            activeMonsters,           // reuse shared reference
+            spawnPoint
         );
     }
 }

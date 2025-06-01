@@ -5,27 +5,28 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 
-public class Tower extends Killable {
+public class Tower extends Prototype {
     private int range;
     private int damage;
-    private int attackSpeed;
+    private float cooldown;
     private int cost;
+    private KillableAppearance appearance;
     private float timeSinceLastShot = 0;
 
-    public Tower(int pv, int maxPv, Vector2 logicalPos, int range, int damage, int attackSpeed, int cost, KillableAppearance appearance) {
-        super(pv, maxPv, logicalPos, null, appearance);
+    public Tower(int range, int damage, float cooldown, int cost, KillableAppearance appearance) {
         this.range = range;
         this.damage = damage;
-        this.attackSpeed = attackSpeed;
+        this.cooldown = cooldown;
         this.cost = cost;
+        this.appearance = appearance;
     }
 
     public Tower(Tower t) {
-        super(t);
         this.range = t.range;
         this.damage = t.damage;
-        this.attackSpeed = t.attackSpeed;
+        this.cooldown = t.cooldown;
         this.cost = t.cost;
+        this.appearance = t.appearance;
     }
 
     @Override
@@ -33,11 +34,11 @@ public class Tower extends Killable {
         return new Tower(this);
     }
 
-    public void update(float delta, Array<Monster> monsters, GameArea area) {
+    public void update(float delta, Array<Monster> monsters, GameArea area, Vector2 logicalPos) {
         timeSinceLastShot += delta;
-        if (timeSinceLastShot < 1f / attackSpeed) return;
+        if (timeSinceLastShot < cooldown) return;
 
-        Vector2 myPixel = getPixelPos(area);
+        Vector2 myPixel = area.logicalToPixel(logicalPos);
 
         for (Monster monster : monsters) {
             Vector2 monsterPixel = monster.getPixelPos(area);
@@ -57,11 +58,15 @@ public class Tower extends Killable {
         return damage;
     }
 
-    public int getAttackSpeed() {
-        return attackSpeed;
+    public float getCooldown() {
+        return cooldown;
     }
 
     public int getCost() {
         return cost;
+    }
+
+    public KillableAppearance getAppearance() {
+        return appearance;
     }
 }
