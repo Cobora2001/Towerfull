@@ -91,38 +91,57 @@ public class GameArea extends Prototype {
     public void setLevel(Level level) {
         this.economyManager = new EconomyManager(100);
         this.currentLevel = level;
+
+        if (level == null) {
+            Gdx.app.error("GameArea", "❌ Niveau null transmis à GameArea.setLevel()");
+            return;
+        }
+
         this.cols = level.getCols();
         this.rows = level.getRows();
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+        // 🔄 Initialisation des assets
+        try {
+            JsonLoader.get().loadAppearancePrototypes("appearances.json");
+            JsonLoader.get().loadMonsterPrototypes("monsters/monsters.json", prototypeFactory);
+            JsonLoader.get().loadTowerPrototypes("towers/towers.json", towerFactory);
+        } catch (Exception e) {
+            Gdx.app.error("GameArea", "❌ Erreur lors du chargement des assets JSON", e);
+            return;
+        }
+
         Vector2 spawn = currentLevel.getPathPoints().first();
+        if (spawn == null) {
+            Gdx.app.error("GameArea", "❌ Point de spawn null");
+            return;
+        }
 
-        JsonLoader.get().loadAppearancePrototypes("appearances.json");
-        JsonLoader.get().loadMonsterPrototypes("monsters/monsters.json", prototypeFactory);
-        JsonLoader.get().loadTowerPrototypes("towers/towers.json", towerFactory);
-
+        // Chargement des vagues
         List<WaveEntry> wave1 = JsonLoader.get().getWaveEntries("wave1");
         List<WaveEntry> wave2 = JsonLoader.get().getWaveEntries("wave2");
 
-        Wave w1 = new Wave(wave1, prototypeFactory, monsters, spawn);
-        Wave w2 = new Wave(wave2, prototypeFactory, monsters, spawn);
-
         scenario = new Scenario(monsters, spawn);
-        scenario.addWave(w1);
-        scenario.addWave(w2);
+        scenario.addWave(new Wave(wave1, prototypeFactory, monsters, spawn));
+        scenario.addWave(new Wave(wave2, prototypeFactory, monsters, spawn));
         scenario.startNextWave();
 
-        for(Vector2 pos : TowerPlacementGenerator.generate(level)) {
+        // Initialisation des build spots
+        for (Vector2 pos : TowerPlacementGenerator.generate(level)) {
             buildSpots.add(new BuildSpot(pos));
         }
 
-        // For testing purposes, set the spots to be used
-        for (int i = 0; i < buildSpots.size; i++) {
-            if (!buildSpots.get(i).isUsed() && i % 2 == 0) { // Just an example condition
-                buildSpots.get(i).setTower(towerFactory.create(TowerType.CASTLE));
+        // Construction de test (à sécuriser)
+        for (BuildSpot spot : buildSpots) {
+            if (!spot.isUsed() && towerFactory.contains(TowerType.CASTLE)) {
+                Tower tower = towerFactory.create(TowerType.CASTLE);
+                if (tower != null) {
+                    spot.setTower(tower);
+                }
             }
         }
     }
+
 
     public void resize(int availableWidth, int availableHeight) {
         if (cols <= 0 || rows <= 0) return;
@@ -167,24 +186,29 @@ public class GameArea extends Prototype {
             scenario.update(delta);
         }
 
-        // 🔁 Mise à jour des monstres + nettoyage si arrivée
+        Array<Vector2> pathPoints = (currentLevel != null) ? currentLevel.getPathPoints() : null;
+
         for (int i = monsters.size - 1; i >= 0; i--) {
             Monster monster = monsters.get(i);
-            monster.update(delta, currentLevel.getPathPoints(), this);
+
+            if (pathPoints != null) {
+                monster.update(delta, pathPoints, this);
+            }
 
             if (monster.hasReachedEnd()) {
                 monsters.removeIndex(i);
-                System.out.println("❌ Monstre arrivé à la fin du chemin !");
                 loseLife(monster.getDamage());
             }
         }
 
         for (BuildSpot spot : getBuiltSpots()) {
-            if (spot.getTower() != null) {
-                spot.getTower().update(delta, monsters, this, spot.getLogicalPos());
+            Tower tower = spot.getTower();
+            if (tower != null) {
+                tower.update(delta, monsters, this, spot.getLogicalPos());
             }
         }
     }
+
 
     public int getLife() {
         return life;
@@ -332,33 +356,23 @@ public class GameArea extends Prototype {
         monsters.add(m);
     }
 
-    public boolean requestTowerBuild(BuildSpot spot) {
-        if (spot == null || spot.hasTower()) return false;
+//    public boolean requestTowerBuild(BuildSpot spot) {
+//        if (spot == null || spot.hasTower()) return false;
+//
+//        TowerType selected = spot.getSelectedType();
+//        if (selected == null) return false;
+//
+//        Tower tower = towerFactory.create(selected);
+//        if (tower == null) return false;
+//
+//        int cost = tower.getCost();
+//        if (!economyManager.canAfford(cost)) return false;
+//
+//        economyManager.spendGold(cost);
+//        spot.setTower(tower);
+//        return true;
+//    }
 
-        TowerType selected = spot.getSelectedType();
-        if (selected == null) return false;
-
-        if (!economyManager.canAfford(selected.getCost())) return false;
-
-        // Construit la tour à partir des stats du TowerType
-        Tower newTower = new Tower(
-                selected.getPv(),
-                selected.getMaxPv(),
-                spot.getLogicalPos(),
-                selected.getRange(),
-                selected.getCooldown(),
-                selected.getDelay(),
-                selected.getDamage()
-        );
-
-        towers.add(newTower);
-        economyManager.spendGold(selected.getCost());
-
-        // Marque le spot comme construit
-        spot.setHasTower(true);
-
-        return true;
-    }
 
 
 

@@ -7,13 +7,10 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 import io.github.tower_defense.Prototype.*;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JsonLoader {
-
     private static final JsonLoader instance = new JsonLoader();
     private final Json json;
 
@@ -33,23 +30,69 @@ public class JsonLoader {
     }
 
     public <T> List<T> loadJsonList(String path, Class<T> clazz) {
-        return JsonListLoader.loadJsonList(path, clazz);
+        FileHandle file = resolve(path);
+        T[] array = json.fromJson((Class<T[]>) java.lang.reflect.Array.newInstance(clazz, 0).getClass(), file);
+        List<T> list = new ArrayList<>();
+        if (array != null) {
+            for (T item : array) list.add(item);
+        }
+        return list;
     }
 
     public void loadMonsterPrototypes(String path, PrototypeFactory<MonsterType, Monster> factory) {
-        new MonsterPrototypeLoader().load(path, factory);
+        new MonsterPrototypeLoader().load(path, MonsterType.class, MonsterData.class, factory);
     }
 
     public void loadTowerPrototypes(String path, PrototypeFactory<TowerType, Tower> factory) {
-        new TowerPrototypeLoader().load(path, factory);
+        new TowerPrototypeLoader().load(path, TowerType.class, TowerData.class, factory);
     }
+
+    public void loadAppearancePrototypes(String path) {
+        FileHandle file = Gdx.files.internal(path);
+        Json json = new Json();
+
+        ObjectMap<String, AppearanceData> rawData = json.fromJson(ObjectMap.class, AppearanceData.class, file);
+        for (ObjectMap.Entry<String, AppearanceData> entry : rawData.entries()) {
+            String name = entry.key;
+            AppearanceData data = entry.value;
+
+            Texture texture = GameTextureAssets.getTexture(data.appearance, Texture.class);
+            KillableAppearance appearance = new KillableAppearance(texture, data.width, data.height);
+            AppearanceAssets.getInstance().registerAppearance(name, appearance);
+        }
+
+        Gdx.app.log("AppearanceLoader", "✅ Apparences chargées depuis " + path);
+    }
+
 
     public List<WaveEntry> getWaveEntries(String waveId) {
         return loadJsonList("waves/" + waveId + ".json", WaveEntry.class);
     }
 
     private FileHandle resolve(String path) {
-        return com.badlogic.gdx.Gdx.files.internal(path);
+        return Gdx.files.internal(path);
+    }
+
+    public static class MonsterData {
+        public int hp;
+        public int speed;
+        public int damage;
+        public int reward;
+        public String appearance;
+    }
+
+    public static class TowerData {
+        public int range;
+        public int damage;
+        public float cooldown;
+        public int cost;
+        public String appearance;
+    }
+
+    private static class AppearanceData {
+        public float width;
+        public float height;
+        public String appearance;
     }
 }
 
