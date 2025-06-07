@@ -1,15 +1,16 @@
 package io.github.tower_defense;
 
 import com.badlogic.gdx.Game;
-import io.github.tower_defense.Loader.GameTextureAssets;
-import io.github.tower_defense.Screen.MainMenuScreen;
+import io.github.tower_defense.loader.GameTextureAssets;
+import io.github.tower_defense.screen.MainMenuScreen;
 
 public class Main extends Game {
     @Override
     public void create() {
         // Initialize the game assets
-        GameTextureAssets.load();
+        GameTextureAssets.loadFromAppearanceData("appearances.json");
         GameTextureAssets.finishLoading();
+
         this.setScreen(new MainMenuScreen(this));
     }
 

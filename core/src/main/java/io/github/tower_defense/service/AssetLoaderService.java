@@ -1,9 +1,9 @@
 package io.github.tower_defense.service;
 
 import com.badlogic.gdx.Gdx;
-import io.github.tower_defense.Loader.GameTextureAssets;
-import io.github.tower_defense.Loader.JsonLoader;
-import io.github.tower_defense.Prototype.*;
+import io.github.tower_defense.loader.GameTextureAssets;
+import io.github.tower_defense.loader.JsonLoader;
+import io.github.tower_defense.prototype.*;
 
 public class AssetLoaderService {
 
@@ -16,10 +16,10 @@ public class AssetLoaderService {
     }
 
     public void loadAllAssets() {
-        Gdx.app.log("AssetLoader", "🔄 Début du chargement des assets...");
+        Gdx.app.log("AssetLoader", "Début du chargement des assets...");
 
         // Charge les textures (.png) via libGDX AssetManager
-        GameTextureAssets.load();
+        GameTextureAssets.loadFromAppearanceData("appearances.json");
         GameTextureAssets.finishLoading(); // important : attendre le chargement complet
 
         // Apparences (textures + tailles) à partir d’un fichier JSON
@@ -29,7 +29,7 @@ public class AssetLoaderService {
         JsonLoader.get().loadMonsterPrototypes("monsters/monsters.json", monsterFactory);
         JsonLoader.get().loadTowerPrototypes("towers/towers.json", towerFactory);
 
-        Gdx.app.log("AssetLoader", "✅ Tous les assets ont été chargés.");
+        Gdx.app.log("AssetLoader", "Tous les assets ont été chargés.");
     }
 
     public PrototypeFactory<MonsterType, Monster> getMonsterFactory() {
