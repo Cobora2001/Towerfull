@@ -26,6 +26,7 @@ public class GameArea extends Prototype {
     private PrototypeFactory<MonsterType, Monster> prototypeFactory = new PrototypeFactory<>();
     private PrototypeFactory<TowerType, Tower> towerFactory = new PrototypeFactory<>();
 
+    private EconomyManager economyManager;
     private Scenario scenario;
 
     private float x, y;
@@ -88,6 +89,7 @@ public class GameArea extends Prototype {
     }
 
     public void setLevel(Level level) {
+        this.economyManager = new EconomyManager(100);
         this.currentLevel = level;
         this.cols = level.getCols();
         this.rows = level.getRows();
@@ -297,6 +299,8 @@ public class GameArea extends Prototype {
     }
 
 
+
+
     private void drawCell(ShapeRenderer renderer, int col, int row) {
         float px = x + col * cellWidth;
         float py = y + row * cellHeight;
@@ -327,6 +331,38 @@ public class GameArea extends Prototype {
         Monster m = new Monster(pv, pv, logicalPosition, speed, damage, reward, appearance);
         monsters.add(m);
     }
+
+    public boolean requestTowerBuild(BuildSpot spot) {
+        if (spot == null || spot.hasTower()) return false;
+
+        TowerType selected = spot.getSelectedType();
+        if (selected == null) return false;
+
+        if (!economyManager.canAfford(selected.getCost())) return false;
+
+        // Construit la tour à partir des stats du TowerType
+        Tower newTower = new Tower(
+                selected.getPv(),
+                selected.getMaxPv(),
+                spot.getLogicalPos(),
+                selected.getRange(),
+                selected.getCooldown(),
+                selected.getDelay(),
+                selected.getDamage()
+        );
+
+        towers.add(newTower);
+        economyManager.spendGold(selected.getCost());
+
+        // Marque le spot comme construit
+        spot.setHasTower(true);
+
+        return true;
+    }
+
+
+
+
 
     public Vector2 logicalToPixel(Vector2 logical) {
         float px = x + (logical.x + 0.5f) * cellWidth;

@@ -29,6 +29,7 @@ public class Tower extends Prototype {
         this.appearance = t.appearance;
     }
 
+
     @Override
     public Tower clone() {
         return new Tower(this);

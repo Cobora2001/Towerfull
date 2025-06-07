@@ -3,7 +3,7 @@ package io.github.tower_defense.Loader;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 
-public class GameAssets {
+public class GameTextureAssets {
     private static final AssetManager manager = new AssetManager();
 
     public static void load() {
