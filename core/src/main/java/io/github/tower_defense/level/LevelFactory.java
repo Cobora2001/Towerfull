@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class LevelFactory {
+
     public static Level makeLevel1() {
         Array<Vector2> path = new Array<>();
         path.add(new Vector2(0, 5));
@@ -25,7 +26,9 @@ public class LevelFactory {
 
     public static Level createGeneratedLevel(int cols, int rows) {
         Array<Vector2> path = LevelGenerator.generatePath(cols, rows);
-        return new Level(cols, rows, path);
+        Level survival =  new Level(cols, rows, path);
+        survival.setSurvival();
+        return survival;
     }
 
 }

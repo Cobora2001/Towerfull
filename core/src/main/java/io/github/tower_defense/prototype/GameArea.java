@@ -41,8 +41,6 @@ public class GameArea extends Prototype {
     private Level currentLevel;
     private int cols, rows;
 
-    private int gold = 100; // Starting gold
-
     private int life = 20; // Starting life
 
     private GameOverListener gameOverListener;
@@ -69,7 +67,6 @@ public class GameArea extends Prototype {
         this.isPaused = gameArea.isPaused;
         this.cols = gameArea.cols;
         this.rows = gameArea.rows;
-        this.gold = gameArea.gold;
         this.life = gameArea.life;
 
         // Deep copy build spots
@@ -127,24 +124,13 @@ public class GameArea extends Prototype {
         List<WaveEntry> wave2 = JsonLoader.get().getWaveEntries("wave2");
 
         scenario = new Scenario(monsters, spawn);
-        scenario.addWave(new Wave(wave1, prototypeFactory, monsters, spawn));
-        scenario.addWave(new Wave(wave2, prototypeFactory, monsters, spawn));
+        scenario.loadWavesFromDirectory("wave", prototypeFactory, spawn);
         scenario.startNextWave();
 
         // Initialisation des build spots
         for (Vector2 pos : TowerPlacementGenerator.generate(level)) {
             buildSpots.add(new BuildSpot(pos));
         }
-
-        // Construction de test (à sécuriser)
-//        for (BuildSpot spot : buildSpots) {
-//            if (!spot.isUsed() && towerFactory.contains(TowerType.CASTLE)) {
-//                Tower tower = towerFactory.create(TowerType.CASTLE);
-//                if (tower != null) {
-//                    spot.setTower(tower);
-//                }
-//            }
-//        }
     }
 
 
@@ -212,7 +198,16 @@ public class GameArea extends Prototype {
                 tower.update(delta, monsters, this, spot.getLogicalPos());
             }
         }
+
+        // ✅ Ajout ici : détection fin de niveau
+        if (scenario != null
+                && !scenario.hasNextWave()
+                && monsters.size == 0) {
+            System.out.println("🏁 Fin du niveau !");
+            // TODO: notifier le GameScreen via listener, popup, etc.
+        }
     }
+
 
 
     public int getLife() {
@@ -310,23 +305,6 @@ public class GameArea extends Prototype {
 
         shapeRenderer.end();
     }
-
-    public int getGold() {
-        return gold;
-    }
-
-    public void addGold(int amount) {
-        gold += amount;
-    }
-
-    public boolean spendGold(int amount) {
-        if (gold >= amount) {
-            gold -= amount;
-            return true;
-        }
-        return false; // Not enough gold
-    }
-
 
 
     private void drawCell(ShapeRenderer renderer, int col, int row) {
