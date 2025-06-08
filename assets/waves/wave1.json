@@ -1,0 +1,5 @@
+[
+  { "type": "ORC", "spawnTime": 1 },
+  { "type": "WOLF", "spawnTime": 1 },
+  { "type": "GOBLIN", "spawnTime": 2 }
+]

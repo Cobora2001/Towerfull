@@ -1,0 +1,51 @@
+{
+  "ORC": {
+    "speed": 1,
+    "hp": 20,
+    "damage": 5,
+    "reward": 10,
+    "appearance": "ORC"
+  },
+  "WOLF": {
+    "speed": 2,
+    "hp": 10,
+    "damage": 3,
+    "reward": 10,
+    "appearance": "WOLF"
+  },
+  "GOBLIN": {
+    "speed": 3,
+    "hp": 8,
+    "damage": 2,
+    "reward": 10,
+    "appearance": "GOBLIN"
+  },
+  "SHAMAN": {
+    "speed": 1,
+    "hp": 15,
+    "damage": 4,
+    "reward": 10,
+    "appearance": "SHAMAN"
+  },
+  "SKELETON": {
+    "speed": 1,
+    "hp": 12,
+    "damage": 3,
+    "reward": 10,
+    "appearance": "SKELETON"
+  },
+  "GOLEM": {
+    "speed": 1,
+    "hp": 40,
+    "damage": 10,
+    "reward": 10,
+    "appearance": "GOLEM"
+  },
+  "WIZARD": {
+    "speed": 1,
+    "hp": 18,
+    "damage": 6,
+    "reward": 10,
+    "appearance": "WIZARD"
+  }
+}
