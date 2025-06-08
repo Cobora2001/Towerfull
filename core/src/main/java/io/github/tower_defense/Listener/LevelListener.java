@@ -1,5 +1,7 @@
 package io.github.tower_defense.Listener;
 
-public interface GameOverListener {
+public interface LevelListener {
     void onGameOver();
+
+    void onLevelComplete();
 }

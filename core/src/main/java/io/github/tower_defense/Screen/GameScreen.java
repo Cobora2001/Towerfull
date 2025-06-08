@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import io.github.tower_defense.Listener.LevelListener;
 import io.github.tower_defense.Prototype.GameArea;
 import io.github.tower_defense.Level.Level;
 import io.github.tower_defense.Main;
@@ -37,9 +38,21 @@ public class GameScreen implements Screen {
         setupUI();
         gameArea.resize(Gdx.graphics.getWidth() - SIDEBAR_WIDTH, Gdx.graphics.getHeight());
 
-        gameArea.setGameOverListener(() -> Gdx.app.postRunnable(() -> {
-            game.setScreen(new MainMenuScreen(game));
-        }));
+        gameArea.setLevelListener(new LevelListener() {
+            @Override
+            public void onGameOver() {
+                Gdx.app.postRunnable(() ->
+                        game.setScreen(new MainMenuScreen(game)) // todo add defeat screen
+                );
+            }
+
+            @Override
+            public void onLevelComplete() {
+                Gdx.app.postRunnable(() ->
+                        game.setScreen(new MainMenuScreen(game)) // todo add victory screen;
+                );
+            }
+        });
     }
 
     private void setupUI() {

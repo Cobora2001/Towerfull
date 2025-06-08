@@ -8,8 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import io.github.tower_defense.Level.Level;
 import io.github.tower_defense.Level.TowerPlacementGenerator;
-import io.github.tower_defense.Listener.GameOverListener;
-import io.github.tower_defense.Loader.AppearanceAssets;
+import io.github.tower_defense.Listener.LevelListener;
 import io.github.tower_defense.Loader.JsonLoader;
 import io.github.tower_defense.AssetRenderer;
 
@@ -39,10 +38,10 @@ public class GameArea extends Prototype {
 
     private int life = 20; // Starting life
 
-    private GameOverListener gameOverListener;
+    private LevelListener levelListener;
 
-    public void setGameOverListener(GameOverListener listener) {
-        this.gameOverListener = listener;
+    public void setLevelListener(LevelListener listener) {
+        this.levelListener = listener;
     }
 
     public GameArea() {
@@ -203,8 +202,8 @@ public class GameArea extends Prototype {
         boolean noMoreWaves = scenario.allWaveFinished();
 
         if(noActiveMonsters && noMoreWaves){
-            if (gameOverListener != null) {
-                gameOverListener.onGameOver(); //todo add a onLevelComplete()
+            if (levelListener != null) {
+                levelListener.onLevelComplete(); //todo add a onLevelComplete()
             }
         }
     }
@@ -218,8 +217,8 @@ public class GameArea extends Prototype {
         if (life <= 0) {
             life = 0;
             System.out.println("💀 Game Over!");
-            if (gameOverListener != null) {
-                gameOverListener.onGameOver();
+            if (levelListener != null) {
+                levelListener.onGameOver();
             }
         }
     }
