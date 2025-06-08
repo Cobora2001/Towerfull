@@ -55,6 +55,14 @@ public class Scenario extends Prototype {
         }
     }
 
+    public boolean hasMoreWave(){
+        return currentWaveIndex < waves.size();
+    }
+
+    public boolean allWaveFinished(){
+        return (currentWave == null || currentWave.isFinished() && currentWaveIndex >= waves.size());
+    }
+
     public Wave getCurrentWave() {
         return currentWave;
     }
