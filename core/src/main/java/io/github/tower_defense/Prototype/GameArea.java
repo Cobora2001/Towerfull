@@ -161,8 +161,16 @@ public class GameArea extends Prototype {
     public void update(float delta) {
         if (isPaused || cols == 0) return;
 
+        // Update current wave
         if (scenario != null && currentLevel != null) {
             scenario.update(delta);
+
+            // Start next wave
+            if(scenario.getCurrentWave() != null && scenario.getCurrentWave().isFinished()){
+                if(scenario.hasMoreWave()){
+                    scenario.startNextWave();
+                }
+            }
         }
 
         // 🔁 Mise à jour des monstres + nettoyage si arrivée
@@ -175,11 +183,28 @@ public class GameArea extends Prototype {
                 System.out.println("❌ Monstre arrivé à la fin du chemin !");
                 loseLife(monster.getDamage());
             }
+            // todo add this to detect if a monster is dead
+            /**
+             * else if (m.isDead()){
+             *  monsters.removeIndex(i);
+             *  addGold(m.getReward());
+             * }
+             */
         }
 
         for (BuildSpot spot : getBuiltSpots()) {
             if (spot.getTower() != null) {
                 spot.getTower().update(delta, monsters, this, spot.getLogicalPos());
+            }
+        }
+
+        // Check the end of the level
+        boolean noActiveMonsters = monsters.size == 0;
+        boolean noMoreWaves = scenario.allWaveFinished();
+
+        if(noActiveMonsters && noMoreWaves){
+            if (gameOverListener != null) {
+                gameOverListener.onGameOver(); //todo add a onLevelComplete()
             }
         }
     }
