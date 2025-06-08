@@ -1,5 +1,6 @@
 package io.github.tower_defense.prototype;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -9,20 +10,14 @@ import java.util.List;
 public class Wave extends Prototype {
     private final List<WaveEntry> entries;
     private final PrototypeFactory<MonsterType, Monster> factory;
-    private final Array<Monster> activeMonsters; // Liste des monstres actifs dans le jeu
-
+    private final Array<Monster> activeMonsters;
 
     private Vector2 spawnPoint;
     private float elapsedTime = 0f;
     private int currentIndex = 0;
     private boolean finished = false;
+    private boolean started = false;
 
-    /**
-     * Constructeur d'une vague.
-     * @param entries liste ordonnée des monstres à faire apparaître
-     * @param factory fabrique de prototypes de monstres
-     * @param activeMonsters liste partagée de monstres actifs (gérée dans GameArea ou Scenario)
-     */
     public Wave(List<WaveEntry> entries,
                 PrototypeFactory<MonsterType, Monster> factory,
                 Array<Monster> activeMonsters,
@@ -33,12 +28,16 @@ public class Wave extends Prototype {
         this.spawnPoint = spawnPoint;
     }
 
-    /**
-     * Mise à jour de la vague : fait apparaître les monstres au bon moment.
-     * @param deltaTime temps écoulé depuis le dernier appel (Gdx.graphics.getDeltaTime())
-     */
+    public void start() {
+        this.started = true;
+        this.elapsedTime = 0f;
+        this.currentIndex = 0;
+        this.finished = false;
+        Gdx.app.log("Wave", "🚀 Vague démarrée avec " + entries.size() + " entrées.");
+    }
+
     public void update(float deltaTime) {
-        if (finished) return;
+        if (!started || finished) return;
 
         elapsedTime += deltaTime;
 
@@ -47,34 +46,35 @@ public class Wave extends Prototype {
 
             WaveEntry entry = entries.get(currentIndex);
             Monster m = factory.create(entry.getType());
+
+            if (m == null) {
+                Gdx.app.error("Wave", "❌ Prototype introuvable pour le type : " + entry.getType());
+                currentIndex++;
+                continue;
+            }
+
             m.setLogicalPos(spawnPoint);
             activeMonsters.add(m);
 
-            System.out.println("👾 Spawned: " + entry.getType() + " at " + elapsedTime);
-
+            Gdx.app.log("Wave", "👾 Monstre spawné : " + entry.getType() + " à t=" + elapsedTime);
             ++currentIndex;
         }
 
         if (currentIndex >= entries.size()) {
             finished = true;
+            Gdx.app.log("Wave", "✅ Vague terminée.");
         }
     }
 
-
-    /**
-     * Indique si tous les monstres de la vague ont été générés.
-     */
     public boolean isFinished() {
         return finished;
     }
 
-    /**
-     * Réinitialise la vague (utile en cas de redémarrage).
-     */
     public void reset() {
-        elapsedTime = 0f;
-        currentIndex = 0;
-        finished = false;
+        this.started = false;
+        this.elapsedTime = 0f;
+        this.currentIndex = 0;
+        this.finished = false;
     }
 
     public Array<Monster> getActiveMonsters() {
@@ -84,10 +84,10 @@ public class Wave extends Prototype {
     @Override
     public Wave clone() {
         return new Wave(
-            new ArrayList<>(entries), // entries cloned
-            factory,
-            activeMonsters,           // reuse shared reference
-            spawnPoint
+                new ArrayList<>(entries),
+                factory,
+                activeMonsters,
+                spawnPoint
         );
     }
 }

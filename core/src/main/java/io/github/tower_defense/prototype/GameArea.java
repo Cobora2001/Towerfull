@@ -113,24 +113,23 @@ public class GameArea extends Prototype {
             return;
         }
 
+        // 📍 Point de spawn
         Vector2 spawn = currentLevel.getPathPoints().first();
         if (spawn == null) {
             Gdx.app.error("GameArea", "❌ Point de spawn null");
             return;
         }
 
-        // Chargement des vagues
-        List<WaveEntry> wave1 = JsonLoader.get().getWaveEntries("wave1");
-        List<WaveEntry> wave2 = JsonLoader.get().getWaveEntries("wave2");
-
+        // 🎬 Initialisation du scénario
         scenario = new Scenario(monsters, spawn);
-        scenario.loadWavesFromDirectory("wave", prototypeFactory, spawn);
-        scenario.startNextWave();
+        scenario.loadWavesFromIndex("waves/index.json", prototypeFactory, spawn);
 
-        // Initialisation des build spots
+        // 🏰 Placement des tours
         for (Vector2 pos : TowerPlacementGenerator.generate(level)) {
             buildSpots.add(new BuildSpot(pos));
         }
+
+        Gdx.app.log("GameArea", "✅ Niveau prêt, scénario initialisé.");
     }
 
 
@@ -173,18 +172,17 @@ public class GameArea extends Prototype {
     public void update(float delta) {
         if (isPaused || cols == 0) return;
 
+        // 🎬 Update des vagues
         if (scenario != null && currentLevel != null) {
             scenario.update(delta);
         }
 
-        Array<Vector2> pathPoints = (currentLevel != null) ? currentLevel.getPathPoints() : null;
-
+        // 👾 Mise à jour des monstres
+        Array<Vector2> pathPoints = currentLevel.getPathPoints();
         for (int i = monsters.size - 1; i >= 0; i--) {
             Monster monster = monsters.get(i);
 
-            if (pathPoints != null) {
-                monster.update(delta, pathPoints, this);
-            }
+            monster.update(delta, pathPoints, this);
 
             if (monster.hasReachedEnd()) {
                 monsters.removeIndex(i);
@@ -192,22 +190,22 @@ public class GameArea extends Prototype {
             }
         }
 
-        for (BuildSpot spot : getBuiltSpots()) {
-            Tower tower = spot.getTower();
-            if (tower != null) {
-                tower.update(delta, monsters, this, spot.getLogicalPos());
+        // 🏹 Mise à jour des tours
+        for (BuildSpot spot : buildSpots) {
+            if (spot.isUsed()) {
+                Tower tower = spot.getTower();
+                if (tower != null) {
+                    tower.update(delta, monsters, this, spot.getLogicalPos());
+                }
             }
         }
 
-        // ✅ Ajout ici : détection fin de niveau
-        if (scenario != null
-                && !scenario.hasNextWave()
-                && monsters.size == 0) {
-            System.out.println("🏁 Fin du niveau !");
-            // TODO: notifier le GameScreen via listener, popup, etc.
+        // ✅ Fin de partie ou vague ?
+        if (scenario != null && !scenario.hasNextWave() && monsters.isEmpty()) {
+            Gdx.app.log("GameArea", "🏁 Fin du niveau !");
+            // TODO : notifier l'UI si nécessaire
         }
     }
-
 
 
     public int getLife() {
@@ -337,7 +335,6 @@ public class GameArea extends Prototype {
         Monster m = new Monster(pv, pv, logicalPosition, speed, damage, reward, appearance);
         monsters.add(m);
     }
-
 
 
     public Vector2 logicalToPixel(Vector2 logical) {

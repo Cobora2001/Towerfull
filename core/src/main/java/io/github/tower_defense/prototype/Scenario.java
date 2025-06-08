@@ -1,18 +1,15 @@
 package io.github.tower_defense.prototype;
 
-import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import io.github.tower_defense.loader.JsonLoader;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Scenario extends Prototype {
+
     private final Array<Monster> activeMonsters;
     private final List<Wave> waves = new ArrayList<>();
     private Vector2 startPosition;
@@ -23,18 +20,19 @@ public class Scenario extends Prototype {
     private final float waveDelay = 3f;
     private float waveCooldown = 0f;
 
-
-
-    public Scenario(Array<Monster> activeMonsters, Vector2 startPosition) {
+    // === Constructeurs ===
+    public Scenario(Array<Monster> activeMonsters, Vector2 spawnPoint) {
         this.activeMonsters = activeMonsters;
+        this.startPosition = spawnPoint;
     }
 
     public Scenario(Scenario other) {
         this.activeMonsters = other.activeMonsters;
-        this.waves.addAll(other.waves);
+        this.startPosition = other.startPosition.cpy();
+        for (Wave w : other.waves) this.waves.add(w.clone());
         this.currentWave = other.currentWave != null ? other.currentWave.clone() : null;
         this.currentWaveIndex = other.currentWaveIndex;
-        this.startPosition = other.startPosition;
+        this.waveCooldown = other.waveCooldown;
     }
 
     @Override
@@ -42,87 +40,90 @@ public class Scenario extends Prototype {
         return new Scenario(this);
     }
 
-    public void addWave(Wave wave) {
-        if (wave == null) {
-            throw new IllegalArgumentException("Wave cannot be null");
-        }
-
-        Wave clonedWave = wave.clone();
-        waves.add(clonedWave);
-    }
-
-    public void startNextWave() {
-        if (currentWaveIndex < waves.size()) {
-            currentWave = waves.get(currentWaveIndex);
-            currentWaveIndex++;
-        } else {
-            currentWave = null;
-        }
-    }
-
-    public void loadWavesFromDirectory(String folderName, PrototypeFactory<MonsterType, Monster> factory, Vector2 spawn) {
+    // === Chargement de vagues ===
+    public void loadWavesFromIndex(String indexPath, PrototypeFactory<MonsterType, Monster> factory, Vector2 spawn) {
         this.startPosition = spawn;
 
-        FileHandle dir = Gdx.files.internal(folderName);
-        if (!dir.exists() || !dir.isDirectory()) {
-            Gdx.app.error("Scenario", "❌ Dossier de vagues introuvable : " + folderName);
+        List<String> wavePaths = JsonLoader.get().loadJsonList(indexPath, String.class);
+        if (wavePaths == null || wavePaths.isEmpty()) {
+            Gdx.app.error("Scenario", "❌ Aucune vague trouvée dans " + indexPath);
             return;
         }
 
-        FileHandle[] allFiles = dir.list();
-
-        List<FileHandle> jsonFiles = new ArrayList<>();
-        for (FileHandle file : allFiles) {
-            if (!file.isDirectory() && file.name().toLowerCase().endsWith(".json")) {
-                jsonFiles.add(file);
+        for (String wavePath : wavePaths) {
+            List<WaveEntry> entries = JsonLoader.get().getWaveEntries(wavePath);
+            if (entries == null || entries.isEmpty()) {
+                Gdx.app.error("Scenario", "⚠️ Vague ignorée (vide ou invalide) : " + wavePath);
+                continue;
             }
-        }
 
-        jsonFiles.sort(Comparator.comparing(FileHandle::name));
-
-        for (FileHandle file : jsonFiles) {
-            String waveId = file.nameWithoutExtension();
-            List<WaveEntry> entries = JsonLoader.get().getWaveEntries(waveId);
             Wave wave = new Wave(entries, factory, activeMonsters, spawn);
-            addWave(wave);
+            waves.add(wave);
+
+            Gdx.app.log("Scenario", "✅ Vague chargée : " + wavePath + " (" + entries.size() + " monstres)");
         }
+
+        Gdx.app.log("Scenario", "📦 Nombre total de vagues : " + waves.size());
     }
 
 
 
 
+    // === Contrôle du scénario ===
     public void update(float deltaTime) {
         if (currentWave != null) {
             currentWave.update(deltaTime);
+
             if (currentWave.isFinished() && activeMonsters.size == 0) {
                 currentWave = null;
                 waveCooldown = waveDelay;
+                Gdx.app.log("Scenario", "⏳ Attente avant prochaine vague...");
             }
+
         } else if (currentWaveIndex < waves.size()) {
             waveCooldown -= deltaTime;
+
             if (waveCooldown <= 0f) {
                 startNextWave();
             }
         }
     }
 
+    private void startNextWave() {
+        if (currentWaveIndex >= waves.size()) {
+            Gdx.app.log("Scenario", "🏁 Toutes les vagues ont été lancées.");
+            return;
+        }
+
+        currentWave = waves.get(currentWaveIndex++);
+        currentWave.start();
+
+        Gdx.app.log("Scenario", "🚀 Lancement de la vague #" + currentWaveIndex);
+    }
+
+    // === Accès / infos ===
+    public boolean isFinished() {
+        return currentWave == null && currentWaveIndex >= waves.size() && activeMonsters.isEmpty();
+    }
+
+    public boolean hasNextWave() {
+        return currentWave != null || currentWaveIndex < waves.size();
+    }
+
+    public int getTotalWaves() {
+        return waves.size();
+    }
+
     public Wave getCurrentWave() {
         return currentWave;
     }
 
-    public boolean hasNextWave() {
-        return currentWaveIndex < waves.size() || currentWave != null;
-    }
-
-    public int getTotalWaves() {
-        return waves.size() + (currentWave != null && !currentWave.isFinished() ? 1 : 0);
-    }
-
     public List<Wave> getWaves() {
-        return waves;
+        return Collections.unmodifiableList(waves);
     }
 
     public Wave getWave(int index) {
+        if (index < 0 || index >= waves.size()) throw new IndexOutOfBoundsException();
         return waves.get(index);
     }
 }

@@ -65,9 +65,23 @@ public class JsonLoader {
     }
 
 
-    public List<WaveEntry> getWaveEntries(String waveId) {
-        return loadJsonList("waves/" + waveId + ".json", WaveEntry.class);
+    public List<WaveEntry> getWaveEntries(String waveIdOrPath) {
+        // Si l'entrée contient déjà ".json" on la considère comme un chemin complet
+        String finalPath = waveIdOrPath.endsWith(".json")
+                ? waveIdOrPath
+                : "waves/" + waveIdOrPath + ".json";
+
+        FileHandle file = resolve(finalPath);
+        if (!file.exists()) {
+            Gdx.app.error("JsonLoader", "❌ Fichier de vague introuvable : " + finalPath);
+            return new ArrayList<>();
+        }
+
+        List<WaveEntry> entries = loadJsonList(finalPath, WaveEntry.class);
+        Gdx.app.log("JsonLoader", "📥 Vague chargée depuis : " + finalPath + " (" + entries.size() + " entrées)");
+        return entries;
     }
+
 
     private FileHandle resolve(String path) {
         return Gdx.files.internal(path);
