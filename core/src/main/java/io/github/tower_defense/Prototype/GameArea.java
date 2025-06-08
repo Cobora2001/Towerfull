@@ -197,13 +197,22 @@ public class GameArea extends Prototype {
             }
         }
 
+        if(life <= 0){
+            if(levelListener != null){
+                levelListener.onGameOver();
+                return;
+            }
+
+        }
+
         // Check the end of the level
         boolean noActiveMonsters = monsters.size == 0;
         boolean noMoreWaves = scenario.allWaveFinished();
 
         if(noActiveMonsters && noMoreWaves){
             if (levelListener != null) {
-                levelListener.onLevelComplete(); //todo add a onLevelComplete()
+                levelListener.onLevelComplete();
+                return;
             }
         }
     }

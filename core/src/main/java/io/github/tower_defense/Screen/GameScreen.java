@@ -42,14 +42,14 @@ public class GameScreen implements Screen {
             @Override
             public void onGameOver() {
                 Gdx.app.postRunnable(() ->
-                        game.setScreen(new MainMenuScreen(game)) // todo add defeat screen
+                        game.setScreen(new DefeatScreen(game))
                 );
             }
 
             @Override
             public void onLevelComplete() {
                 Gdx.app.postRunnable(() ->
-                        game.setScreen(new MainMenuScreen(game)) // todo add victory screen;
+                        game.setScreen(new VictoryScreen(game))
                 );
             }
         });
