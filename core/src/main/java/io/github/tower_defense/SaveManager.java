@@ -1,6 +1,6 @@
 package io.github.tower_defense;
 
-import io.github.tower_defense.Prototype.GameArea;
+import io.github.tower_defense.prototype.GameArea;
 
 import java.util.Stack;
 

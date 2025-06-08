@@ -2,7 +2,7 @@ package io.github.tower_defense;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import io.github.tower_defense.Prototype.KillableAppearance;
+import io.github.tower_defense.prototype.KillableAppearance;
 
 public class AssetRenderer {
     private final SpriteBatch batch;
