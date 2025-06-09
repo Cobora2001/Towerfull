@@ -37,14 +37,50 @@ public class GameRenderer {
         renderMonsters();
     }
 
+    private Color getColorForTowerInstance(Tower tower) {
+        int hash = System.identityHashCode(tower);
+
+        // Convert to hue between 0–360, avoid super-saturated
+        float hue = (hash & 0xFFFFFF) % 360;
+        float saturation = 0.4f; // softer color
+        float brightness = 1f;   // full brightness
+
+        Color base = hsbToColor(hue, saturation, brightness);
+        base.a = 0.05f; // soft transparency
+        return base;
+    }
+
+    private Color hsbToColor(float h, float s, float b) {
+        float c = b * s;
+        float x = c * (1 - Math.abs((h / 60f) % 2 - 1));
+        float m = b - c;
+
+        float r = 0, g = 0, bl = 0;
+
+        if (h < 60) {
+            r = c; g = x;
+        } else if (h < 120) {
+            r = x; g = c;
+        } else if (h < 180) {
+            g = c; bl = x;
+        } else if (h < 240) {
+            g = x; bl = c;
+        } else if (h < 300) {
+            r = x; bl = c;
+        } else {
+            r = c; bl = x;
+        }
+
+        return new Color(r + m, g + m, bl + m, 1f);
+    }
+
+
     private void renderTowerRanges() {
         // Enable blending for transparency
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(1f, 1f, 1f, 0.1f); // White, 20% opacity
-
         for (BuildSpot spot : gameArea.getBuildSpots()) {
             Tower tower = spot.getTower();
             if (tower == null) continue;
@@ -52,12 +88,11 @@ public class GameRenderer {
             float range = tower.getRange();
             Vector2 logicalCenter = spot.getLogicalPos().cpy().add(0.5f, 0.5f);
             Vector2 pixelCenter = logicalToPixel(logicalCenter);
-
             float pixelRadius = range * cellWidth;
 
+            shapeRenderer.setColor(getColorForTowerInstance(tower));
             shapeRenderer.circle(pixelCenter.x, pixelCenter.y, pixelRadius);
         }
-
         shapeRenderer.end();
 
         // Disable blending after drawing (optional but good practice)
@@ -161,7 +196,7 @@ public class GameRenderer {
         );
     }
 
-    private Vector2 logicalToPixelCenter(Vector2 logical) {
+    public Vector2 logicalToPixelCenter(Vector2 logical) {
         return logicalToPixel(logical).add(cellWidth / 2f, cellHeight / 2f);
     }
 

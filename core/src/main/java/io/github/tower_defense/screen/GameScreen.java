@@ -30,6 +30,8 @@ public class GameScreen implements Screen {
 
     private ConstructionMenu constructionMenu;
     private ConstructionController constructionController;
+    private TowerMenu towerMenu;
+
     private AssetLoaderService assetLoader;
 
     private Table rootTable;
@@ -217,23 +219,60 @@ public class GameScreen implements Screen {
             uiStage.screenToStageCoordinates(mouse);
 
             Vector2 logical = gameRenderer.pixelToLogical(mouse);
+            int clickX = (int) logical.x;
+            int clickY = (int) logical.y;
 
             for (BuildSpot spot : gameArea.getBuildSpots()) {
-                if (spot.isUsed()) continue;
-
                 Vector2 spotPos = spot.getLogicalPos();
                 int spotX = (int) spotPos.x;
                 int spotY = (int) spotPos.y;
 
-                int clickX = (int) logical.x;
-                int clickY = (int) logical.y;
-
                 if (clickX == spotX && clickY == spotY) {
-                    constructionController.showMenu(constructionMenu, spot);
+                    if (!spot.isUsed()) {
+                        constructionController.showMenu(constructionMenu, spot);
+                    } else {
+                        if (!spot.isUsed()) {
+                            constructionController.showMenu(constructionMenu, spot);
+                            clearTowerMenu(); // hide if switching
+                        } else {
+                            showTowerMenu(spot);
+                        }
+
+                    }
                     break;
                 }
             }
         }
+    }
+
+    private void clearTowerMenu() {
+        if (towerMenu != null) {
+            towerMenu.remove();
+            towerMenu = null;
+        }
+    }
+
+    private void showTowerMenu(BuildSpot spot) {
+        clearTowerMenu();
+
+        Tower tower = spot.getTower();
+        if (tower == null) return;
+
+        int refund = Math.max(1, tower.getCost() / 2);
+
+        towerMenu = new TowerMenu(skin, refund, () -> {
+            gameArea.getEconomyManager().earnGold(refund);
+            spot.removeTower();
+            clearTowerMenu();
+            constructionController.updateMenuButtons(constructionMenu);
+        });
+
+        sidebarTable.add(towerMenu)
+            .expandY()
+            .fillX()
+            .bottom()
+            .pad(10)
+            .row();
     }
 
     @Override

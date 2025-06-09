@@ -50,6 +50,10 @@ public class BuildSpot extends Killable {
         return clone;
     }
 
+    public void removeTower() {
+        this.tower = null;
+    }
+
     public void setTower(Tower tower) {
         this.tower = tower;
     }
