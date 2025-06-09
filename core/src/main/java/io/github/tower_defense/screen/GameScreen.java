@@ -30,7 +30,6 @@ public class GameScreen implements Screen {
 
     private ConstructionMenu constructionMenu;
     private ConstructionController constructionController;
-    private BuildSpot selectedSpot;
     private AssetLoaderService assetLoader;
 
     private Table rootTable;
@@ -223,7 +222,6 @@ public class GameScreen implements Screen {
 
             for (BuildSpot spot : gameArea.getBuildSpots()) {
                 if (!spot.isUsed() && spot.getLogicalPos().dst(logical) < 0.5f) {
-                    selectedSpot = spot;
                     constructionController.showMenu(constructionMenu, spot);
                     break;
                 }
@@ -252,11 +250,40 @@ public class GameScreen implements Screen {
     public void resize(int width, int height) {
         uiStage.getViewport().update(width, height, true);
 
+        int cols = gameArea.getCols();
+        int rows = gameArea.getRows();
+
+        // Leave space for the sidebar on the right
+        float availableWidth = width - SIDEBAR_WIDTH;
+        float availableHeight = height;
+
+        float levelAspect = (float) cols / rows;
+        float screenAspect = availableWidth / availableHeight;
+
+        float cellSize;
+        float totalGameWidth, totalGameHeight;
+
+        if (screenAspect >= levelAspect) {
+            // Screen is wider than the level — height is limiting factor
+            cellSize = availableHeight / rows;
+        } else {
+            // Screen is taller than the level — width is limiting factor
+            cellSize = availableWidth / cols;
+        }
+
+        totalGameWidth = cols * cellSize;
+        totalGameHeight = rows * cellSize;
+
+        // Center the game area horizontally (inside the available space),
+        // and vertically on the full screen
+        float gameStartX = (availableWidth - totalGameWidth) / 2f;
+        float gameStartY = (height - totalGameHeight) / 2f;
+
         gameRenderer = new GameRenderer(
             gameArea,
-            new Vector2(0, 0),
-            (float) (width - SIDEBAR_WIDTH) / gameArea.getCols(),
-            (float) height / gameArea.getRows()
+            new Vector2(gameStartX, gameStartY),
+            cellSize,
+            cellSize
         );
     }
 
