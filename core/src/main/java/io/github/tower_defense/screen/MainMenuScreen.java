@@ -39,8 +39,7 @@ public class MainMenuScreen implements Screen {
 
         loadButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                // Placeholder: add load functionality later
-                System.out.println("Load clicked");
+                game.setScreen(new LoadScreen(game)); // Navigate to LoadScreen
             }
         });
 

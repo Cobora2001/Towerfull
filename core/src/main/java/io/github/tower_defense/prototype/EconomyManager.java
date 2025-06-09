@@ -3,7 +3,7 @@ package io.github.tower_defense.prototype;
 import com.badlogic.gdx.utils.Array;
 import io.github.tower_defense.listener.GoldListener;
 
-public class EconomyManager {
+public class EconomyManager extends Prototype {
     private int gold;
     private final Array<GoldListener> listeners = new Array<>();
 
@@ -60,5 +60,12 @@ public class EconomyManager {
         for (GoldListener l : listeners) {
             l.onGoldChanged(gold);
         }
+    }
+
+    @Override
+    public EconomyManager clone() {
+        EconomyManager clone = new EconomyManager();
+        clone.setGold(this.gold);
+        return clone;
     }
 }

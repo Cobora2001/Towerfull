@@ -16,6 +16,9 @@ import io.github.tower_defense.level.Level;
 import io.github.tower_defense.prototype.*;
 import io.github.tower_defense.Main;
 import io.github.tower_defense.service.AssetLoaderService;
+import io.github.tower_defense.service.SaveManager;
+
+import java.util.Vector;
 
 public class GameScreen implements Screen {
     private final Main game;
@@ -23,6 +26,8 @@ public class GameScreen implements Screen {
     private GameArea gameArea;
     private Stage uiStage;
     private Skin skin;
+
+    private Vector<GameArea> gameAreas = new Vector<>();
 
     private ConstructionMenu constructionMenu;
     private ConstructionController constructionController;
@@ -47,6 +52,34 @@ public class GameScreen implements Screen {
         assetLoader.loadAllAssets();
 
         gameArea.setLevel(level);
+
+        setupUI();
+        setupConstruction();
+
+        gameArea.resize(Gdx.graphics.getWidth() - SIDEBAR_WIDTH, Gdx.graphics.getHeight());
+
+        gameArea.setLevelListener(new LevelListener() {
+            @Override
+            public void onGameOver() {
+                Gdx.app.postRunnable(() ->
+                        game.setScreen(new DefeatScreen(game))
+                );
+            }
+
+            @Override
+            public void onLevelComplete() {
+                Gdx.app.postRunnable(() ->
+                        game.setScreen(new VictoryScreen(game))
+                );
+            }
+        });
+    }
+
+    public GameScreen(Main game, GameArea gameArea) {
+        this.game = game;
+        this.gameArea = gameArea;
+        this.assetLoader = new AssetLoaderService();
+        assetLoader.loadAllAssets();
 
         setupUI();
         setupConstruction();
@@ -121,6 +154,14 @@ public class GameScreen implements Screen {
             }
         });
 
+        saveButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                // Save the game state
+                saveGame();
+                Gdx.app.log("GameScreen", "Game saved successfully!");
+            }
+        });
+
         quitButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new MainMenuScreen(game));
@@ -133,6 +174,10 @@ public class GameScreen implements Screen {
 
         rootTable.add().expand().fill(); // Placeholder for game area
         rootTable.add(sidebarTable).width(SIDEBAR_WIDTH).fillY();
+    }
+
+    private void saveGame() {
+        SaveManager.getInstance().saveGameWithTimestamp(gameArea);
     }
 
     private void setupConstruction() {

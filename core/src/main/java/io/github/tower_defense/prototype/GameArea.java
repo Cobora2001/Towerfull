@@ -82,6 +82,10 @@ public class GameArea extends Prototype {
 
         // Clone level if needed (you can share it if it’s immutable)
         this.currentLevel = gameArea.currentLevel;
+
+        this.economyManager = gameArea.economyManager.clone();
+
+        this.scenario = gameArea.scenario.clone();
     }
 
     public void addMonster(Monster m) {
