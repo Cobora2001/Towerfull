@@ -258,7 +258,7 @@ public class GameScreen implements Screen {
         Tower tower = spot.getTower();
         if (tower == null) return;
 
-        int refund = Math.max(1, tower.getCost() / 2);
+        int refund = Math.max(0, tower.getCost() / 2);
 
         towerMenu = new TowerMenu(skin, refund, () -> {
             gameArea.getEconomyManager().earnGold(refund);
