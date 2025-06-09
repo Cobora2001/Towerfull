@@ -52,9 +52,9 @@ public class Monster extends Killable {
                 hasReachedEnd = true;
             }
         } else {
-            float maxDistance = speed * delta; // cells per second × seconds
+            float maxDistance = speed * delta;
             if (distance <= maxDistance) {
-                logicalPos.set(target);
+                logicalPos.set(target.cpy());
                 pathIndex++;
                 if (pathIndex >= path.size) {
                     hasReachedEnd = true;

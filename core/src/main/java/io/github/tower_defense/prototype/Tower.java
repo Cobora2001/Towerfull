@@ -12,8 +12,8 @@ public class Tower extends Prototype {
     private float timeSinceLastShot;
 
     public Tower(int range, int damage, float cooldown, int cost, KillableAppearance appearance) {
-        this.range = range + 10000;
-        this.damage = damage + 100;
+        this.range = range;
+        this.damage = damage;
         this.cooldown = cooldown;
         this.timeSinceLastShot = cooldown; // Start with cooldown to allow immediate firing
         this.cost = cost;
@@ -21,8 +21,8 @@ public class Tower extends Prototype {
     }
 
     public Tower(Tower t) {
-        this.range = t.range + 10000;
-        this.damage = t.damage + 100;
+        this.range = t.range;
+        this.damage = t.damage;
         this.cooldown = t.cooldown;
         this.cost = t.cost;
         this.appearance = t.appearance;
@@ -43,7 +43,7 @@ public class Tower extends Prototype {
             Vector2 monsterPosition = monster.getLogicalPos();
             // We use the logical position of the monster to calculate if the tower can hit it
             float distance = monsterPosition.dst(logicalPos);
-            if (distance <= range) {
+            if (distance <= range && !monster.isDead()) {
                 // Tower can hit the monster
                 monster.takeDamage(damage);
                 timeSinceLastShot = 0; // Reset cooldown after shooting

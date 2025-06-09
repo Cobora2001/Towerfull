@@ -38,6 +38,8 @@ public class GameScreen implements Screen {
     private TextButton pauseButton;
     private TextButton resumeButton;
 
+    private Cell<TextButton> pauseResumeCell;
+
     private Label goldLabel;
     private Label lifeLabel;
 
@@ -51,8 +53,7 @@ public class GameScreen implements Screen {
 
         gameArea.setLevel(level);
 
-        setupUI(); // ✅ NOW it's safe — EconomyManager is guaranteed to be initialized
-
+        setupUI();
         setupConstruction();
 
         gameArea.setLevelListener(new LevelListener() {
@@ -82,7 +83,7 @@ public class GameScreen implements Screen {
 
         gameRenderer = new GameRenderer(
             gameArea,
-            new Vector2(0, 0), // top-left of the renderable area
+            new Vector2(0, 0),
             (float) width / gameArea.getCols(),
             (float) height / gameArea.getRows()
         );
@@ -114,10 +115,10 @@ public class GameScreen implements Screen {
         sidebarTable.top().pad(10);
 
         lifeLabel = new Label("Life: 20", skin);
-        sidebarTable.add(lifeLabel).padBottom(10).row();
-
         goldLabel = new Label("Gold: " + gameArea.getEconomyManager().getGold(), skin);
-        sidebarTable.add(goldLabel).padBottom(8).row();
+
+        sidebarTable.add(lifeLabel).padBottom(10).row();
+        sidebarTable.add(goldLabel).padBottom(20).row();
 
         constructionController = new ConstructionController(
             gameArea.getEconomyManager(),
@@ -128,9 +129,6 @@ public class GameScreen implements Screen {
             goldLabel.setText("Gold: " + newGold);
             constructionController.updateMenuButtons(constructionMenu);
         });
-
-        sidebarTable.add(lifeLabel).padBottom(10).row();
-        sidebarTable.add(goldLabel).padBottom(20).row();
 
         pauseButton = new TextButton("Pause", skin);
         resumeButton = new TextButton("Resume", skin);
@@ -164,12 +162,21 @@ public class GameScreen implements Screen {
             }
         });
 
-        sidebarTable.add(pauseButton).padBottom(10).row();
+        // ✅ Store reference to the pause/resume button cell
+        pauseResumeCell = sidebarTable.add(pauseButton).padBottom(10);
+        sidebarTable.row();
+
         sidebarTable.add(saveButton).padBottom(10).row();
         sidebarTable.add(quitButton).padBottom(10).row();
 
-        rootTable.add().expand().fill(); // Placeholder for game area
+        rootTable.add().expand().fill();
         rootTable.add(sidebarTable).width(SIDEBAR_WIDTH).fillY();
+    }
+
+    private void updateButton() {
+        if (pauseResumeCell != null) {
+            pauseResumeCell.setActor(gameArea.isPaused() ? resumeButton : pauseButton);
+        }
     }
 
     private void saveGame() {
@@ -204,15 +211,6 @@ public class GameScreen implements Screen {
             .row();
     }
 
-    private void updateButton() {
-        sidebarTable.getCells().get(0).clearActor(); // First cell
-        if (gameArea.isPaused()) {
-            sidebarTable.getCells().get(0).setActor(resumeButton);
-        } else {
-            sidebarTable.getCells().get(0).setActor(pauseButton);
-        }
-    }
-
     private void checkBuildSpotClick() {
         if (Gdx.input.justTouched()) {
             Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
@@ -221,7 +219,16 @@ public class GameScreen implements Screen {
             Vector2 logical = gameRenderer.pixelToLogical(mouse);
 
             for (BuildSpot spot : gameArea.getBuildSpots()) {
-                if (!spot.isUsed() && spot.getLogicalPos().dst(logical) < 0.5f) {
+                if (spot.isUsed()) continue;
+
+                Vector2 spotPos = spot.getLogicalPos();
+                int spotX = (int) spotPos.x;
+                int spotY = (int) spotPos.y;
+
+                int clickX = (int) logical.x;
+                int clickY = (int) logical.y;
+
+                if (clickX == spotX && clickY == spotY) {
                     constructionController.showMenu(constructionMenu, spot);
                     break;
                 }
@@ -253,29 +260,19 @@ public class GameScreen implements Screen {
         int cols = gameArea.getCols();
         int rows = gameArea.getRows();
 
-        // Leave space for the sidebar on the right
         float availableWidth = width - SIDEBAR_WIDTH;
         float availableHeight = height;
 
         float levelAspect = (float) cols / rows;
         float screenAspect = availableWidth / availableHeight;
 
-        float cellSize;
-        float totalGameWidth, totalGameHeight;
+        float cellSize = (screenAspect >= levelAspect)
+            ? availableHeight / rows
+            : availableWidth / cols;
 
-        if (screenAspect >= levelAspect) {
-            // Screen is wider than the level — height is limiting factor
-            cellSize = availableHeight / rows;
-        } else {
-            // Screen is taller than the level — width is limiting factor
-            cellSize = availableWidth / cols;
-        }
+        float totalGameWidth = cols * cellSize;
+        float totalGameHeight = rows * cellSize;
 
-        totalGameWidth = cols * cellSize;
-        totalGameHeight = rows * cellSize;
-
-        // Center the game area horizontally (inside the available space),
-        // and vertically on the full screen
         float gameStartX = (availableWidth - totalGameWidth) / 2f;
         float gameStartY = (height - totalGameHeight) / 2f;
 

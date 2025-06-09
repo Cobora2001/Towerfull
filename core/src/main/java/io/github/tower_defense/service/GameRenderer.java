@@ -1,10 +1,13 @@
 package io.github.tower_defense.service;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import io.github.tower_defense.AssetRenderer;
 import io.github.tower_defense.prototype.*;
 
 public class GameRenderer {
@@ -16,19 +19,49 @@ public class GameRenderer {
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
     private final SpriteBatch spriteBatch = new SpriteBatch();
 
+    private final AssetRenderer assetRenderer;
+
     public GameRenderer(GameArea gameArea, Vector2 startPosition, float cellWidth, float cellHeight) {
         this.gameArea = gameArea;
         this.startPosition = startPosition;
         this.cellWidth = cellWidth;
         this.cellHeight = cellHeight;
+        this.assetRenderer = new AssetRenderer(spriteBatch, cellWidth, cellHeight);
     }
 
     public void render() {
         renderMapBorder();
         renderPaths();
         renderBuildSpots();
-        renderTowers();
+        renderTowerRanges();
         renderMonsters();
+    }
+
+    private void renderTowerRanges() {
+        // Enable blending for transparency
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(1f, 1f, 1f, 0.1f); // White, 20% opacity
+
+        for (BuildSpot spot : gameArea.getBuildSpots()) {
+            Tower tower = spot.getTower();
+            if (tower == null) continue;
+
+            float range = tower.getRange();
+            Vector2 logicalCenter = spot.getLogicalPos().cpy().add(0.5f, 0.5f);
+            Vector2 pixelCenter = logicalToPixel(logicalCenter);
+
+            float pixelRadius = range * cellWidth;
+
+            shapeRenderer.circle(pixelCenter.x, pixelCenter.y, pixelRadius);
+        }
+
+        shapeRenderer.end();
+
+        // Disable blending after drawing (optional but good practice)
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     private void renderMapBorder() {
@@ -51,55 +84,60 @@ public class GameRenderer {
         if (gameArea.getCurrentLevel() == null) return;
 
         Array<Vector2> path = gameArea.getCurrentLevel().getPathPoints();
-        if (path == null || path.isEmpty()) return;
+        if (path == null || path.size < 2) return;
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        for (int i = 0; i < path.size; i++) {
-            Vector2 point = path.get(i);
-            Vector2 pos = logicalToPixel(point);
+        for (int i = 0; i < path.size - 1; i++) {
+            Vector2 start = path.get(i);
+            Vector2 end = path.get(i + 1);
 
-            if (i == 0) shapeRenderer.setColor(Color.GREEN);        // Start
-            else if (i == path.size - 1) shapeRenderer.setColor(Color.RED); // End
-            else shapeRenderer.setColor(Color.YELLOW);              // Middle
+            int x0 = (int) start.x;
+            int y0 = (int) start.y;
+            int x1 = (int) end.x;
+            int y1 = (int) end.y;
 
-            shapeRenderer.rect(pos.x, pos.y, cellWidth, cellHeight);
+            int dx = Integer.signum(x1 - x0);
+            int dy = Integer.signum(y1 - y0);
+
+            int x = x0;
+            int y = y0;
+
+            // Draw all steps between start and end (inclusive of start, exclusive of end)
+            while (x != x1 || y != y1) {
+                Color color;
+                if (x == path.first().x && y == path.first().y) {
+                    color = Color.GREEN; // Start
+                } else {
+                    color = Color.YELLOW; // Middle
+                }
+
+                shapeRenderer.setColor(color);
+                Vector2 pixelPos = logicalToPixel(new Vector2(x, y));
+                shapeRenderer.rect(pixelPos.x, pixelPos.y, cellWidth, cellHeight);
+
+                x += dx;
+                y += dy;
+            }
         }
+
+        // Draw the final point (end)
+        Vector2 last = path.peek();
+        shapeRenderer.setColor(Color.RED);
+        Vector2 lastPixel = logicalToPixel(last);
+        shapeRenderer.rect(lastPixel.x, lastPixel.y, cellWidth, cellHeight);
 
         shapeRenderer.end();
     }
-
 
     private void renderBuildSpots() {
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-
-        for (BuildSpot spot : gameArea.getBuildSpots()) {
-            Vector2 pos = logicalToPixel(spot.getLogicalPos());
-            shapeRenderer.setColor(spot.isUsed() ? Color.RED : Color.GREEN);
-            shapeRenderer.rect(pos.x, pos.y, cellWidth, cellHeight);
-        }
-
-        shapeRenderer.end();
-    }
-
-    private void renderTowers() {
         spriteBatch.begin();
 
         for (BuildSpot spot : gameArea.getBuildSpots()) {
-            if (spot.isUsed()) {
-                Tower tower = spot.getTower();
-                if (tower != null) {
-                    KillableAppearance appearance = tower.getAppearance();
-                    if (appearance != null && appearance.getTexture() != null) {
-                        Vector2 pixelPos = logicalToPixel(spot.getLogicalPos());
-                        spriteBatch.draw(
-                            appearance.getTexture(),
-                            pixelPos.x, pixelPos.y,
-                            cellWidth, cellHeight
-                        );
-                    }
-                }
-            }
+            Vector2 pixelCenter = logicalToPixelCenter(spot.getLogicalPos());
+            KillableAppearance appearance = spot.getAppearance();
+
+            assetRenderer.renderKillable(appearance, pixelCenter);
         }
 
         spriteBatch.end();
@@ -108,16 +146,9 @@ public class GameRenderer {
     private void renderMonsters() {
         spriteBatch.begin();
 
-        for (Monster monster : gameArea.getMonsters()) {
-            KillableAppearance appearance = monster.getAppearance();
-            if (appearance != null && appearance.getTexture() != null) {
-                Vector2 pixelPos = logicalToPixel(monster.getLogicalPos());
-                spriteBatch.draw(
-                    appearance.getTexture(),
-                    pixelPos.x, pixelPos.y,
-                    cellWidth, cellHeight
-                );
-            }
+        for (Killable monster : gameArea.getMonsters()) {
+            Vector2 pixelCenter = logicalToPixelCenter(monster.getLogicalPos());
+            assetRenderer.renderKillable(monster.getAppearance(), pixelCenter);
         }
 
         spriteBatch.end();
@@ -128,6 +159,10 @@ public class GameRenderer {
             startPosition.x + logical.x * cellWidth,
             startPosition.y + logical.y * cellHeight
         );
+    }
+
+    private Vector2 logicalToPixelCenter(Vector2 logical) {
+        return logicalToPixel(logical).add(cellWidth / 2f, cellHeight / 2f);
     }
 
     public Vector2 pixelToLogical(Vector2 pixel) {
