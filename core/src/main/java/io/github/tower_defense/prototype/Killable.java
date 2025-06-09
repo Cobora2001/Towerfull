@@ -31,9 +31,5 @@ public abstract class Killable extends Prototype {
     public void setLogicalPos(Vector2 logicalPos) {
         this.logicalPos = logicalPos;
     }
-
-    public Vector2 getPixelPos(GameArea area) {
-        return area.logicalToPixel(logicalPos);
-    }
 }
 

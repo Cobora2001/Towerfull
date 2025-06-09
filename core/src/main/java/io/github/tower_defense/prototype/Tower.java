@@ -39,16 +39,15 @@ public class Tower extends Prototype {
         timeSinceLastShot += delta;
         if (timeSinceLastShot < cooldown) return;
 
-        Vector2 myPixel = area.logicalToPixel(logicalPos);
-
         for (Monster monster : monsters) {
-            Vector2 monsterPixel = monster.getPixelPos(area);
-            if (myPixel.dst(monsterPixel) <= range) {
+            Vector2 monsterPosition = monster.getLogicalPos();
+            // We use the logical position of the monster to calculate if the tower can hit it
+            float distance = monsterPosition.dst(logicalPos);
+            if (distance <= range) {
+                // Tower can hit the monster
                 monster.takeDamage(damage);
-                timeSinceLastShot = 0;
-                // Comment about the damage dealt
-                System.out.println("Tower at " + logicalPos + " dealt " + damage + " damage to monster at " + monster.getLogicalPos());
-                break;
+                timeSinceLastShot = 0; // Reset cooldown after shooting
+                break; // Exit loop after hitting one monster
             }
         }
     }

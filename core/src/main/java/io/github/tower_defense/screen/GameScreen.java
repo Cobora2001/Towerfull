@@ -9,12 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import io.github.tower_defense.listener.LevelListener;
-import io.github.tower_defense.prototype.GameArea;
-import io.github.tower_defense.level.Level;
-
-
 import io.github.tower_defense.prototype.*;
+import io.github.tower_defense.level.Level;
 import io.github.tower_defense.Main;
+import io.github.tower_defense.service.GameRenderer;
 import io.github.tower_defense.service.AssetLoaderService;
 import io.github.tower_defense.service.SaveManager;
 
@@ -24,6 +22,7 @@ public class GameScreen implements Screen {
     private final Main game;
 
     private GameArea gameArea;
+    private GameRenderer gameRenderer;
     private Stage uiStage;
     private Skin skin;
 
@@ -53,24 +52,19 @@ public class GameScreen implements Screen {
 
         gameArea.setLevel(level);
 
-        setupUI();
-        setupConstruction();
+        setupUI(); // ✅ NOW it's safe — EconomyManager is guaranteed to be initialized
 
-        gameArea.resize(Gdx.graphics.getWidth() - SIDEBAR_WIDTH, Gdx.graphics.getHeight());
+        setupConstruction();
 
         gameArea.setLevelListener(new LevelListener() {
             @Override
             public void onGameOver() {
-                Gdx.app.postRunnable(() ->
-                        game.setScreen(new DefeatScreen(game))
-                );
+                Gdx.app.postRunnable(() -> game.setScreen(new DefeatScreen(game)));
             }
 
             @Override
             public void onLevelComplete() {
-                Gdx.app.postRunnable(() ->
-                        game.setScreen(new VictoryScreen(game))
-                );
+                Gdx.app.postRunnable(() -> game.setScreen(new VictoryScreen(game)));
             }
         });
     }
@@ -84,21 +78,25 @@ public class GameScreen implements Screen {
         setupUI();
         setupConstruction();
 
-        gameArea.resize(Gdx.graphics.getWidth() - SIDEBAR_WIDTH, Gdx.graphics.getHeight());
+        int width = Gdx.graphics.getWidth() - SIDEBAR_WIDTH;
+        int height = Gdx.graphics.getHeight();
+
+        gameRenderer = new GameRenderer(
+            gameArea,
+            new Vector2(0, 0), // top-left of the renderable area
+            (float) width / gameArea.getCols(),
+            (float) height / gameArea.getRows()
+        );
 
         gameArea.setLevelListener(new LevelListener() {
             @Override
             public void onGameOver() {
-                Gdx.app.postRunnable(() ->
-                        game.setScreen(new DefeatScreen(game))
-                );
+                Gdx.app.postRunnable(() -> game.setScreen(new DefeatScreen(game)));
             }
 
             @Override
             public void onLevelComplete() {
-                Gdx.app.postRunnable(() ->
-                        game.setScreen(new VictoryScreen(game))
-                );
+                Gdx.app.postRunnable(() -> game.setScreen(new VictoryScreen(game)));
             }
         });
     }
@@ -119,12 +117,12 @@ public class GameScreen implements Screen {
         lifeLabel = new Label("Life: 20", skin);
         sidebarTable.add(lifeLabel).padBottom(10).row();
 
-        goldLabel = new Label("Gold: "+ gameArea.getEconomyManager().getGold(), skin);
+        goldLabel = new Label("Gold: " + gameArea.getEconomyManager().getGold(), skin);
         sidebarTable.add(goldLabel).padBottom(8).row();
 
         constructionController = new ConstructionController(
-                gameArea.getEconomyManager(),
-                assetLoader
+            gameArea.getEconomyManager(),
+            assetLoader
         );
 
         constructionController.setGoldListener(newGold -> {
@@ -156,7 +154,6 @@ public class GameScreen implements Screen {
 
         saveButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                // Save the game state
                 saveGame();
                 Gdx.app.log("GameScreen", "Game saved successfully!");
             }
@@ -184,33 +181,31 @@ public class GameScreen implements Screen {
         constructionController = new ConstructionController(gameArea.getEconomyManager(), assetLoader);
 
         constructionMenu = new ConstructionMenu(
-                skin,
-                gameArea.getEconomyManager(),
-                assetLoader.getTowerFactory(),
-                new ConstructionMenu.TowerSelectionListener() {
-                    public void onTowerSelected(TowerType type) {
-                        constructionController.handleSelection(type, constructionMenu);
-                    }
-
-                    public void onCancel() {
-                        constructionController.cancel(constructionMenu);
-                    }
+            skin,
+            gameArea.getEconomyManager(),
+            assetLoader.getTowerFactory(),
+            new ConstructionMenu.TowerSelectionListener() {
+                public void onTowerSelected(TowerType type) {
+                    constructionController.handleSelection(type, constructionMenu);
                 }
+
+                public void onCancel() {
+                    constructionController.cancel(constructionMenu);
+                }
+            }
         );
 
         constructionMenu.defaults().pad(4).fillX().growX();
 
         sidebarTable.add(constructionMenu)
-                .expandY()
-                .fillX()
-                .bottom()
-                .pad(10)
-                .row();
-
+            .expandY()
+            .fillX()
+            .bottom()
+            .pad(10)
+            .row();
     }
 
     private void updateButton() {
-
         sidebarTable.getCells().get(0).clearActor(); // First cell
         if (gameArea.isPaused()) {
             sidebarTable.getCells().get(0).setActor(resumeButton);
@@ -223,7 +218,8 @@ public class GameScreen implements Screen {
         if (Gdx.input.justTouched()) {
             Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
             uiStage.screenToStageCoordinates(mouse);
-            Vector2 logical = gameArea.pixelToLogical(mouse);
+
+            Vector2 logical = gameRenderer.pixelToLogical(mouse);
 
             for (BuildSpot spot : gameArea.getBuildSpots()) {
                 if (!spot.isUsed() && spot.getLogicalPos().dst(logical) < 0.5f) {
@@ -241,13 +237,11 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         gameArea.update(delta);
-        gameArea.render();
+        gameRenderer.render();
 
         lifeLabel.setText("Life: " + gameArea.getLife());
 
         checkBuildSpotClick();
-
-        // mise à jour dynamique des boutons en fonction de l'argent
         constructionController.updateMenuButtons(constructionMenu);
 
         uiStage.act(delta);
@@ -257,13 +251,16 @@ public class GameScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         uiStage.getViewport().update(width, height, true);
-        gameArea.resize(width - SIDEBAR_WIDTH, height);
+
+        gameRenderer = new GameRenderer(
+            gameArea,
+            new Vector2(0, 0),
+            (float) (width - SIDEBAR_WIDTH) / gameArea.getCols(),
+            (float) height / gameArea.getRows()
+        );
     }
 
-
-    @Override
-    public void dispose() {
-        gameArea.dispose();
+    @Override public void dispose() {
         uiStage.dispose();
         skin.dispose();
     }
