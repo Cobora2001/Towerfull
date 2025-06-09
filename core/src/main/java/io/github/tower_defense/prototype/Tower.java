@@ -9,22 +9,24 @@ public class Tower extends Prototype {
     private float cooldown;
     private int cost;
     private KillableAppearance appearance;
-    private float timeSinceLastShot = 0;
+    private float timeSinceLastShot;
 
     public Tower(int range, int damage, float cooldown, int cost, KillableAppearance appearance) {
-        this.range = range;
-        this.damage = damage;
+        this.range = range + 10000;
+        this.damage = damage + 100;
         this.cooldown = cooldown;
+        this.timeSinceLastShot = cooldown; // Start with cooldown to allow immediate firing
         this.cost = cost;
         this.appearance = appearance;
     }
 
     public Tower(Tower t) {
-        this.range = t.range;
-        this.damage = t.damage;
+        this.range = t.range + 10000;
+        this.damage = t.damage + 100;
         this.cooldown = t.cooldown;
         this.cost = t.cost;
         this.appearance = t.appearance;
+        this.timeSinceLastShot = t.timeSinceLastShot;
     }
 
 
@@ -44,6 +46,8 @@ public class Tower extends Prototype {
             if (myPixel.dst(monsterPixel) <= range) {
                 monster.takeDamage(damage);
                 timeSinceLastShot = 0;
+                // Comment about the damage dealt
+                System.out.println("Tower at " + logicalPos + " dealt " + damage + " damage to monster at " + monster.getLogicalPos());
                 break;
             }
         }

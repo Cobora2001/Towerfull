@@ -189,14 +189,10 @@ public class GameArea extends Prototype {
             if (monster.hasReachedEnd()) {
                 monsters.removeIndex(i);
                 loseLife(monster.getDamage());
+            } else if (monster.isDead()){
+                monsters.removeIndex(i);
+                economyManager.earnGold(monster.getReward());
             }
-            // todo add this to detect if a monster is dead
-            /**
-             * else if (m.isDead()){
-             *  monsters.removeIndex(i);
-             *  addGold(m.getReward());
-             * }
-             */
         }
 
         // 🏹 Mise à jour des tours
