@@ -44,10 +44,15 @@ public class Tower extends Prototype {
             // We use the logical position of the monster to calculate if the tower can hit it
             float distance = monsterPosition.dst(logicalPos);
             if (distance <= range && !monster.isDead()) {
-                // Tower can hit the monster
                 monster.takeDamage(damage);
-                timeSinceLastShot = 0; // Reset cooldown after shooting
-                break; // Exit loop after hitting one monster
+                timeSinceLastShot = 0;
+
+                // Record the shot
+                Vector2 towerCenter = logicalPos.cpy().add(0.5f, 0.5f);
+                Vector2 monsterCenter = monsterPosition.cpy().add(0.5f, 0.5f);
+                area.addShot(towerCenter, monsterCenter);
+
+                break;
             }
         }
     }

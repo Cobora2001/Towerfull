@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import io.github.tower_defense.AssetRenderer;
+import io.github.tower_defense.ShotRecord;
 import io.github.tower_defense.prototype.*;
 
 public class GameRenderer {
@@ -35,6 +36,27 @@ public class GameRenderer {
         renderBuildSpots();
         renderTowerRanges();
         renderMonsters();
+        renderShots();
+    }
+
+    private void renderShots() {
+        Array<ShotRecord> shots = gameArea.getRecentShots();
+        if (shots.size == 0) return;
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(new Color(1f, 0f, 0f, 0.8f)); // bright red line
+
+        for (ShotRecord shot : shots) {
+            Vector2 from = logicalToPixel(shot.getFrom());
+            Vector2 to = logicalToPixel(shot.getTo());
+            shapeRenderer.line(from, to);
+        }
+
+        shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     private Color getColorForTowerInstance(Tower tower) {

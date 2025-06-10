@@ -3,6 +3,7 @@ package io.github.tower_defense.prototype;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import io.github.tower_defense.ShotRecord;
 import io.github.tower_defense.level.Level;
 import io.github.tower_defense.level.TowerPlacementGenerator;
 import io.github.tower_defense.listener.LevelListener;
@@ -26,6 +27,8 @@ public class GameArea extends Prototype {
     private int cols, rows;
 
     private LevelListener levelListener;
+
+    private final Array<ShotRecord> recentShots = new Array<>();
 
     public GameArea() {}
 
@@ -116,6 +119,15 @@ public class GameArea extends Prototype {
             }
         }
 
+        // Update their time and remove them if they've been there long enough
+        for (int i = recentShots.size - 1; i >= 0; i--) {
+            recentShots.get(i).updateTime(delta);
+            float timeShotsLeftOn = 0.3f;
+            if(recentShots.get(i).getTimeSinceShot() > timeShotsLeftOn) {
+                recentShots.removeIndex(i);
+            }
+        }
+
         if (life <= 0) {
             if (levelListener != null) {
                 levelListener.onGameOver();
@@ -141,6 +153,14 @@ public class GameArea extends Prototype {
 
     public Array<Monster> getMonsters() {
         return monsters;
+    }
+
+    public void addShot(Vector2 from, Vector2 to) {
+        recentShots.add(new ShotRecord(from.cpy(), to.cpy()));
+    }
+
+    public Array<ShotRecord> getRecentShots() {
+        return recentShots;
     }
 
     public Array<BuildSpot> getBuiltSpots() {
