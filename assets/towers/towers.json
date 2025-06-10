@@ -18,41 +18,41 @@
     "range": 4,
     "cost": 80,
     "cooldown": 1.8,
-    "appearance": "CASTLE"
+    "appearance": "CRYSTAL"
   },
   "CATAPULT": {
     "damage": 20,
     "range": 5,
     "cost": 120,
     "cooldown": 2.5,
-    "appearance": "CASTLE"
+    "appearance": "CATAPULT"
   },
   "LONGBOW": {
     "damage": 10,
     "range": 4,
     "cost": 60,
     "cooldown": 1.4,
-    "appearance": "CASTLE"
+    "appearance": "LONGBOW"
   },
   "SLINGSHOT": {
     "damage": 7,
     "range": 3,
     "cost": 30,
     "cooldown": 1.0,
-    "appearance": "CASTLE"
+    "appearance": "SLINGSHOT"
   },
   "MAGE": {
     "damage": 18,
     "range": 3,
     "cost": 90,
     "cooldown": 2.2,
-    "appearance": "CASTLE"
+    "appearance": "MAGE"
   },
   "GOLD_ARROW": {
     "damage": 0,
     "range": 2,
     "cost": 0,
     "cooldown": 1.0,
-    "appearance": "CASTLE"
+    "appearance": "GOLD_ARROW"
   }
 }

@@ -20,7 +20,12 @@ public enum AppearanceType {
 
     // 🏰 Tours
     CASTLE,
-    SNIPER
-
+    SNIPER,
+    CRYSTAL,
+    CATAPULT,
+    LONGBOW,
+    SLINGSHOT,
+    MAGE,
+    GOLD_ARROW
 }
 
