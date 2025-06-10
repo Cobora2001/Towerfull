@@ -4,9 +4,9 @@ import com.badlogic.gdx.math.Vector2;
 
 public abstract class Killable extends Prototype {
     protected Vector2 logicalPos;
-    protected KillableAppearance appearance;
+    protected Appearance appearance;
 
-    public Killable(Vector2 logicalPos, KillableAppearance appearance) {
+    public Killable(Vector2 logicalPos, Appearance appearance) {
         this.logicalPos = logicalPos;
         this.appearance = appearance;
     }
@@ -16,11 +16,11 @@ public abstract class Killable extends Prototype {
         this.appearance = other.appearance != null ? other.appearance : null;
     }
 
-    public KillableAppearance getAppearance() {
+    public Appearance getAppearance() {
         return appearance;
     }
 
-    public void setAppearance(KillableAppearance appearance) {
+    public void setAppearance(Appearance appearance) {
         this.appearance = appearance;
     }
 

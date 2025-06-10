@@ -1,7 +1,7 @@
 package io.github.tower_defense.prototype;
 
 public enum AppearanceType {
-
+/*
     // 🧱 Mobs de base
     GOBLIN,
     SKELETON,
@@ -26,6 +26,14 @@ public enum AppearanceType {
     LONGBOW,
     SLINGSHOT,
     MAGE,
-    GOLD_ARROW
+    GOLD_ARROW,
+
+    // Background
+    GRASS,
+    COBBLE,
+
+    // Start and End
+    PORTAL,
+    TEMPLE*/
 }
 

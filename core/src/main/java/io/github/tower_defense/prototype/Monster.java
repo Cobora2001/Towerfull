@@ -14,7 +14,7 @@ public class Monster extends Killable {
 
     public Monster(int pv, int maxPv, Vector2 logicalPos,
                    float speed, int damage, int reward,
-                   KillableAppearance appearance) {
+                   Appearance appearance) {
         super(logicalPos, appearance);
         this.speed = speed;
         this.damage = damage;

@@ -142,7 +142,7 @@ public class GameArea extends Prototype {
         }
     }
 
-    public void spawnMonster(Vector2 logicalPosition, int pv, int speed, int damage, int reward, KillableAppearance appearance) {
+    public void spawnMonster(Vector2 logicalPosition, int pv, int speed, int damage, int reward, Appearance appearance) {
         Monster m = new Monster(pv, pv, logicalPosition, speed, damage, reward, appearance);
         monsters.add(m);
     }

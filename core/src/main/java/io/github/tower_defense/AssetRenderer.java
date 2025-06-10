@@ -2,7 +2,7 @@ package io.github.tower_defense;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import io.github.tower_defense.prototype.KillableAppearance;
+import io.github.tower_defense.prototype.Appearance;
 
 public class AssetRenderer {
     private final SpriteBatch batch;
@@ -14,7 +14,7 @@ public class AssetRenderer {
         this.cellHeight = cellHeight;
     }
 
-    public void renderKillable(KillableAppearance appearance, Vector2 pixelCenterPos) {
+    public void renderAppearance(Appearance appearance, Vector2 pixelCenterPos) {
         if (appearance == null) return;
 
         // Convert appearance width/height from logical units to pixels

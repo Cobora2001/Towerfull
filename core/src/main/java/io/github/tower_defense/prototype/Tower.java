@@ -8,10 +8,10 @@ public class Tower extends Prototype {
     private int damage;
     private float cooldown;
     private int cost;
-    private KillableAppearance appearance;
+    private Appearance appearance;
     private float timeSinceLastShot;
 
-    public Tower(int range, int damage, float cooldown, int cost, KillableAppearance appearance) {
+    public Tower(int range, int damage, float cooldown, int cost, Appearance appearance) {
         this.range = range;
         this.damage = damage;
         this.cooldown = cooldown;
@@ -73,7 +73,7 @@ public class Tower extends Prototype {
         return cost;
     }
 
-    public KillableAppearance getAppearance() {
+    public Appearance getAppearance() {
         return appearance;
     }
 }
