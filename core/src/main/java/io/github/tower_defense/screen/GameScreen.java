@@ -9,12 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import io.github.tower_defense.listener.LevelListener;
-import io.github.tower_defense.prototype.GameArea;
-import io.github.tower_defense.level.Level;
-
-
 import io.github.tower_defense.prototype.*;
+import io.github.tower_defense.level.Level;
 import io.github.tower_defense.Main;
+import io.github.tower_defense.service.GameRenderer;
 import io.github.tower_defense.service.AssetLoaderService;
 import io.github.tower_defense.service.SaveManager;
 
@@ -24,6 +22,7 @@ public class GameScreen implements Screen {
     private final Main game;
 
     private GameArea gameArea;
+    private GameRenderer gameRenderer;
     private Stage uiStage;
     private Skin skin;
 
@@ -31,7 +30,8 @@ public class GameScreen implements Screen {
 
     private ConstructionMenu constructionMenu;
     private ConstructionController constructionController;
-    private BuildSpot selectedSpot;
+    private TowerMenu towerMenu;
+
     private AssetLoaderService assetLoader;
 
     private Table rootTable;
@@ -39,6 +39,8 @@ public class GameScreen implements Screen {
 
     private TextButton pauseButton;
     private TextButton resumeButton;
+
+    private Cell<TextButton> pauseResumeCell;
 
     private Label goldLabel;
     private Label lifeLabel;
@@ -56,21 +58,15 @@ public class GameScreen implements Screen {
         setupUI();
         setupConstruction();
 
-        gameArea.resize(Gdx.graphics.getWidth() - SIDEBAR_WIDTH, Gdx.graphics.getHeight());
-
         gameArea.setLevelListener(new LevelListener() {
             @Override
             public void onGameOver() {
-                Gdx.app.postRunnable(() ->
-                        game.setScreen(new DefeatScreen(game))
-                );
+                Gdx.app.postRunnable(() -> game.setScreen(new DefeatScreen(game)));
             }
 
             @Override
             public void onLevelComplete() {
-                Gdx.app.postRunnable(() ->
-                        game.setScreen(new VictoryScreen(game))
-                );
+                Gdx.app.postRunnable(() -> game.setScreen(new VictoryScreen(game)));
             }
         });
     }
@@ -84,21 +80,25 @@ public class GameScreen implements Screen {
         setupUI();
         setupConstruction();
 
-        gameArea.resize(Gdx.graphics.getWidth() - SIDEBAR_WIDTH, Gdx.graphics.getHeight());
+        int width = Gdx.graphics.getWidth() - SIDEBAR_WIDTH;
+        int height = Gdx.graphics.getHeight();
+
+        gameRenderer = new GameRenderer(
+            gameArea,
+            new Vector2(0, 0),
+            (float) width / gameArea.getCols(),
+            (float) height / gameArea.getRows()
+        );
 
         gameArea.setLevelListener(new LevelListener() {
             @Override
             public void onGameOver() {
-                Gdx.app.postRunnable(() ->
-                        game.setScreen(new DefeatScreen(game))
-                );
+                Gdx.app.postRunnable(() -> game.setScreen(new DefeatScreen(game)));
             }
 
             @Override
             public void onLevelComplete() {
-                Gdx.app.postRunnable(() ->
-                        game.setScreen(new VictoryScreen(game))
-                );
+                Gdx.app.postRunnable(() -> game.setScreen(new VictoryScreen(game)));
             }
         });
     }
@@ -117,23 +117,20 @@ public class GameScreen implements Screen {
         sidebarTable.top().pad(10);
 
         lifeLabel = new Label("Life: 20", skin);
-        sidebarTable.add(lifeLabel).padBottom(10).row();
+        goldLabel = new Label("Gold: " + gameArea.getEconomyManager().getGold(), skin);
 
-        goldLabel = new Label("Gold: "+ gameArea.getEconomyManager().getGold(), skin);
-        sidebarTable.add(goldLabel).padBottom(8).row();
+        sidebarTable.add(lifeLabel).padBottom(10).row();
+        sidebarTable.add(goldLabel).padBottom(20).row();
 
         constructionController = new ConstructionController(
-                gameArea.getEconomyManager(),
-                assetLoader
+            gameArea.getEconomyManager(),
+            assetLoader
         );
 
         constructionController.setGoldListener(newGold -> {
             goldLabel.setText("Gold: " + newGold);
             constructionController.updateMenuButtons(constructionMenu);
         });
-
-        sidebarTable.add(lifeLabel).padBottom(10).row();
-        sidebarTable.add(goldLabel).padBottom(20).row();
 
         pauseButton = new TextButton("Pause", skin);
         resumeButton = new TextButton("Resume", skin);
@@ -156,7 +153,6 @@ public class GameScreen implements Screen {
 
         saveButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                // Save the game state
                 saveGame();
                 Gdx.app.log("GameScreen", "Game saved successfully!");
             }
@@ -168,12 +164,21 @@ public class GameScreen implements Screen {
             }
         });
 
-        sidebarTable.add(pauseButton).padBottom(10).row();
+        // ✅ Store reference to the pause/resume button cell
+        pauseResumeCell = sidebarTable.add(pauseButton).padBottom(10);
+        sidebarTable.row();
+
         sidebarTable.add(saveButton).padBottom(10).row();
         sidebarTable.add(quitButton).padBottom(10).row();
 
-        rootTable.add().expand().fill(); // Placeholder for game area
+        rootTable.add().expand().fill();
         rootTable.add(sidebarTable).width(SIDEBAR_WIDTH).fillY();
+    }
+
+    private void updateButton() {
+        if (pauseResumeCell != null) {
+            pauseResumeCell.setActor(gameArea.isPaused() ? resumeButton : pauseButton);
+        }
     }
 
     private void saveGame() {
@@ -184,55 +189,90 @@ public class GameScreen implements Screen {
         constructionController = new ConstructionController(gameArea.getEconomyManager(), assetLoader);
 
         constructionMenu = new ConstructionMenu(
-                skin,
-                gameArea.getEconomyManager(),
-                assetLoader.getTowerFactory(),
-                new ConstructionMenu.TowerSelectionListener() {
-                    public void onTowerSelected(TowerType type) {
-                        constructionController.handleSelection(type, constructionMenu);
-                    }
-
-                    public void onCancel() {
-                        constructionController.cancel(constructionMenu);
-                    }
+            skin,
+            gameArea.getEconomyManager(),
+            assetLoader.getTowerFactory(),
+            new ConstructionMenu.TowerSelectionListener() {
+                public void onTowerSelected(TowerType type) {
+                    constructionController.handleSelection(type, constructionMenu);
                 }
+
+                public void onCancel() {
+                    constructionController.cancel(constructionMenu);
+                }
+            }
         );
 
         constructionMenu.defaults().pad(4).fillX().growX();
 
         sidebarTable.add(constructionMenu)
-                .expandY()
-                .fillX()
-                .bottom()
-                .pad(10)
-                .row();
-
-    }
-
-    private void updateButton() {
-
-        sidebarTable.getCells().get(0).clearActor(); // First cell
-        if (gameArea.isPaused()) {
-            sidebarTable.getCells().get(0).setActor(resumeButton);
-        } else {
-            sidebarTable.getCells().get(0).setActor(pauseButton);
-        }
+            .expandY()
+            .fillX()
+            .bottom()
+            .pad(10)
+            .row();
     }
 
     private void checkBuildSpotClick() {
         if (Gdx.input.justTouched()) {
             Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
             uiStage.screenToStageCoordinates(mouse);
-            Vector2 logical = gameArea.pixelToLogical(mouse);
+
+            Vector2 logical = gameRenderer.pixelToLogical(mouse);
+            int clickX = (int) logical.x;
+            int clickY = (int) logical.y;
 
             for (BuildSpot spot : gameArea.getBuildSpots()) {
-                if (!spot.isUsed() && spot.getLogicalPos().dst(logical) < 0.5f) {
-                    selectedSpot = spot;
-                    constructionController.showMenu(constructionMenu, spot);
+                Vector2 spotPos = spot.getLogicalPos();
+                int spotX = (int) spotPos.x;
+                int spotY = (int) spotPos.y;
+
+                if (clickX == spotX && clickY == spotY) {
+                    if (!spot.isUsed()) {
+                        constructionController.showMenu(constructionMenu, spot);
+                    } else {
+                        if (!spot.isUsed()) {
+                            constructionController.showMenu(constructionMenu, spot);
+                            clearTowerMenu(); // hide if switching
+                        } else {
+                            showTowerMenu(spot);
+                        }
+
+                    }
                     break;
                 }
             }
         }
+    }
+
+    private void clearTowerMenu() {
+        if (towerMenu != null) {
+            towerMenu.remove();
+            towerMenu = null;
+        }
+    }
+
+    private void showTowerMenu(BuildSpot spot) {
+        clearTowerMenu();
+
+        Tower tower = spot.getTower();
+        if (tower == null) return;
+
+        int refund = Math.max(0, tower.getCost() / 2);
+
+        towerMenu = new TowerMenu(skin, refund, () -> {
+            gameArea.getEconomyManager().earnGold(refund);
+            spot.removeTower();
+            clearTowerMenu();
+            constructionController.updateMenuButtons(constructionMenu);
+        });
+
+        sidebarTable.add(towerMenu)
+            .expandY()
+            .fillX()
+            .bottom()
+            .pad(10)
+            .row();
     }
 
     @Override
@@ -241,13 +281,11 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         gameArea.update(delta);
-        gameArea.render();
+        gameRenderer.render();
 
         lifeLabel.setText("Life: " + gameArea.getLife());
 
         checkBuildSpotClick();
-
-        // mise à jour dynamique des boutons en fonction de l'argent
         constructionController.updateMenuButtons(constructionMenu);
 
         uiStage.act(delta);
@@ -257,13 +295,35 @@ public class GameScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         uiStage.getViewport().update(width, height, true);
-        gameArea.resize(width - SIDEBAR_WIDTH, height);
+
+        int cols = gameArea.getCols();
+        int rows = gameArea.getRows();
+
+        float availableWidth = width - SIDEBAR_WIDTH;
+        float availableHeight = height;
+
+        float levelAspect = (float) cols / rows;
+        float screenAspect = availableWidth / availableHeight;
+
+        float cellSize = (screenAspect >= levelAspect)
+            ? availableHeight / rows
+            : availableWidth / cols;
+
+        float totalGameWidth = cols * cellSize;
+        float totalGameHeight = rows * cellSize;
+
+        float gameStartX = (availableWidth - totalGameWidth) / 2f;
+        float gameStartY = (height - totalGameHeight) / 2f;
+
+        gameRenderer = new GameRenderer(
+            gameArea,
+            new Vector2(gameStartX, gameStartY),
+            cellSize,
+            cellSize
+        );
     }
 
-
-    @Override
-    public void dispose() {
-        gameArea.dispose();
+    @Override public void dispose() {
         uiStage.dispose();
         skin.dispose();
     }

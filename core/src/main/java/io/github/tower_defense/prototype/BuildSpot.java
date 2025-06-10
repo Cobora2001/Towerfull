@@ -41,10 +41,6 @@ public class BuildSpot extends Killable {
         // si used == true, on ne fait rien ici pour éviter d’écraser une tour non encore assignée
     }
 
-    public Vector2 getPixelPos(GameArea gameArea) {
-        return gameArea.logicalToPixel(logicalPos);
-    }
-
     @Override
     public BuildSpot clone() {
         BuildSpot clone = new BuildSpot(new Vector2(logicalPos));
@@ -52,6 +48,10 @@ public class BuildSpot extends Killable {
             clone.tower = tower.clone();
         }
         return clone;
+    }
+
+    public void removeTower() {
+        this.tower = null;
     }
 
     public void setTower(Tower tower) {

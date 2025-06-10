@@ -53,7 +53,7 @@ public class Wave extends Prototype {
                 continue;
             }
 
-            m.setLogicalPos(spawnPoint);
+            m.setLogicalPos(spawnPoint.cpy());
             activeMonsters.add(m);
 
             Gdx.app.log("Wave", "👾 Monstre spawné : " + entry.getType() + " à t=" + elapsedTime);

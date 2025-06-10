@@ -3,20 +3,17 @@ package io.github.tower_defense.prototype;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-
 public class Monster extends Killable {
     private int pv;
     private int maxPv;
-    private int speed;
+    private float speed; // cells per second
     private int damage;
     private int reward;
     private int pathIndex = 0;
-    private float speedMultiplier = 60f;
     private boolean hasReachedEnd = false;
 
-
     public Monster(int pv, int maxPv, Vector2 logicalPos,
-                   int speed, int damage, int reward,
+                   float speed, int damage, int reward,
                    KillableAppearance appearance) {
         super(logicalPos, appearance);
         this.speed = speed;
@@ -27,12 +24,11 @@ public class Monster extends Killable {
     }
 
     public Monster(Monster m) {
-        super(m); // Clone logique + sprite
+        super(m); // Clone logic + appearance
         this.speed = m.speed;
         this.damage = m.damage;
         this.reward = m.reward;
         this.pathIndex = m.pathIndex;
-        this.speedMultiplier = m.speedMultiplier;
         this.hasReachedEnd = m.hasReachedEnd;
         this.pv = m.pv;
         this.maxPv = m.maxPv;
@@ -43,26 +39,30 @@ public class Monster extends Killable {
         return new Monster(this);
     }
 
-    public void update(float delta, Array<Vector2> path, GameArea area) {
+    public void update(float delta, Array<Vector2> path) {
         if (hasReachedEnd || pathIndex >= path.size) return;
 
-        Vector2 targetLogical = path.get(pathIndex);
-        Vector2 targetPixel = area.logicalToPixel(targetLogical);
-        Vector2 currentPixel = area.logicalToPixel(logicalPos);
-
-        Vector2 direction = targetPixel.cpy().sub(currentPixel);
+        Vector2 target = path.get(pathIndex);
+        Vector2 direction = target.cpy().sub(logicalPos);
         float distance = direction.len();
 
-        if (distance < 1f) {
+        if (distance < 0.01f) {
             pathIndex++;
             if (pathIndex >= path.size) {
                 hasReachedEnd = true;
             }
         } else {
-            float pixelsPerSecond = speed * area.getCellWidth();
-            direction.nor().scl(pixelsPerSecond * delta);
-            Vector2 newPixel = currentPixel.add(direction);
-            this.logicalPos = area.pixelToLogical(newPixel);
+            float maxDistance = speed * delta;
+            if (distance <= maxDistance) {
+                logicalPos.set(target.cpy());
+                pathIndex++;
+                if (pathIndex >= path.size) {
+                    hasReachedEnd = true;
+                }
+            } else {
+                direction.nor().scl(maxDistance);
+                logicalPos.add(direction);
+            }
         }
     }
 
@@ -70,7 +70,7 @@ public class Monster extends Killable {
         return hasReachedEnd;
     }
 
-    public int getSpeed() {
+    public float getSpeed() {
         return speed;
     }
 
@@ -110,5 +110,4 @@ public class Monster extends Killable {
     public boolean isDead() {
         return pv <= 0;
     }
-
 }
