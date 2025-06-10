@@ -11,7 +11,7 @@
   },
   "SPOT": {
     "width": 1,
-    "height": 1,
+    "height": 0.6,
     "appearance": "towers/spot.png"
   },
   "ORC": {
@@ -48,5 +48,55 @@
     "width": 0.8,
     "height": 0.8,
     "appearance": "monsters/wizard.png"
+  },
+  "CRYSTAL": {
+    "width": 0.5,
+    "height": 0.8,
+    "appearance": "towers/crystal.PNG"
+  },
+  "CATAPULT": {
+    "width": 1.0,
+    "height": 0.6,
+    "appearance": "towers/catapult.png"
+  },
+  "LONGBOW": {
+    "width": 0.6,
+    "height": 0.8,
+    "appearance": "towers/longbow.png"
+  },
+  "SLINGSHOT": {
+    "width": 0.5,
+    "height": 0.5,
+    "appearance": "towers/slingshot.png"
+  },
+  "MAGE": {
+    "width": 0.6,
+    "height": 0.6,
+    "appearance": "towers/mage.png"
+  },
+  "GOLD_ARROW": {
+    "width": 0.8,
+    "height": 0.7,
+    "appearance": "towers/gold_arrow.png"
+  },
+  "GRASS": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/grass.png"
+  },
+  "COBBLE": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/cobble.png"
+  },
+  "PORTAL": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/portal.png"
+  },
+  "TEMPLE": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/temple.png"
   }
 }

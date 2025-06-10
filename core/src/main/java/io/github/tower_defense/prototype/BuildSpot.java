@@ -59,8 +59,8 @@ public class BuildSpot extends Killable {
     }
 
     @Override
-    public KillableAppearance getAppearance() {
-        KillableAppearance appearance = isUsed() ? tower.getAppearance() : super.getAppearance();
+    public Appearance getAppearance() {
+        Appearance appearance = isUsed() ? tower.getAppearance() : super.getAppearance();
         if (appearance == null) {
             Gdx.app.error("BuildSpot", "❌ Apparence manquante pour " + (isUsed() ? "la tour" : "SPOT") + " au spot " + logicalPos);
         }

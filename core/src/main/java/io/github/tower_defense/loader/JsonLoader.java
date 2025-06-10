@@ -57,7 +57,7 @@ public class JsonLoader {
             AppearanceData data = entry.value;
 
             Texture texture = GameTextureAssets.getTexture(data.appearance, Texture.class);
-            KillableAppearance appearance = new KillableAppearance(texture, data.width, data.height);
+            Appearance appearance = new Appearance(texture, data.width, data.height);
             AppearanceAssets.getInstance().registerAppearance(name, appearance);
         }
 

@@ -27,7 +27,7 @@ public class GameTextureAssets {
         if (!manager.isLoaded(path)) {
             throw new IllegalArgumentException("Asset not loaded: " + path);
         }
-        return manager.get(path, Texture.class);
+        return manager.get(path, textureClass);
     }
 
     public static void finishLoading() {

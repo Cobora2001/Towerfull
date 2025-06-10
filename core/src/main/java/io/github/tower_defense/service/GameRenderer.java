@@ -8,9 +8,15 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import io.github.tower_defense.AssetRenderer;
+import io.github.tower_defense.ShotRecord;
+import io.github.tower_defense.loader.AppearanceAssets;
 import io.github.tower_defense.prototype.*;
 
 public class GameRenderer {
+    private static final String backgroundAppearance = "GRASS";
+    private static final String pathappearance = "COBBLE";
+    private static final String spawnAppearance = "PORTAL";
+    private static final String endAppearance = "TEMPLE";
 
     private final GameArea gameArea;
     private final Vector2 startPosition;
@@ -31,10 +37,33 @@ public class GameRenderer {
 
     public void render() {
         renderMapBorder();
+        renderBackground();
         renderPaths();
+        renderPathEndpoints();
         renderBuildSpots();
         renderTowerRanges();
         renderMonsters();
+        renderShots();
+    }
+
+    private void renderShots() {
+        Array<ShotRecord> shots = gameArea.getRecentShots();
+        if (shots.size == 0) return;
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(new Color(1f, 0f, 0f, 0.8f)); // bright red line
+
+        for (ShotRecord shot : shots) {
+            Vector2 from = logicalToPixel(shot.getFrom());
+            Vector2 to = logicalToPixel(shot.getTo());
+            shapeRenderer.line(from, to);
+        }
+
+        shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     private Color getColorForTowerInstance(Tower tower) {
@@ -46,7 +75,7 @@ public class GameRenderer {
         float brightness = 1f;   // full brightness
 
         Color base = hsbToColor(hue, saturation, brightness);
-        base.a = 0.05f; // soft transparency
+        base.a = 0.15f;
         return base;
     }
 
@@ -73,7 +102,6 @@ public class GameRenderer {
 
         return new Color(r + m, g + m, bl + m, 1f);
     }
-
 
     private void renderTowerRanges() {
         // Enable blending for transparency
@@ -114,6 +142,26 @@ public class GameRenderer {
         shapeRenderer.end();
     }
 
+    private void renderPathEndpoints() {
+        if (gameArea.getCurrentLevel() == null) return;
+
+        Array<Vector2> path = gameArea.getCurrentLevel().getPathPoints();
+        if (path == null || path.size == 0) return;
+
+        Appearance portal = AppearanceAssets.getInstance().getAppearance(spawnAppearance);
+        Appearance temple = AppearanceAssets.getInstance().getAppearance(endAppearance);
+        if (portal == null || temple == null) return;
+
+        spriteBatch.begin();
+
+        Vector2 startPixel = logicalToPixelCenter(path.first());
+        Vector2 endPixel = logicalToPixelCenter(path.peek());
+
+        assetRenderer.renderAppearance(portal, startPixel);
+        assetRenderer.renderAppearance(temple, endPixel);
+
+        spriteBatch.end();
+    }
 
     private void renderPaths() {
         if (gameArea.getCurrentLevel() == null) return;
@@ -121,7 +169,10 @@ public class GameRenderer {
         Array<Vector2> path = gameArea.getCurrentLevel().getPathPoints();
         if (path == null || path.size < 2) return;
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        Appearance cobble = AppearanceAssets.getInstance().getAppearance(pathappearance);
+        if (cobble == null) return;
+
+        spriteBatch.begin();
 
         for (int i = 0; i < path.size - 1; i++) {
             Vector2 start = path.get(i);
@@ -138,31 +189,38 @@ public class GameRenderer {
             int x = x0;
             int y = y0;
 
-            // Draw all steps between start and end (inclusive of start, exclusive of end)
+            // Draw all tiles between start and end
             while (x != x1 || y != y1) {
-                Color color;
-                if (x == path.first().x && y == path.first().y) {
-                    color = Color.GREEN; // Start
-                } else {
-                    color = Color.YELLOW; // Middle
-                }
-
-                shapeRenderer.setColor(color);
-                Vector2 pixelPos = logicalToPixel(new Vector2(x, y));
-                shapeRenderer.rect(pixelPos.x, pixelPos.y, cellWidth, cellHeight);
-
+                Vector2 pixelPos = logicalToPixelCenter(new Vector2(x, y));
+                assetRenderer.renderAppearance(cobble, pixelPos);
                 x += dx;
                 y += dy;
             }
         }
 
-        // Draw the final point (end)
+        // Also render the last tile
         Vector2 last = path.peek();
-        shapeRenderer.setColor(Color.RED);
-        Vector2 lastPixel = logicalToPixel(last);
-        shapeRenderer.rect(lastPixel.x, lastPixel.y, cellWidth, cellHeight);
+        Vector2 lastPixel = logicalToPixelCenter(last);
+        assetRenderer.renderAppearance(cobble, lastPixel);
 
-        shapeRenderer.end();
+        spriteBatch.end();
+    }
+
+    private void renderBackground() {
+        spriteBatch.begin();
+
+        Appearance background = AppearanceAssets.getInstance().getAppearance(backgroundAppearance);
+
+        if (background != null) {
+            for (int x = 0; x < gameArea.getCols(); x++) {
+                for (int y = 0; y < gameArea.getRows(); y++) {
+                    Vector2 pixelPos = logicalToPixel(new Vector2(x, y));
+                    assetRenderer.renderAppearance(background, pixelPos.add(cellWidth / 2f, cellHeight / 2f));
+                }
+            }
+        }
+
+        spriteBatch.end();
     }
 
     private void renderBuildSpots() {
@@ -170,9 +228,9 @@ public class GameRenderer {
 
         for (BuildSpot spot : gameArea.getBuildSpots()) {
             Vector2 pixelCenter = logicalToPixelCenter(spot.getLogicalPos());
-            KillableAppearance appearance = spot.getAppearance();
+            Appearance appearance = spot.getAppearance();
 
-            assetRenderer.renderKillable(appearance, pixelCenter);
+            assetRenderer.renderAppearance(appearance, pixelCenter);
         }
 
         spriteBatch.end();
@@ -183,7 +241,7 @@ public class GameRenderer {
 
         for (Killable monster : gameArea.getMonsters()) {
             Vector2 pixelCenter = logicalToPixelCenter(monster.getLogicalPos());
-            assetRenderer.renderKillable(monster.getAppearance(), pixelCenter);
+            assetRenderer.renderAppearance(monster.getAppearance(), pixelCenter);
         }
 
         spriteBatch.end();

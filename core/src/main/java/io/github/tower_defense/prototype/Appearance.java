@@ -2,11 +2,11 @@ package io.github.tower_defense.prototype;
 
 import com.badlogic.gdx.graphics.Texture;
 
-public class KillableAppearance {
+public class Appearance {
     private final Texture texture;
     private final float width, height;
 
-    public KillableAppearance(Texture texture, float width, float height) {
+    public Appearance(Texture texture, float width, float height) {
         this.texture = texture;
         this.width = width;
         this.height = height;

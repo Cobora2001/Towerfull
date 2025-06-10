@@ -1,6 +1,6 @@
 package io.github.tower_defense.loader;
 
-import io.github.tower_defense.prototype.KillableAppearance;
+import io.github.tower_defense.prototype.Appearance;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +8,7 @@ import java.util.Map;
 public class AppearanceAssets {
     private static AppearanceAssets instance = null;
 
-    private final Map<String, KillableAppearance> appearances = new HashMap<String, KillableAppearance>();
+    private final Map<String, Appearance> appearances = new HashMap<String, Appearance>();
 
     public static AppearanceAssets getInstance() {
         if (instance == null) {
@@ -22,14 +22,14 @@ public class AppearanceAssets {
     }
 
     // Add methods to load and manage appearance assets here
-    public void registerAppearance(String name, KillableAppearance appearance) {
+    public void registerAppearance(String name, Appearance appearance) {
         if (name == null || appearance == null) {
             throw new IllegalArgumentException("Name and appearance cannot be null");
         }
         appearances.put(name, appearance);
     }
 
-    public KillableAppearance getAppearance(String name) {
+    public Appearance getAppearance(String name) {
         if (name == null) {
             throw new IllegalArgumentException("Name cannot be null");
         }
