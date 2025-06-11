@@ -50,7 +50,7 @@ public class Tower extends Prototype {
                 // Record the shot
                 Vector2 towerCenter = logicalPos.cpy().add(0.5f, 0.5f);
                 Vector2 monsterCenter = monsterPosition.cpy().add(0.5f, 0.5f);
-                area.addShot(towerCenter, monsterCenter);
+                area.addShot(towerCenter, monsterCenter, damage);
 
                 break;
             }

@@ -155,8 +155,8 @@ public class GameArea extends Prototype {
         return monsters;
     }
 
-    public void addShot(Vector2 from, Vector2 to) {
-        recentShots.add(new ShotRecord(from.cpy(), to.cpy()));
+    public void addShot(Vector2 from, Vector2 to, int damage) {
+        recentShots.add(new ShotRecord(from.cpy(), to.cpy(), damage));
     }
 
     public Array<ShotRecord> getRecentShots() {

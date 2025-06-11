@@ -53,13 +53,13 @@ public class GameRenderer {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(new Color(1f, 0f, 0f, 0.8f)); // bright red line
 
         for (ShotRecord shot : shots) {
             Vector2 from = logicalToPixel(shot.getFrom());
             Vector2 to = logicalToPixel(shot.getTo());
-            shapeRenderer.line(from, to);
+            shapeRenderer.rectLine(from, to, (float) shot.getDamage());
         }
 
         shapeRenderer.end();
