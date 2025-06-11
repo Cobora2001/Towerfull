@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import io.github.tower_defense.loader.AppearanceAssets;
 
-public class BuildSpot extends Killable {
+public class BuildSpot extends Printable {
     private final Vector2 logicalPos;
     private Tower tower; // null if empty
 

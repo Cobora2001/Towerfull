@@ -3,12 +3,12 @@ package io.github.tower_defense.prototype;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-public class Monster extends Killable {
+public class Monster extends Printable {
     private int pv;
     private int maxPv;
-    private float speed; // cells per second
-    private int damage;
-    private int reward;
+    private final float speed; // cells per second
+    private final int damage;
+    private final int reward;
     private int pathIndex = 0;
     private boolean hasReachedEnd = false;
 

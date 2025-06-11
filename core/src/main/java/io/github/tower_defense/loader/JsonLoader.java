@@ -89,7 +89,7 @@ public class JsonLoader {
 
     public static class MonsterData {
         public int hp;
-        public int speed;
+        public float speed;
         public int damage;
         public int reward;
         public String appearance;

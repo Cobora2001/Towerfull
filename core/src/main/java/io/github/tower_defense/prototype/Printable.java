@@ -2,16 +2,16 @@ package io.github.tower_defense.prototype;
 
 import com.badlogic.gdx.math.Vector2;
 
-public abstract class Killable extends Prototype {
+public abstract class Printable extends Prototype {
     protected Vector2 logicalPos;
     protected Appearance appearance;
 
-    public Killable(Vector2 logicalPos, Appearance appearance) {
+    public Printable(Vector2 logicalPos, Appearance appearance) {
         this.logicalPos = logicalPos;
         this.appearance = appearance;
     }
 
-    public Killable(Killable other) {
+    public Printable(Printable other) {
         this.logicalPos = other.logicalPos != null ? new Vector2(other.logicalPos) : null;
         this.appearance = other.appearance != null ? other.appearance : null;
     }

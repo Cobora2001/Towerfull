@@ -239,7 +239,7 @@ public class GameRenderer {
     private void renderMonsters() {
         spriteBatch.begin();
 
-        for (Killable monster : gameArea.getMonsters()) {
+        for (Printable monster : gameArea.getMonsters()) {
             Vector2 pixelCenter = logicalToPixelCenter(monster.getLogicalPos());
             assetRenderer.renderAppearance(monster.getAppearance(), pixelCenter);
         }

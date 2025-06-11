@@ -4,11 +4,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class Tower extends Prototype {
-    private int range;
-    private int damage;
-    private float cooldown;
-    private int cost;
-    private Appearance appearance;
+    private final int range;
+    private final int damage;
+    private final float cooldown;
+    private final int cost;
+    private final Appearance appearance;
     private float timeSinceLastShot;
 
     public Tower(int range, int damage, float cooldown, int cost, Appearance appearance) {
