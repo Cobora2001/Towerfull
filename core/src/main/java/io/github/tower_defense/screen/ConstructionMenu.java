@@ -20,7 +20,12 @@ public class ConstructionMenu extends Table {
     private final EnumMap<TowerType, TextButton> buttons = new EnumMap<>(TowerType.class);
     private final PrototypeFactory<TowerType, Tower> factory;
 
-    public ConstructionMenu(Skin skin, EconomyManager economy, PrototypeFactory<TowerType, Tower> factory, TowerSelectionListener listener) {
+    public ConstructionMenu(
+        Skin skin,
+        EconomyManager economy,
+        PrototypeFactory<TowerType, Tower> factory,
+        TowerSelectionListener listener
+    ) {
         super(skin);
         this.factory = factory;
 
@@ -30,9 +35,14 @@ public class ConstructionMenu extends Table {
 
         add(new Label("Build Menu", skin)).padBottom(6).row();
 
-        for (TowerType type : TowerType.values()) {
-            Tower tower = factory.create(type);
-            String label = type.name() + " (" + tower.getCost() + "g)";
+        // Sort TowerTypes by the prototype's cost without cloning
+        java.util.List<TowerType> sortedTypes = java.util.Arrays.stream(TowerType.values())
+            .sorted(java.util.Comparator.comparingInt(type -> factory.getPrototype(type).getCost()))
+            .collect(java.util.stream.Collectors.toList());
+
+        for (TowerType type : sortedTypes) {
+            Tower prototype = factory.getPrototype(type);
+            String label = type.name() + " (" + prototype.getCost() + "g)";
             TextButton btn = new TextButton(label, skin);
             btn.getLabel().setFontScale(0.8f);
             btn.addListener(new ClickListener() {
