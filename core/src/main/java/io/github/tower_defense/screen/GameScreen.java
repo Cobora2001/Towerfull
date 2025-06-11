@@ -165,7 +165,7 @@ public class GameScreen implements Screen {
         });
 
         // ✅ Store reference to the pause/resume button cell
-        pauseResumeCell = sidebarTable.add(pauseButton).padBottom(10);
+        pauseResumeCell = sidebarTable.add(gameArea.isPaused() ? resumeButton : pauseButton).padBottom(10);
         sidebarTable.row();
 
         sidebarTable.add(saveButton).padBottom(10).row();
