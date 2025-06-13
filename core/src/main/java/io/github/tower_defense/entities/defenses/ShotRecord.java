@@ -3,6 +3,7 @@ package io.github.tower_defense.entities.defenses;
 import com.badlogic.gdx.math.Vector2;
 
 public class ShotRecord {
+    private static final float TIME_TO_LIVE = 0.3f;
     private final Vector2 from;
     private final Vector2 to;
     private float timeSinceShot;
@@ -13,6 +14,14 @@ public class ShotRecord {
         this.to = to;
         this.timeSinceShot = 0;
         this.damage = damage;
+    }
+
+    public boolean isAlive() {
+        return timeSinceShot < TIME_TO_LIVE;
+    }
+
+    public float getPercentageAlive() {
+        return Math.max(0, (TIME_TO_LIVE - timeSinceShot) / TIME_TO_LIVE);
     }
 
     public Vector2 getFrom() {

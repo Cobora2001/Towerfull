@@ -130,7 +130,7 @@ public class GameArea extends Prototype {
 
         for (int i = recentShots.size - 1; i >= 0; i--) {
             recentShots.get(i).updateTime(delta);
-            if (recentShots.get(i).getTimeSinceShot() > 0.3f) {
+            if (!recentShots.get(i).isAlive()) {
                 recentShots.removeIndex(i);
             }
         }

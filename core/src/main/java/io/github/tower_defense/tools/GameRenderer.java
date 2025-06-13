@@ -17,7 +17,7 @@ import io.github.tower_defense.entities.*;
 
 public class GameRenderer {
     private static final AppearanceId backgroundAppearance = AppearanceId.GRASS;
-    private static final AppearanceId pathappearance = AppearanceId.COBBLE;
+    private static final AppearanceId pathAppearance = AppearanceId.COBBLE;
     private static final AppearanceId spawnAppearance = AppearanceId.PORTAL;
     private static final AppearanceId endAppearance = AppearanceId.TEMPLE;
 
@@ -57,17 +57,26 @@ public class GameRenderer {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(new Color(1f, 0f, 0f, 0.8f)); // bright red line
+
+        float baseThickness = 0.2f * Math.min(cellWidth, cellHeight);
 
         for (ShotRecord shot : shots) {
+            float alpha = shot.getPercentageAlive();
+
+            // Clamp alpha to make shots more visible
+            alpha = Math.max(0.2f, alpha); // always at least 20% visible
+
             Vector2 from = logicalToPixel(shot.getFrom());
             Vector2 to = logicalToPixel(shot.getTo());
-            shapeRenderer.rectLine(from, to, (float) shot.getDamage());
+
+            shapeRenderer.setColor(1f, 0.1f, 0.1f, alpha); // rich red
+            shapeRenderer.rectLine(from, to, baseThickness);
         }
 
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
+
 
     private Color getColorForTowerInstance(Tower tower) {
         int hash = System.identityHashCode(tower);
@@ -166,7 +175,7 @@ public class GameRenderer {
         Array<Vector2> path = gameArea.getPathPoints();
         if (path == null || path.size < 2) return;
 
-        Appearance cobble = GameAssets.get().appearances.get(pathappearance);
+        Appearance cobble = GameAssets.get().appearances.get(pathAppearance);
         if (cobble == null) return;
 
         spriteBatch.begin();
