@@ -74,18 +74,6 @@ public class GameScreen implements Screen {
         setupConstruction();
 
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-        gameArea.setLevelListener(new LevelListener() {
-            @Override
-            public void onGameOver() {
-                Gdx.app.postRunnable(() -> game.setScreen(new DefeatScreen(game)));
-            }
-
-            @Override
-            public void onLevelComplete() {
-                Gdx.app.postRunnable(() -> game.setScreen(new VictoryScreen(game)));
-            }
-        });
     }
 
     private void setupUI() {
