@@ -1,7 +1,5 @@
 package io.github.tower_defense.tools;
 
-import io.github.tower_defense.entities.Prototype;
-
 import java.util.HashMap;
 import java.util.Map;
 

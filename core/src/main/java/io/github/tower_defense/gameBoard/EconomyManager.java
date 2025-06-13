@@ -1,7 +1,7 @@
 package io.github.tower_defense.gameBoard;
 
 import com.badlogic.gdx.utils.Array;
-import io.github.tower_defense.entities.Prototype;
+import io.github.tower_defense.tools.Prototype;
 import io.github.tower_defense.listener.GoldListener;
 
 public class EconomyManager extends Prototype {

@@ -1,6 +1,7 @@
 package io.github.tower_defense.entities;
 
 import com.badlogic.gdx.math.Vector2;
+import io.github.tower_defense.tools.Prototype;
 
 public abstract class Printable extends Prototype {
     protected Vector2 logicalPos;

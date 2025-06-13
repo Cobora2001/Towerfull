@@ -1,6 +1,6 @@
 package io.github.tower_defense.entities.ennemies;
 
-import io.github.tower_defense.entities.Prototype;
+import io.github.tower_defense.tools.Prototype;
 
 import java.util.Collections;
 import java.util.List;

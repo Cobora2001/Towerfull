@@ -3,7 +3,7 @@ package io.github.tower_defense.gameBoard;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import io.github.tower_defense.entities.Prototype;
+import io.github.tower_defense.tools.Prototype;
 import io.github.tower_defense.entities.defenses.ShotRecord;
 import io.github.tower_defense.entities.defenses.BuildSpot;
 import io.github.tower_defense.entities.defenses.Tower;

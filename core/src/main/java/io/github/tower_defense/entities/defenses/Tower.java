@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import io.github.tower_defense.entities.Appearance;
 import io.github.tower_defense.gameBoard.GameArea;
-import io.github.tower_defense.entities.Prototype;
+import io.github.tower_defense.tools.Prototype;
 import io.github.tower_defense.entities.ennemies.Monster;
 
 public class Tower extends Prototype {

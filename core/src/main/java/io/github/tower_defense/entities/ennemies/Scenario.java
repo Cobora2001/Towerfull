@@ -2,7 +2,7 @@ package io.github.tower_defense.entities.ennemies;
 
 import com.badlogic.gdx.Gdx;
 import io.github.tower_defense.gameBoard.GameArea;
-import io.github.tower_defense.entities.Prototype;
+import io.github.tower_defense.tools.Prototype;
 import io.github.tower_defense.tools.PrototypeFactory;
 import io.github.tower_defense.enumElements.MonsterType;
 

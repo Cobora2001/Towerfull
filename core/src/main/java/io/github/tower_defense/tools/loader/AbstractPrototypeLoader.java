@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
-import io.github.tower_defense.entities.*;
+import io.github.tower_defense.tools.Prototype;
 import io.github.tower_defense.tools.PrototypeFactory;
 
 public abstract class AbstractPrototypeLoader<T extends Prototype, D, E extends Enum<E>> {
