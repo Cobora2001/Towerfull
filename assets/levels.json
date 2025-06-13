@@ -1,23 +1,78 @@
 {
+  "TUTORIAL": {
+    "cols": 10,
+    "rows": 3,
+    "path": [
+      [1, 1],
+      [8, 1]
+    ],
+    "scenario": "SCENARIO_1",
+    "buildableTiles": [
+      [2, 2],
+      [5, 0]
+    ],
+    "startingGold": 100,
+    "startingLife": 20
+  },
   "LEVEL_1": {
     "cols": 10,
     "rows": 10,
     "path": [
-      [0, 5],
-      [3, 5],
-      [3, 8],
-      [9, 8]
+      [1, 1],
+      [1, 8],
+      [8, 8],
+      [8, 3],
+      [3, 3],
+      [3, 6],
+      [5, 6],
+      [5, 5]
     ],
-    "scenario": "SCENARIO_1"
+    "scenario": "SCENARIO_1",
+    "buildableTiles": [
+      [7, 2],
+      [4, 4],
+      [2, 6],
+      [6, 6],
+      [7, 9]
+    ],
+    "startingGold": 100,
+    "startingLife": 20
   },
   "LEVEL_2": {
     "cols": 10,
     "rows": 20,
     "path": [
-      [0, 2],
-      [5, 2],
-      [5, 9]
+      [1, 1],
+      [1, 5],
+      [6, 5],
+      [6, 3],
+      [4, 3],
+      [4, 1],
+      [8, 1],
+      [8, 8],
+      [5, 8],
+      [5, 11],
+      [8, 11],
+      [8, 16],
+      [5, 16],
+      [5, 18],
+      [2, 18],
+      [2, 7]
     ],
-    "scenario": "SCENARIO_2"
+    "scenario": "SCENARIO_2",
+    "buildableTiles": [
+      [2, 3],
+      [5, 4],
+      [6, 2],
+      [9, 4],
+      [4, 7],
+      [1, 11],
+      [4, 14],
+      [6, 10],
+      [9, 13],
+      [6, 17]
+    ],
+    "startingGold": 150,
+    "startingLife": 25
   }
 }
