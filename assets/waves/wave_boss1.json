@@ -1,5 +1,0 @@
-[
-  { "type": "GOLEM", "spawnTime": 0 },
-  { "type": "WIZARD", "spawnTime": 1.0 },
-  { "type": "WIZARD", "spawnTime": 2.0 }
-]

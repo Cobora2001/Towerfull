@@ -1,0 +1,32 @@
+{
+  "WAVE1": {
+    "data": [
+      { "type": "ORC", "spawnTime": 1 },
+      { "type": "WOLF", "spawnTime": 1 },
+      { "type": "GOBLIN", "spawnTime": 2 }
+    ]
+  },
+  "WAVE2": {
+    "data": [
+      { "type": "SHAMAN", "spawnTime": 0 },
+      { "type": "SKELETON", "spawnTime": 1 },
+      { "type": "GOLEM", "spawnTime": 2 }
+    ]
+  },
+  "WAVE3": {
+    "data": [
+      { "type": "SKELETON", "spawnTime": 0 },
+      { "type": "ORC", "spawnTime": 0.7 },
+      { "type": "GOBLIN", "spawnTime": 1.0 },
+      { "type": "WOLF", "spawnTime": 1.5 },
+      { "type": "SHAMAN", "spawnTime": 2.2 }
+    ]
+  },
+  "WAVE_BOSS1": {
+    "data": [
+      { "type": "GOLEM", "spawnTime": 0 },
+      { "type": "WIZARD", "spawnTime": 1.0 },
+      { "type": "WIZARD", "spawnTime": 2.0 }
+    ]
+  }
+}

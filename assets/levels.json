@@ -1,0 +1,23 @@
+{
+  "LEVEL_1": {
+    "cols": 10,
+    "rows": 10,
+    "path": [
+      [0, 5],
+      [3, 5],
+      [3, 8],
+      [9, 8]
+    ],
+    "scenario": "SCENARIO_1"
+  },
+  "LEVEL_2": {
+    "cols": 10,
+    "rows": 20,
+    "path": [
+      [0, 2],
+      [5, 2],
+      [5, 9]
+    ],
+    "scenario": "SCENARIO_2"
+  }
+}

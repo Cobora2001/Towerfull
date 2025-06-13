@@ -1,7 +1,0 @@
-[
-  { "type": "SKELETON", "spawnTime": 0 },
-  { "type": "ORC", "spawnTime": 0.7 },
-  { "type": "GOBLIN", "spawnTime": 1.0 },
-  { "type": "WOLF", "spawnTime": 1.5 },
-  { "type": "SHAMAN", "spawnTime": 2.2 }
-]

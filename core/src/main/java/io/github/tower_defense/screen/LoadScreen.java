@@ -9,8 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.tower_defense.Main;
-import io.github.tower_defense.prototype.GameArea;
-import io.github.tower_defense.service.SaveManager;
+import io.github.tower_defense.gameBoard.GameArea;
+import io.github.tower_defense.tools.SaveManager;
 
 public class LoadScreen extends ScreenAdapter {
     private final Main game;

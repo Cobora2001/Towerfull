@@ -28,20 +28,20 @@ public class VictoryScreen implements Screen {
         table.setFillParent(true);
         table.center();
 
-        Label title = new Label("Victoire !", skin);
+        Label title = new Label("Victory!", skin);
         title.setFontScale(2f);
         table.add(title).padBottom(40).row();
 
-        TextButton nextLevel = new TextButton("Niveau suivant", skin);
-        nextLevel.addListener(new ClickListener(){
-           @Override
-           public void clicked(InputEvent event, float x, float y){
-               game.setScreen(new LevelSelectScreen(game));
-           }
+        TextButton chooseLevel = new TextButton("Choose a Level", skin);
+        chooseLevel.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                game.setScreen(new LevelSelectScreen(game));
+            }
         });
-        table.add(nextLevel).width(250).pad(10).row();
+        table.add(chooseLevel).width(250).pad(10).row();
 
-        TextButton menu = new TextButton("Menu principal", skin);
+        TextButton menu = new TextButton("Main Menu", skin);
         menu.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -50,7 +50,7 @@ public class VictoryScreen implements Screen {
         });
         table.add(menu).width(250).pad(10).row();
 
-        TextButton quit = new TextButton("Quitter", skin);
+        TextButton quit = new TextButton("Quit", skin);
         quit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -63,9 +63,7 @@ public class VictoryScreen implements Screen {
     }
 
     @Override
-    public void show() {
-
-    }
+    public void show() {}
 
     @Override
     public void render(float delta) {
@@ -82,19 +80,13 @@ public class VictoryScreen implements Screen {
     }
 
     @Override
-    public void pause() {
-
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-
-    }
+    public void resume() {}
 
     @Override
-    public void hide() {
-
-    }
+    public void hide() {}
 
     @Override
     public void dispose() {

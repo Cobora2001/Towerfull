@@ -8,33 +8,30 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import io.github.tower_defense.entities.defenses.BuildSpot;
+import io.github.tower_defense.entities.defenses.Tower;
+import io.github.tower_defense.enumElements.TowerType;
+import io.github.tower_defense.gameBoard.GameArea;
 import io.github.tower_defense.listener.LevelListener;
-import io.github.tower_defense.prototype.*;
-import io.github.tower_defense.level.Level;
+import io.github.tower_defense.gameBoard.level.Level;
 import io.github.tower_defense.Main;
-import io.github.tower_defense.service.GameRenderer;
-import io.github.tower_defense.service.AssetLoaderService;
-import io.github.tower_defense.service.SaveManager;
-
-import java.util.Vector;
+import io.github.tower_defense.screen.accessories.ConstructionController;
+import io.github.tower_defense.screen.accessories.ConstructionMenu;
+import io.github.tower_defense.tools.GameRenderer;
+import io.github.tower_defense.tools.SaveManager;
 
 public class GameScreen implements Screen {
     private final Main game;
 
-    private GameArea gameArea;
+    private final GameArea gameArea;
     private GameRenderer gameRenderer;
     private Stage uiStage;
     private Skin skin;
-
-    private Vector<GameArea> gameAreas = new Vector<>();
 
     private ConstructionMenu constructionMenu;
     private ConstructionController constructionController;
     private TowerMenu towerMenu;
 
-    private AssetLoaderService assetLoader;
-
-    private Table rootTable;
     private Table sidebarTable;
 
     private TextButton pauseButton;
@@ -49,14 +46,12 @@ public class GameScreen implements Screen {
 
     public GameScreen(Main game, Level level) {
         this.game = game;
-        this.gameArea = new GameArea();
-        this.assetLoader = new AssetLoaderService();
-        assetLoader.loadAllAssets();
-
-        gameArea.setLevel(level);
+        this.gameArea = new GameArea(level);
 
         setupUI();
         setupConstruction();
+
+        resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         gameArea.setLevelListener(new LevelListener() {
             @Override
@@ -74,21 +69,11 @@ public class GameScreen implements Screen {
     public GameScreen(Main game, GameArea gameArea) {
         this.game = game;
         this.gameArea = gameArea;
-        this.assetLoader = new AssetLoaderService();
-        assetLoader.loadAllAssets();
 
         setupUI();
         setupConstruction();
 
-        int width = Gdx.graphics.getWidth() - SIDEBAR_WIDTH;
-        int height = Gdx.graphics.getHeight();
-
-        gameRenderer = new GameRenderer(
-            gameArea,
-            new Vector2(0, 0),
-            (float) width / gameArea.getCols(),
-            (float) height / gameArea.getRows()
-        );
+        resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         gameArea.setLevelListener(new LevelListener() {
             @Override
@@ -109,7 +94,7 @@ public class GameScreen implements Screen {
 
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        rootTable = new Table();
+        Table rootTable = new Table();
         rootTable.setFillParent(true);
         uiStage.addActor(rootTable);
 
@@ -123,8 +108,7 @@ public class GameScreen implements Screen {
         sidebarTable.add(goldLabel).padBottom(20).row();
 
         constructionController = new ConstructionController(
-            gameArea.getEconomyManager(),
-            assetLoader
+            gameArea.getEconomyManager()
         );
 
         constructionController.setGoldListener(newGold -> {
@@ -186,12 +170,11 @@ public class GameScreen implements Screen {
     }
 
     private void setupConstruction() {
-        constructionController = new ConstructionController(gameArea.getEconomyManager(), assetLoader);
+        constructionController = new ConstructionController(gameArea.getEconomyManager());
 
         constructionMenu = new ConstructionMenu(
             skin,
             gameArea.getEconomyManager(),
-            assetLoader.getTowerFactory(),
             new ConstructionMenu.TowerSelectionListener() {
                 public void onTowerSelected(TowerType type) {
                     constructionController.handleSelection(type, constructionMenu);

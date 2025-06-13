@@ -27,21 +27,20 @@ public class DefeatScreen implements Screen {
         table.setFillParent(true);
         table.center();
 
-        Label title = new Label("Defaite...", skin);
+        Label title = new Label("Defeat...", skin);
         title.setFontScale(2f);
         table.add(title).padBottom(40).row();
 
-        TextButton retry = new TextButton("Rejouer", skin);
+        TextButton retry = new TextButton("Retry", skin);
         retry.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //todo retry the same level
                 game.setScreen(new LevelSelectScreen(game));
             }
         });
         table.add(retry).width(250).pad(10).row();
 
-        TextButton menu = new TextButton("Menu principal", skin);
+        TextButton menu = new TextButton("Main Menu", skin);
         menu.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -50,7 +49,7 @@ public class DefeatScreen implements Screen {
         });
         table.add(menu).width(250).pad(10).row();
 
-        TextButton quit = new TextButton("Quitter", skin);
+        TextButton quit = new TextButton("Quit", skin);
         quit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -63,9 +62,7 @@ public class DefeatScreen implements Screen {
     }
 
     @Override
-    public void show() {
-
-    }
+    public void show() {}
 
     @Override
     public void render(float delta) {
@@ -82,19 +79,13 @@ public class DefeatScreen implements Screen {
     }
 
     @Override
-    public void pause() {
-
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-
-    }
+    public void resume() {}
 
     @Override
-    public void hide() {
-
-    }
+    public void hide() {}
 
     @Override
     public void dispose() {

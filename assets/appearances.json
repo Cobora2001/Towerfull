@@ -9,10 +9,10 @@
     "height": 0.8,
     "appearance": "towers/sniper.png"
   },
-  "SPOT": {
+  "BUILD_SPOT": {
     "width": 1,
     "height": 0.6,
-    "appearance": "towers/spot.png"
+    "appearance": "towers/build_spot.png"
   },
   "ORC": {
     "width": 1,

@@ -1,23 +1,24 @@
 package io.github.tower_defense;
 
 import com.badlogic.gdx.Game;
-import io.github.tower_defense.loader.GameTextureAssets;
 import io.github.tower_defense.screen.MainMenuScreen;
+import io.github.tower_defense.tools.GameAssets;
 
 public class Main extends Game {
     @Override
     public void create() {
         // Initialize the game assets
-        GameTextureAssets.loadFromAppearanceData("appearances.json");
-        GameTextureAssets.finishLoading();
+        GameAssets.get().loadAll();
 
         this.setScreen(new MainMenuScreen(this));
     }
 
     @Override
     public void dispose() {
-        // Dispose of the game assets when the game is closed
-        GameTextureAssets.dispose();
+        // Dispose of game assets
+        GameAssets.get().dispose();
+
+        // Call the super dispose method
         super.dispose();
     }
 }

@@ -1,0 +1,18 @@
+{
+  "SCENARIO_1": {
+    "waves":
+    [
+      { "wave": "WAVE1", "startTime": 0 },
+      { "wave": "WAVE2", "startTime": 10 }
+    ]
+  },
+  "SCENARIO_2": {
+    "waves":
+    [
+      { "wave": "WAVE1", "startTime": 0 },
+      { "wave": "WAVE2", "startTime": 15 },
+      { "wave": "WAVE3", "startTime": 30 }
+      { "wave": "WAVE_BOSS1", "startTime": 45 }
+    ]
+  }
+}
