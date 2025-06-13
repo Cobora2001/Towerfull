@@ -9,6 +9,12 @@ import io.github.tower_defense.tools.GameAssets;
 public class Main extends Game {
     private Music bgMusic;
 
+    public void setVolume(float volume) {
+        if (bgMusic != null) {
+            bgMusic.setVolume(volume);
+        }
+    }
+
     @Override
     public void create() {
         // Initialize the game assets
