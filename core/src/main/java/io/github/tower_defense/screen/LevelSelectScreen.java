@@ -16,8 +16,9 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.tower_defense.Main;
 import io.github.tower_defense.gameBoard.level.Level;
 import io.github.tower_defense.enumElements.LevelId;
-import io.github.tower_defense.gameBoard.level.PathGenerator;
+import io.github.tower_defense.gameBoard.level.generators.PathGenerator;
 import io.github.tower_defense.entities.ennemies.Scenario;
+import io.github.tower_defense.gameBoard.level.generators.TowerPlacementGenerator;
 import io.github.tower_defense.tools.GameAssets;
 
 import java.util.*;
@@ -85,10 +86,9 @@ public class LevelSelectScreen implements Screen {
         int cols = 16;
         int rows = 16;
         Array<Vector2> path = PathGenerator.generatePath(cols, rows);
-        Scenario scenario = new Scenario(GameAssets.get().monsterFactory);
-        Level level = new Level(cols, rows, path, scenario);
-        level.setSurvival(); // mark it
-        return level;
+        Scenario scenario = GameAssets.get().scenarioFactory.getRandom();
+        Array<Vector2> buildableTiles = TowerPlacementGenerator.generate(cols, rows, path);
+        return new Level(cols, rows, path, scenario, buildableTiles, 100, 20);
     }
 
     private String formatLevelName(String rawName) {

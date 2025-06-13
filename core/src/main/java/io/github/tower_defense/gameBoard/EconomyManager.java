@@ -8,9 +8,7 @@ public class EconomyManager extends Prototype {
     private int gold;
     private final Array<GoldListener> listeners = new Array<>();
 
-    private final int startingGold = 100;
-
-    public EconomyManager() {
+    public EconomyManager(int startingGold) {
         this.gold = startingGold;
         notifyGoldChanged();
     }
@@ -44,11 +42,6 @@ public class EconomyManager extends Prototype {
         notifyGoldChanged();
     }
 
-    public void reset() {
-        this.gold = startingGold;
-        notifyGoldChanged();
-    }
-
     public void addListener(GoldListener listener) {
         listeners.add(listener);
     }
@@ -65,8 +58,6 @@ public class EconomyManager extends Prototype {
 
     @Override
     public EconomyManager clone() {
-        EconomyManager clone = new EconomyManager();
-        clone.setGold(this.gold);
-        return clone;
+        return new EconomyManager(this.gold);
     }
 }

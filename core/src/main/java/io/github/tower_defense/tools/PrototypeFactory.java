@@ -40,4 +40,16 @@ public class PrototypeFactory<M extends Enum<M>, T extends Prototype> extends Pr
         }
         return clone;
     }
+
+    public T getRandom() {
+        if (prototypes.isEmpty()) {
+            return null;
+        }
+        // Get a random key from the map
+        M randomKey = prototypes.keySet().stream()
+                .skip((int) (prototypes.size() * Math.random()))
+                .findFirst()
+                .orElse(null);
+        return create(randomKey);
+    }
 }

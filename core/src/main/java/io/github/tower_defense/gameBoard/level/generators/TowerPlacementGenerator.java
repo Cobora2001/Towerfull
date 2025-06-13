@@ -1,4 +1,4 @@
-package io.github.tower_defense.gameBoard.level;
+package io.github.tower_defense.gameBoard.level.generators;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -7,12 +7,8 @@ import java.util.HashSet;
 
 public class TowerPlacementGenerator {
 
-    public static Array<Vector2> generate(Level level) {
-        int cols = level.getCols();
-        int rows = level.getRows();
-        Array<Vector2> path = level.getPathPoints();
-
-        // Set des positions du chemin (tous les points du chemin, pas seulement les intersections)
+    public static Array<Vector2> generate(int width, int height, Array<Vector2> path) {
+        // Collect all path cells
         HashSet<Vector2> pathCells = new HashSet<>();
         for (int i = 0; i < path.size - 1; i++) {
             Vector2 start = path.get(i);
@@ -32,10 +28,10 @@ public class TowerPlacementGenerator {
                 if (x != x2) x += dx;
                 if (y != y2) y += dy;
             }
-            pathCells.add(new Vector2(x2, y2)); // include the final point too
+            pathCells.add(new Vector2(x2, y2)); // include the final point
         }
 
-        // Exclure les zones autour de l'entrée et de la sortie
+        // Exclude area around the entry and exit
         HashSet<Vector2> entryExit = new HashSet<>();
         Vector2 start = path.first();
         Vector2 end = path.peek();
@@ -49,7 +45,7 @@ public class TowerPlacementGenerator {
 
         Array<Vector2> validSpots = new Array<>();
 
-        // Générer des spots autour du chemin étendu
+        // Generate buildable spots adjacent to the path
         for (Vector2 point : pathCells) {
             int x = (int) point.x;
             int y = (int) point.y;
@@ -61,7 +57,7 @@ public class TowerPlacementGenerator {
                     int nx = x + dx;
                     int ny = y + dy;
 
-                    if (nx < 0 || ny < 0 || nx >= cols || ny >= rows) continue;
+                    if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
 
                     Vector2 candidate = new Vector2(nx, ny);
 
@@ -74,9 +70,9 @@ public class TowerPlacementGenerator {
             }
         }
 
-        // 🔁 Limiter le nombre de tours en fonction du chemin
-        int pathLength = pathCells.size(); // better estimate now
-        int maxSpots = Math.min(Math.max(4, pathLength / 4), 20); // entre 4 et 20
+        // Limit number of spots based on path length
+        int pathLength = pathCells.size();
+        int maxSpots = Math.min(Math.max(4, pathLength / 4), 20);
 
         validSpots.shuffle();
         validSpots.truncate(maxSpots);

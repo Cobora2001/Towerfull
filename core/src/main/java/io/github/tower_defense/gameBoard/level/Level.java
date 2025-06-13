@@ -9,14 +9,21 @@ public class Level {
     private final int cols;
     private final int rows;
     private final Array<Vector2> pathPoints;
+    private final Array<Vector2> buildableTiles;
     private LevelMode mode = LevelMode.CLASSIC;
     private final Scenario scenario;
+    private final int startingGold;
+    private final int startingLife;
 
-    public Level(int cols, int rows, Array<Vector2> pathPoints, Scenario scenario) {
+    public Level(int cols, int rows, Array<Vector2> pathPoints, Scenario scenario, Array<Vector2> buildableTiles,
+                 int startingGold, int startingLife) {
         this.cols = cols;
         this.rows = rows;
         this.pathPoints = pathPoints;
         this.scenario = scenario;
+        this.buildableTiles = buildableTiles;
+        this.startingGold = startingGold;
+        this.startingLife = startingLife;
     }
 
     public int getCols() {
@@ -36,4 +43,16 @@ public class Level {
     public void setSurvival() { this.mode = LevelMode.SURVIVAL;}
 
     public Scenario getScenario() { return scenario; }
+
+    public Array<Vector2> getBuildableTiles() {
+        return buildableTiles;
+    }
+
+    public int getStartingGold() {
+        return startingGold;
+    }
+
+    public int getStartingLife() {
+        return startingLife;
+    }
 }

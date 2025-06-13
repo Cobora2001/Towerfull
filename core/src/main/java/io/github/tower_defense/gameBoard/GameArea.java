@@ -11,7 +11,7 @@ import io.github.tower_defense.entities.ennemies.Monster;
 import io.github.tower_defense.entities.ennemies.Scenario;
 import io.github.tower_defense.enumElements.MonsterType;
 import io.github.tower_defense.gameBoard.level.Level;
-import io.github.tower_defense.gameBoard.level.TowerPlacementGenerator;
+import io.github.tower_defense.gameBoard.level.generators.TowerPlacementGenerator;
 import io.github.tower_defense.listener.LevelListener;
 import io.github.tower_defense.tools.GameAssets;
 import io.github.tower_defense.tools.PrototypeFactory;
@@ -29,7 +29,7 @@ public class GameArea extends Prototype {
     private final Scenario scenario;
 
     private boolean isPaused = false;
-    private int life = 20;
+    private int life;
 
     private int cols, rows;
 
@@ -38,7 +38,8 @@ public class GameArea extends Prototype {
     private final Array<ShotRecord> recentShots = new Array<>();
 
     public GameArea(Level level) {
-        this.economyManager = new EconomyManager();
+        this.economyManager = new EconomyManager(level.getStartingGold());
+        this.life = level.getStartingLife();
 
         if (level == null) {
             Gdx.app.error("GameArea", "❌ Niveau null");
@@ -67,7 +68,10 @@ public class GameArea extends Prototype {
         }
 
         buildSpots.clear();
-        for (Vector2 pos : TowerPlacementGenerator.generate(level)) {
+
+        Array<Vector2> places = level.getBuildableTiles();
+
+        for (Vector2 pos : places) {
             buildSpots.add(new BuildSpot(pos));
         }
 

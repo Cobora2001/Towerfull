@@ -1,4 +1,4 @@
-package io.github.tower_defense.gameBoard.level;
+package io.github.tower_defense.gameBoard.level.generators;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;

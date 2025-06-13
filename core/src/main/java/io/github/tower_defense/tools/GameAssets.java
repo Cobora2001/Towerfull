@@ -12,7 +12,8 @@ import io.github.tower_defense.entities.ennemies.Scenario;
 import io.github.tower_defense.entities.ennemies.WaveSchedule;
 import io.github.tower_defense.enumElements.*;
 import io.github.tower_defense.gameBoard.level.Level;
-import io.github.tower_defense.gameBoard.level.PathGenerator;
+import io.github.tower_defense.gameBoard.level.generators.PathGenerator;
+import io.github.tower_defense.gameBoard.level.generators.TowerPlacementGenerator;
 import io.github.tower_defense.tools.loader.MonsterPrototypeLoader;
 import io.github.tower_defense.tools.loader.ScenarioPrototypeLoader;
 import io.github.tower_defense.tools.loader.TowerPrototypeLoader;
@@ -75,7 +76,6 @@ public class GameAssets {
             LevelData data = entry.value;
 
             Array<Vector2> path;
-
             if (data.survival || data.path == null || data.path.isEmpty()) {
                 path = PathGenerator.generatePath(data.cols, data.rows);
             } else {
@@ -90,7 +90,17 @@ public class GameAssets {
                 scenario = scenarioFactory.create(data.scenario);
             }
 
-            Level level = new Level(data.cols, data.rows, path, scenario);
+            Array<Vector2> buildableTiles = new Array<>();
+            if (data.buildableTiles != null && !data.buildableTiles.isEmpty()) {
+                for (float[] tile : data.buildableTiles) {
+                    buildableTiles.add(new Vector2(tile[0], tile[1]));
+                }
+            } else {
+                buildableTiles = TowerPlacementGenerator.generate(data.cols, data.rows, path);
+            }
+
+            Level level = new Level(data.cols, data.rows, path, scenario,
+                                    buildableTiles, data.startingGold, data.startingLife);
 
             if (data.survival) {
                 level.setSurvival();
