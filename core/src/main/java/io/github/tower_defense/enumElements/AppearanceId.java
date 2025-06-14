@@ -33,9 +33,13 @@ public enum AppearanceId {
     // Background
     GRASS,
     COBBLE,
+    SAND,
+    PATH,
 
     // Start and End
     PORTAL,
-    TEMPLE
+    TEMPLE,
+    CAVE,
+    DESERT_TEMPLE
 }
 

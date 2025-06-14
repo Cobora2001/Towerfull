@@ -98,5 +98,25 @@
     "width": 1.0,
     "height": 1.0,
     "appearance": "squares/temple.png"
+  },
+  "DESERT_TEMPLE": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/desert_temple.png"
+  },
+  "SAND": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/sand.png"
+  },
+  "CAVE": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/cave.PNG"
+  },
+  "PATH": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/path.png"
   }
 }

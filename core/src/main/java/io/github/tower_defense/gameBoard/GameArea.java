@@ -3,6 +3,7 @@ package io.github.tower_defense.gameBoard;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import io.github.tower_defense.gameBoard.level.Background;
 import io.github.tower_defense.listener.LifeListener;
 import io.github.tower_defense.tools.Prototype;
 import io.github.tower_defense.entities.defenses.ShotRecord;
@@ -40,6 +41,8 @@ public class GameArea extends Prototype {
 
     private final Array<LifeListener> lifeListeners = new Array<>();
 
+    private final Background background;
+
     public GameArea(Level level) {
         this.economyManager = new EconomyManager(level.getStartingGold());
         this.life = level.getStartingLife();
@@ -49,6 +52,8 @@ public class GameArea extends Prototype {
 
         this.cols = level.getCols();
         this.rows = level.getRows();
+
+        background = level.getBackground();
 
         try {
             GameAssets.get().loadAll();
@@ -92,6 +97,10 @@ public class GameArea extends Prototype {
         for (Monster m : gameArea.monsters) {
             this.monsters.add(m.clone());
         }
+
+        this.background = gameArea.background;
+
+        this.recentShots.addAll(gameArea.recentShots);
     }
 
     public void update(float delta) {
@@ -241,5 +250,9 @@ public class GameArea extends Prototype {
 
     public Array<Vector2> getPathPoints() {
         return pathPoints;
+    }
+
+    public Background getBackground() {
+        return background;
     }
 }

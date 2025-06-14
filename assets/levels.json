@@ -12,7 +12,8 @@
       [5, 0]
     ],
     "startingGold": 100,
-    "startingLife": 20
+    "startingLife": 20,
+    "background": "GRASSLAND"
   },
   "LEVEL_1": {
     "cols": 10,
@@ -36,7 +37,8 @@
       [7, 9]
     ],
     "startingGold": 100,
-    "startingLife": 20
+    "startingLife": 20,
+    "background": "GRASSLAND"
   },
   "LEVEL_2": {
     "cols": 10,
@@ -73,6 +75,7 @@
       [6, 17]
     ],
     "startingGold": 150,
-    "startingLife": 25
+    "startingLife": 25,
+    "background": "DESERT"
   }
 }

@@ -11,6 +11,7 @@ import io.github.tower_defense.entities.ennemies.Monster;
 import io.github.tower_defense.entities.ennemies.Scenario;
 import io.github.tower_defense.entities.ennemies.WaveSchedule;
 import io.github.tower_defense.enumElements.*;
+import io.github.tower_defense.gameBoard.level.Background;
 import io.github.tower_defense.gameBoard.level.Level;
 import io.github.tower_defense.gameBoard.level.generators.PathGenerator;
 import io.github.tower_defense.gameBoard.level.generators.TowerPlacementGenerator;
@@ -34,6 +35,7 @@ public class GameAssets {
 
     public final Map<LevelId, Level> levels = new HashMap<>();
     public final Map<AppearanceId, Appearance> appearances = new HashMap<>();
+    public final Map<BackgroundId, Background> backgrounds = new HashMap<>();
 
     private GameAssets() {}
     public static GameAssets get() { return instance; }
@@ -67,6 +69,47 @@ public class GameAssets {
             new ScenarioPrototypeLoader(waveFactory, monsterFactory);
         scenarioLoader.load("scenarios.json", ScenarioId.class, ScenarioData.class, scenarioFactory);
 
+        // Load backgrounds
+        ObjectMap<String, BackgroundData> backgroundMap = json.fromJson(ObjectMap.class, BackgroundData.class,
+            Gdx.files.internal("backgrounds.json"));
+
+        for (ObjectMap.Entry<String, BackgroundData> entry : backgroundMap.entries()) {
+            Appearance backgroundAppearance = appearances.get(entry.value.backgroundAppearance);
+            if (backgroundAppearance == null) {
+                Gdx.app.error("GameAssets", "Background appearance not found: " + entry.value.backgroundAppearance);
+                continue;
+            }
+
+            Appearance pathAppearance = appearances.get(entry.value.pathAppearance);
+            if (pathAppearance == null) {
+                Gdx.app.error("GameAssets", "Path appearance not found: " + entry.value.pathAppearance);
+                continue;
+            }
+
+            Appearance pathStartAppearance = appearances.get(entry.value.pathStartAppearance);
+            if (pathStartAppearance == null) {
+                Gdx.app.error("GameAssets", "Path start appearance not found: " + entry.value.pathStartAppearance);
+                continue;
+            }
+
+            Appearance pathEndAppearance = appearances.get(entry.value.pathEndAppearance);
+            if (pathEndAppearance == null) {
+                Gdx.app.error("GameAssets", "Path end appearance not found: " + entry.value.pathEndAppearance);
+                continue;
+            }
+
+            BackgroundId backgroundId = BackgroundId.valueOf(entry.key);
+
+            Background background = new Background(
+                backgroundAppearance,
+                pathAppearance,
+                pathStartAppearance,
+                pathEndAppearance
+            );
+
+            backgrounds.put(backgroundId, background);
+        }
+
         // Load levels
         ObjectMap<String, LevelData> levelMap = json.fromJson(ObjectMap.class, LevelData.class,
             Gdx.files.internal("levels.json"));
@@ -99,8 +142,10 @@ public class GameAssets {
                 buildableTiles = TowerPlacementGenerator.generate(data.cols, data.rows, path);
             }
 
+            Background background = backgrounds.get(data.background);
+
             Level level = new Level(data.cols, data.rows, path, scenario,
-                                    buildableTiles, data.startingGold, data.startingLife);
+                                    buildableTiles, data.startingGold, data.startingLife, background);
 
             if (data.survival) {
                 level.setSurvival();
@@ -108,6 +153,7 @@ public class GameAssets {
 
             levels.put(id, level);
         }
+
     }
 
     public void dispose() {

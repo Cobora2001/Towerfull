@@ -1,19 +1,24 @@
 package io.github.tower_defense.entities.defenses;
 
 import com.badlogic.gdx.math.Vector2;
+import io.github.tower_defense.tools.Prototype;
 
-public class ShotRecord {
+public class ShotRecord extends Prototype {
     private static final float TIME_TO_LIVE = 0.3f;
     private final Vector2 from;
     private final Vector2 to;
     private float timeSinceShot;
     private final int damage;
 
-    public ShotRecord(Vector2 from, Vector2 to, int damage) {
+    public ShotRecord(Vector2 from, Vector2 to, int damage, float timeSinceShot) {
         this.from = from;
         this.to = to;
-        this.timeSinceShot = 0;
+        this.timeSinceShot = timeSinceShot;
         this.damage = damage;
+    }
+
+    public ShotRecord(Vector2 from, Vector2 to, int damage) {
+        this(from, to, damage, 0f);
     }
 
     public boolean isAlive() {
@@ -42,5 +47,10 @@ public class ShotRecord {
 
     public int getDamage() {
         return damage;
+    }
+
+    @Override
+    public ShotRecord clone() {
+        return new ShotRecord(from.cpy(), to.cpy(), damage, timeSinceShot);
     }
 }

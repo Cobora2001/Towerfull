@@ -1,0 +1,14 @@
+{
+  "GRASSLAND": {
+    "backgroundAppearance": "GRASS",
+    "pathAppearance": "COBBLE",
+    "pathStartAppearance": "PORTAL",
+    "pathEndAppearance": "TEMPLE"
+  },
+  "DESERT": {
+    "backgroundAppearance": "SAND",
+    "pathAppearance": "PATH",
+    "pathStartAppearance": "CAVE",
+    "pathEndAppearance": "DESERT_TEMPLE"
+  }
+}

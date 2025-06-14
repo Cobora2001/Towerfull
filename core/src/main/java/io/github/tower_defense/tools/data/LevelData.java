@@ -1,6 +1,7 @@
 package io.github.tower_defense.tools.data;
 
 import com.badlogic.gdx.utils.Array;
+import io.github.tower_defense.enumElements.BackgroundId;
 import io.github.tower_defense.enumElements.ScenarioId;
 
 import java.util.List;
@@ -14,4 +15,5 @@ public class LevelData {
     public Array<float[]> buildableTiles;
     public int startingGold;
     public int startingLife;
+    public BackgroundId background;
 }

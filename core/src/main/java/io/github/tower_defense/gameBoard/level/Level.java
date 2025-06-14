@@ -14,9 +14,10 @@ public class Level {
     private final Scenario scenario;
     private final int startingGold;
     private final int startingLife;
+    private final Background background;
 
     public Level(int cols, int rows, Array<Vector2> pathPoints, Scenario scenario, Array<Vector2> buildableTiles,
-                 int startingGold, int startingLife) {
+                 int startingGold, int startingLife, Background background) {
         this.cols = cols;
         this.rows = rows;
         this.pathPoints = pathPoints;
@@ -24,6 +25,7 @@ public class Level {
         this.buildableTiles = buildableTiles;
         this.startingGold = startingGold;
         this.startingLife = startingLife;
+        this.background = background;
     }
 
     public int getCols() {
@@ -54,5 +56,9 @@ public class Level {
 
     public int getStartingLife() {
         return startingLife;
+    }
+
+    public Background getBackground() {
+        return background;
     }
 }

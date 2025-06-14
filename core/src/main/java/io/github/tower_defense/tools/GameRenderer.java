@@ -10,18 +10,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import io.github.tower_defense.entities.defenses.BuildSpot;
 import io.github.tower_defense.entities.defenses.Tower;
-import io.github.tower_defense.enumElements.AppearanceId;
 import io.github.tower_defense.gameBoard.GameArea;
 import io.github.tower_defense.screen.accessories.AssetRenderer;
 import io.github.tower_defense.entities.defenses.ShotRecord;
 import io.github.tower_defense.entities.*;
 
 public class GameRenderer {
-    private static final AppearanceId backgroundAppearance = AppearanceId.GRASS;
-    private static final AppearanceId pathAppearance = AppearanceId.COBBLE;
-    private static final AppearanceId spawnAppearance = AppearanceId.PORTAL;
-    private static final AppearanceId endAppearance = AppearanceId.TEMPLE;
-
     private final GameArea gameArea;
     private final Vector2 startPosition;
     private final float cellWidth, cellHeight;
@@ -164,17 +158,17 @@ public class GameRenderer {
         Array<Vector2> path = gameArea.getPathPoints();
         if (path == null || path.size == 0) return;
 
-        Appearance portal = GameAssets.get().appearances.get(spawnAppearance);
-        Appearance temple = GameAssets.get().appearances.get(endAppearance);
-        if (portal == null || temple == null) return;
+        Appearance start = gameArea.getBackground().getPathStartAppearance();
+        Appearance end = gameArea.getBackground().getPathEndAppearance();
+        if (start == null || end == null) return;
 
         spriteBatch.begin();
 
         Vector2 startPixel = logicalToPixelCenter(path.first());
         Vector2 endPixel = logicalToPixelCenter(path.peek());
 
-        assetRenderer.renderAppearance(portal, startPixel);
-        assetRenderer.renderAppearance(temple, endPixel);
+        assetRenderer.renderAppearance(start, startPixel);
+        assetRenderer.renderAppearance(end, endPixel);
 
         spriteBatch.end();
     }
@@ -183,8 +177,8 @@ public class GameRenderer {
         Array<Vector2> path = gameArea.getPathPoints();
         if (path == null || path.size < 2) return;
 
-        Appearance cobble = GameAssets.get().appearances.get(pathAppearance);
-        if (cobble == null) return;
+        Appearance pathAppearance = gameArea.getBackground().getPathAppearance();
+        if (pathAppearance == null) return;
 
         spriteBatch.begin();
 
@@ -206,7 +200,7 @@ public class GameRenderer {
             // Draw all tiles between start and end
             while (x != x1 || y != y1) {
                 Vector2 pixelPos = logicalToPixelCenter(new Vector2(x, y));
-                assetRenderer.renderAppearance(cobble, pixelPos);
+                assetRenderer.renderAppearance(pathAppearance, pixelPos);
                 x += dx;
                 y += dy;
             }
@@ -215,7 +209,7 @@ public class GameRenderer {
         // Also render the last tile
         Vector2 last = path.peek();
         Vector2 lastPixel = logicalToPixelCenter(last);
-        assetRenderer.renderAppearance(cobble, lastPixel);
+        assetRenderer.renderAppearance(pathAppearance, lastPixel);
 
         spriteBatch.end();
     }
@@ -223,7 +217,7 @@ public class GameRenderer {
     private void renderBackground() {
         spriteBatch.begin();
 
-        Appearance background = GameAssets.get().appearances.get(backgroundAppearance);
+        Appearance background = gameArea.getBackground().getBackgroundAppearance();
 
         if (background != null) {
             for (int x = 0; x < gameArea.getCols(); x++) {
