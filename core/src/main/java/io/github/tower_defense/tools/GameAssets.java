@@ -123,7 +123,7 @@ public class GameAssets {
             LevelData data = entry.value;
 
             Array<Vector2> path;
-            if (data.survival || data.path == null || data.path.isEmpty()) {
+            if (data.path == null || data.path.isEmpty()) {
                 path = PathGenerator.generatePath(data.cols, data.rows);
             } else {
                 path = new Array<>();
@@ -150,11 +150,7 @@ public class GameAssets {
 
             Level level = new Level(data.cols, data.rows, path, scenario,
                                     buildableTiles, data.startingGold, data.startingLife, background);
-
-            if (data.survival) {
-                level.setSurvival();
-            }
-
+            
             levels.put(id, level);
         }
 

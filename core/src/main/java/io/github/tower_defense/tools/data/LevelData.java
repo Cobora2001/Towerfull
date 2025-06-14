@@ -11,7 +11,6 @@ public class LevelData {
     public int rows;
     public List<float[]> path; // Each element is a [x, y] array
     public ScenarioId scenario;
-    public boolean survival = false;
     public Array<float[]> buildableTiles;
     public int startingGold;
     public int startingLife;

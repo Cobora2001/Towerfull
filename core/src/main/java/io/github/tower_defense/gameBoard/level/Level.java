@@ -10,7 +10,6 @@ public class Level {
     private final int rows;
     private final Array<Vector2> pathPoints;
     private final Array<Vector2> buildableTiles;
-    private LevelMode mode = LevelMode.CLASSIC;
     private final Scenario scenario;
     private final int startingGold;
     private final int startingLife;
@@ -39,10 +38,6 @@ public class Level {
     public Array<Vector2> getPathPoints() {
         return pathPoints;
     }
-
-    public LevelMode getMode() { return mode; }
-
-    public void setSurvival() { this.mode = LevelMode.SURVIVAL;}
 
     public Scenario getScenario() { return scenario; }
 
