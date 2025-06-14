@@ -19,15 +19,16 @@ public class DestructionMenu extends Table {
         setBackground("default-round");
 
         infoLabel = new Label("", skin);
-        add(infoLabel).padBottom(6).row();
+        infoLabel.setAlignment(Align.center);
+        add(infoLabel).padBottom(6).fillX().row();
 
         TextButton sell = new TextButton("Sell", skin);
         sell.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                listener.onSellTower(currentSpot); // store it when showing the menu
+                listener.onSellTower(currentSpot);
             }
         });
-        add(sell).padBottom(4).fillX().growX();
+        add(sell).fillX().padBottom(4).row(); // Explicit row after sell
 
         TextButton cancelBtn = new TextButton("Cancel", skin);
         cancelBtn.addListener(new ClickListener() {
@@ -36,7 +37,7 @@ public class DestructionMenu extends Table {
                 setVisible(false);
             }
         });
-        add(cancelBtn).padTop(4).fillX().growX();
+        add(cancelBtn).fillX().padTop(4).row();
 
         setTransform(true);
         setOrigin(Align.topLeft);
@@ -65,6 +66,6 @@ public class DestructionMenu extends Table {
                 ((TextButton) actor).getLabel().setFontScale(scale);
             }
         }
-        invalidateHierarchy(); // Update layout after scale change
+        invalidateHierarchy();
     }
 }

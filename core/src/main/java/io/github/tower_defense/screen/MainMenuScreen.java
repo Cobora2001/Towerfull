@@ -15,11 +15,8 @@ public class MainMenuScreen implements Screen {
 
     private final Stage stage;
     private final Skin skin;
-    private final Main game;
-    private boolean isMuted = false;
 
     public MainMenuScreen(Main game) {
-        this.game = game;
 
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
@@ -31,7 +28,8 @@ public class MainMenuScreen implements Screen {
         table.center();
 
         // Title Label
-        Label titleLabel = new Label("Tower Defense: Placeholder Title", skin);
+        Label titleLabel = new Label("Tower Defense: Towerfull", skin);
+        titleLabel.setFontScale(2.0f);
         table.add(titleLabel).padBottom(40).center().row();
 
         // Buttons
