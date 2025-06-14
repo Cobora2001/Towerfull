@@ -118,5 +118,25 @@
     "width": 1.0,
     "height": 1.0,
     "appearance": "squares/path.png"
+  },
+  "ICE": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/ice.png"
+  },
+  "ICE_PATH": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/ice_path.png"
+  },
+  "ICE_SPAWN": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/ice_spawn.png"
+  },
+  "ICE_CASTLE": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/ice_castle.png"
   }
 }

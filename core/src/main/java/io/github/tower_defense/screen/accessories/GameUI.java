@@ -34,6 +34,9 @@ public class GameUI {
     private final TextButton quitButton;
     private final TextButton pauseResumeButton;
 
+    private static final String PAUSE_BUTTON_TEXT = "Pause";
+    private static final String RESUME_BUTTON_TEXT = "Resume";
+
     private boolean isPaused;
 
     // We store sidebar as a field so we can modify it when toggling menus
@@ -56,7 +59,7 @@ public class GameUI {
         saveButton = new TextButton("Save", skin);
         menuButton = new TextButton("Menu", skin);
         quitButton = new TextButton("Quit", skin);
-        pauseResumeButton = new TextButton("Pause", skin);
+        pauseResumeButton = new TextButton(isPaused ? RESUME_BUTTON_TEXT : PAUSE_BUTTON_TEXT, skin);
 
         constructionMenu = createConstructionMenu();
         constructionMenuContainer = new Container<>(constructionMenu);
@@ -79,7 +82,7 @@ public class GameUI {
             public void changed(ChangeEvent event, Actor actor) {
                 isPaused = !isPaused;
                 controller.setPaused(isPaused);
-                pauseResumeButton.setText(isPaused ? "Resume" : "Pause");
+                pauseResumeButton.setText(isPaused ? RESUME_BUTTON_TEXT : PAUSE_BUTTON_TEXT);
             }
         });
 

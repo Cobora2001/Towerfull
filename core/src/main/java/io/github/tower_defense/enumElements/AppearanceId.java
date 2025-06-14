@@ -35,11 +35,15 @@ public enum AppearanceId {
     COBBLE,
     SAND,
     PATH,
+    ICE,
+    ICE_PATH,
 
     // Start and End
     PORTAL,
     TEMPLE,
     CAVE,
-    DESERT_TEMPLE
+    DESERT_TEMPLE,
+    ICE_SPAWN,
+    ICE_CASTLE
 }
 
