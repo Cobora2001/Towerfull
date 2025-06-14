@@ -138,5 +138,25 @@
     "width": 1.0,
     "height": 1.0,
     "appearance": "squares/ice_castle.png"
+  },
+  "SHACK": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/shack.png"
+  },
+  "DIRT": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/dirt.png"
+  },
+  "BRICK": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/brick.png"
+  },
+  "BROKEN_TOWER": {
+    "width": 1.0,
+    "height": 1.0,
+    "appearance": "squares/broken_tower.png"
   }
 }

@@ -16,5 +16,11 @@
     "pathAppearance": "ICE_PATH",
     "pathStartAppearance": "ICE_SPAWN",
     "pathEndAppearance": "ICE_CASTLE"
+  },
+  "DIRT": {
+    "backgroundAppearance": "DIRT",
+    "pathAppearance": "BRICK",
+    "pathStartAppearance": "BROKEN_TOWER",
+    "pathEndAppearance": "SHACK"
   }
 }

@@ -37,6 +37,8 @@ public enum AppearanceId {
     PATH,
     ICE,
     ICE_PATH,
+    DIRT,
+    BRICK,
 
     // Start and End
     PORTAL,
@@ -44,6 +46,8 @@ public enum AppearanceId {
     CAVE,
     DESERT_TEMPLE,
     ICE_SPAWN,
-    ICE_CASTLE
+    ICE_CASTLE,
+    BROKEN_TOWER,
+    SHACK
 }
 
