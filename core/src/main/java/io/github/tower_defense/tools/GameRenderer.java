@@ -36,6 +36,17 @@ public class GameRenderer {
     }
 
     public void render() {
+        Gdx.gl.glEnable(GL20.GL_SCISSOR_TEST);
+
+        // Define the scissor box to match the game area
+        Gdx.gl.glScissor(
+            (int) startPosition.x,
+            (int) startPosition.y,
+            (int) (gameArea.getCols() * cellWidth),
+            (int) (gameArea.getRows() * cellHeight)
+        );
+
+        // All game rendering
         renderMapBorder();
         renderBackground();
         renderPaths();
@@ -44,6 +55,8 @@ public class GameRenderer {
         renderTowerRanges();
         renderMonsters();
         renderShots();
+
+        Gdx.gl.glDisable(GL20.GL_SCISSOR_TEST);
     }
 
     private void renderShots() {
