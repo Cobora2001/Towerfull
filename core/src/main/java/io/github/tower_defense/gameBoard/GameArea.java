@@ -55,13 +55,6 @@ public class GameArea extends Prototype {
 
         background = level.getBackground();
 
-        try {
-            GameAssets.get().loadAll();
-        } catch (Exception e) {
-            Gdx.app.error("GameArea", "❌ Erreur lors du chargement des assets JSON", e);
-            return;
-        }
-
         Vector2 spawn = level.getPathPoints().first();
         if (spawn == null) {
             Gdx.app.error("GameArea", "❌ Point de spawn null");

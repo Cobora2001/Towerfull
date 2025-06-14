@@ -1,6 +1,7 @@
 package io.github.tower_defense.tools;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -36,6 +37,9 @@ public class GameAssets {
     public final Map<LevelId, Level> levels = new HashMap<>();
     public final Map<AppearanceId, Appearance> appearances = new HashMap<>();
     public final Map<BackgroundId, Background> backgrounds = new HashMap<>();
+
+    private Music bgMusic;
+    private boolean muted = false;
 
     private GameAssets() {}
     public static GameAssets get() { return instance; }
@@ -154,6 +158,10 @@ public class GameAssets {
             levels.put(id, level);
         }
 
+        // Load music
+        bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/Age_of_war_theme.mp3"));
+        bgMusic.setLooping(true);
+        bgMusic.play();
     }
 
     public void dispose() {
@@ -161,10 +169,28 @@ public class GameAssets {
             appearance.getTexture().dispose();
         }
         appearances.clear();
+        levels.clear();
+        backgrounds.clear();
 
         towerFactory.clear();
         monsterFactory.clear();
         waveFactory.clear();
         scenarioFactory.clear();
+
+        if (bgMusic != null) {
+            bgMusic.stop();
+            bgMusic.dispose();
+        }
+    }
+
+    public void toggleMusic() {
+        if (bgMusic == null) return;
+
+        muted = !muted;
+        bgMusic.setVolume(muted ? 0f : 1f);
+    }
+
+    public boolean isMusicMuted() {
+        return muted;
     }
 }

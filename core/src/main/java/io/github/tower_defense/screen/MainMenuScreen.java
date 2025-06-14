@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.tower_defense.Main;
+import io.github.tower_defense.tools.GameAssets;
 
 public class MainMenuScreen implements Screen {
 
@@ -36,7 +37,7 @@ public class MainMenuScreen implements Screen {
         // Buttons
         TextButton startButton = new TextButton("Start", skin);
         TextButton loadButton = new TextButton("Load", skin);
-        TextButton muteButton = new TextButton("Mute Music", skin);
+        TextButton muteButton = new TextButton(GameAssets.get().isMusicMuted() ? "Unmute" : "Mute", skin);
         TextButton quitButton = new TextButton("Quit", skin);
 
         startButton.addListener(new ClickListener() {
@@ -53,9 +54,8 @@ public class MainMenuScreen implements Screen {
 
         muteButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                isMuted = !isMuted;
-                game.setVolume(isMuted ? 0f : 1f);
-                muteButton.setText(isMuted ? "Unmute Music" : "Mute Music");
+                GameAssets.get().toggleMusic();
+                muteButton.setText(GameAssets.get().isMusicMuted() ? "Unmute" : "Mute");
             }
         });
 
