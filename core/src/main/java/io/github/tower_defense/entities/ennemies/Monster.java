@@ -13,6 +13,7 @@ public class Monster extends Printable {
     private final int reward;
     private int pathIndex = 0;
     private boolean hasReachedEnd = false;
+    private Array<Vector2> path = null;
 
     public Monster(int pv, int maxPv, Vector2 logicalPos,
                    float speed, int damage, int reward,
@@ -38,6 +39,14 @@ public class Monster extends Printable {
         this.hasReachedEnd = m.hasReachedEnd;
         this.pv = m.pv;
         this.maxPv = m.maxPv;
+        if (m.path != null) {
+            this.path = new Array<>(m.path.size);
+            for (Vector2 v : m.path) {
+                this.path.add(new Vector2(v)); // Clone each Vector2
+            }
+        } else {
+            this.path = null;
+        }
     }
 
     @Override
@@ -45,7 +54,8 @@ public class Monster extends Printable {
         return new Monster(this);
     }
 
-    public void update(float delta, Array<Vector2> path) {
+    public void update(float delta) {
+        if (path == null || path.size == 0) return;
         if (hasReachedEnd || pathIndex >= path.size) return;
 
         Vector2 target = path.get(pathIndex);
@@ -70,6 +80,12 @@ public class Monster extends Printable {
                 logicalPos.add(direction);
             }
         }
+    }
+
+    public void setPath(Array<Vector2> path) {
+        this.path = path;
+        this.pathIndex = 0;
+        this.hasReachedEnd = false;
     }
 
     public boolean hasReachedEnd() {

@@ -3,7 +3,9 @@ package io.github.tower_defense.gameBoard;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import io.github.tower_defense.gameBoard.level.Axis;
 import io.github.tower_defense.gameBoard.level.Background;
+import io.github.tower_defense.gameBoard.level.PathGraph;
 import io.github.tower_defense.listener.LifeListener;
 import io.github.tower_defense.tools.Prototype;
 import io.github.tower_defense.entities.defenses.ShotRecord;
@@ -14,7 +16,6 @@ import io.github.tower_defense.entities.ennemies.Scenario;
 import io.github.tower_defense.enumElements.MonsterType;
 import io.github.tower_defense.gameBoard.level.Level;
 import io.github.tower_defense.listener.LevelListener;
-import io.github.tower_defense.tools.GameAssets;
 import io.github.tower_defense.tools.PrototypeFactory;
 
 public class GameArea extends Prototype {
@@ -24,7 +25,8 @@ public class GameArea extends Prototype {
 
     private PrototypeFactory<MonsterType, Monster> prototypeFactory = new PrototypeFactory<>();
 
-    private final Array<Vector2> pathPoints;
+    private final PathGraph pathGraph;
+    private final Array<Axis> spawnPoints = new Array<>();
 
     private final EconomyManager economyManager;
     private final Scenario scenario;
@@ -47,19 +49,14 @@ public class GameArea extends Prototype {
         this.economyManager = new EconomyManager(level.getStartingGold());
         this.life = level.getStartingLife();
 
-        this.pathPoints = level.getPathPoints();
+        this.pathGraph = level.getPathGraph();
+        this.spawnPoints.addAll(pathGraph.getSpawns());
         this.scenario = level.getScenario();
 
         this.cols = level.getCols();
         this.rows = level.getRows();
 
         background = level.getBackground();
-
-        Vector2 spawn = level.getPathPoints().first();
-        if (spawn == null) {
-            Gdx.app.error("GameArea", "❌ Point de spawn null");
-            return;
-        }
 
         buildSpots.clear();
 
@@ -79,7 +76,8 @@ public class GameArea extends Prototype {
         this.life = gameArea.life;
         this.prototypeFactory = gameArea.prototypeFactory.clone();
         this.economyManager = gameArea.economyManager.clone();
-        this.pathPoints = gameArea.pathPoints;
+        this.pathGraph = gameArea.pathGraph;
+        this.spawnPoints.addAll(gameArea.spawnPoints);
         this.scenario = gameArea.scenario.clone();
         this.levelListener = gameArea.levelListener;
 
@@ -107,7 +105,7 @@ public class GameArea extends Prototype {
         for (int i = monsters.size - 1; i >= 0; i--) {
             Monster monster = monsters.get(i);
 
-            monster.update(delta, pathPoints);
+            monster.update(delta);
 
             if (monster.hasReachedEnd()) {
                 monsters.removeIndex(i);
@@ -144,6 +142,10 @@ public class GameArea extends Prototype {
         }
     }
 
+    public PathGraph getPathGraph() {
+        return pathGraph;
+    }
+
     public void addLifeListener(LifeListener listener) {
         lifeListeners.add(listener);
     }
@@ -159,7 +161,20 @@ public class GameArea extends Prototype {
             Gdx.app.error("GameArea", "❌ Tentative de spawn d'un monstre null");
             return;
         }
-        monster.setLogicalPos(new Vector2(pathPoints.first()));
+
+        // Choose a random spawn point from the available spawn points
+        if (spawnPoints.size == 0) {
+            Gdx.app.error("GameArea", "❌ Aucune position de spawn disponible pour le monstre");
+            return;
+        }
+
+        Axis spawnPoint = spawnPoints.random();
+
+        monster.setLogicalPos(spawnPoint.getPosition().cpy());
+
+        // Initialize the monster's path
+        monster.setPath(pathGraph.getPathPointsStartingFrom(spawnPoint));
+
         monsters.add(monster);
     }
 
@@ -239,10 +254,6 @@ public class GameArea extends Prototype {
 
     public GameArea clone() {
         return new GameArea(this);
-    }
-
-    public Array<Vector2> getPathPoints() {
-        return pathPoints;
     }
 
     public Background getBackground() {

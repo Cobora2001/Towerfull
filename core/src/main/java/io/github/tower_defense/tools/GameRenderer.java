@@ -8,9 +8,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 import io.github.tower_defense.entities.defenses.BuildSpot;
 import io.github.tower_defense.entities.defenses.Tower;
 import io.github.tower_defense.gameBoard.GameArea;
+import io.github.tower_defense.gameBoard.level.Axis;
 import io.github.tower_defense.screen.accessories.AssetRenderer;
 import io.github.tower_defense.entities.defenses.ShotRecord;
 import io.github.tower_defense.entities.*;
@@ -155,61 +157,65 @@ public class GameRenderer {
     }
 
     private void renderPathEndpoints() {
-        Array<Vector2> path = gameArea.getPathPoints();
-        if (path == null || path.size == 0) return;
-
         Appearance start = gameArea.getBackground().getPathStartAppearance();
         Appearance end = gameArea.getBackground().getPathEndAppearance();
+
         if (start == null || end == null) return;
 
         spriteBatch.begin();
 
-        Vector2 startPixel = logicalToPixelCenter(path.first());
-        Vector2 endPixel = logicalToPixelCenter(path.peek());
+        for (Axis spawn : gameArea.getPathGraph().getSpawns()) {
+            Vector2 pos = logicalToPixelCenter(spawn.getPosition());
+            assetRenderer.renderAppearance(start, pos);
+        }
 
-        assetRenderer.renderAppearance(start, startPixel);
-        assetRenderer.renderAppearance(end, endPixel);
+        for (Axis endNode : gameArea.getPathGraph().getEnds()) {
+            Vector2 pos = logicalToPixelCenter(endNode.getPosition());
+            assetRenderer.renderAppearance(end, pos);
+        }
 
         spriteBatch.end();
     }
 
     private void renderPaths() {
-        Array<Vector2> path = gameArea.getPathPoints();
-        if (path == null || path.size < 2) return;
-
         Appearance pathAppearance = gameArea.getBackground().getPathAppearance();
         if (pathAppearance == null) return;
 
         spriteBatch.begin();
 
-        for (int i = 0; i < path.size - 1; i++) {
-            Vector2 start = path.get(i);
-            Vector2 end = path.get(i + 1);
+        ObjectMap<String, Axis> nodes = gameArea.getPathGraph().getNodes();
 
-            int x0 = (int) start.x;
-            int y0 = (int) start.y;
-            int x1 = (int) end.x;
-            int y1 = (int) end.y;
+        for (Axis from : nodes.values()) {
+            Vector2 start = from.getPosition();
 
-            int dx = Integer.signum(x1 - x0);
-            int dy = Integer.signum(y1 - y0);
+            for (Axis to : from.getNextAxes()) {
+                Vector2 end = to.getPosition();
 
-            int x = x0;
-            int y = y0;
+                int x0 = (int) start.x;
+                int y0 = (int) start.y;
+                int x1 = (int) end.x;
+                int y1 = (int) end.y;
 
-            // Draw all tiles between start and end
-            while (x != x1 || y != y1) {
-                Vector2 pixelPos = logicalToPixelCenter(new Vector2(x, y));
-                assetRenderer.renderAppearance(pathAppearance, pixelPos);
-                x += dx;
-                y += dy;
+                int dx = Integer.signum(x1 - x0);
+                int dy = Integer.signum(y1 - y0);
+
+                int x = x0;
+                int y = y0;
+
+                // Draw all tiles between from and to
+                while (x != x1 || y != y1) {
+                    Vector2 pixelPos = logicalToPixelCenter(new Vector2(x, y));
+                    assetRenderer.renderAppearance(pathAppearance, pixelPos);
+                    x += dx;
+                    y += dy;
+                }
+
+                // Draw last tile
+                Vector2 last = to.getPosition();
+                Vector2 lastPixel = logicalToPixelCenter(last);
+                assetRenderer.renderAppearance(pathAppearance, lastPixel);
             }
         }
-
-        // Also render the last tile
-        Vector2 last = path.peek();
-        Vector2 lastPixel = logicalToPixelCenter(last);
-        assetRenderer.renderAppearance(pathAppearance, lastPixel);
 
         spriteBatch.end();
     }
