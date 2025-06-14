@@ -3,6 +3,7 @@ package io.github.tower_defense.gameBoard;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import io.github.tower_defense.listener.LifeListener;
 import io.github.tower_defense.tools.Prototype;
 import io.github.tower_defense.entities.defenses.ShotRecord;
 import io.github.tower_defense.entities.defenses.BuildSpot;
@@ -36,6 +37,8 @@ public class GameArea extends Prototype {
     private LevelListener levelListener;
 
     private final Array<ShotRecord> recentShots = new Array<>();
+
+    private final Array<LifeListener> lifeListeners = new Array<>();
 
     public GameArea(Level level) {
         this.economyManager = new EconomyManager(level.getStartingGold());
@@ -139,6 +142,16 @@ public class GameArea extends Prototype {
         }
     }
 
+    public void addLifeListener(LifeListener listener) {
+        lifeListeners.add(listener);
+    }
+
+    private void notifyLifeChanged() {
+        for (LifeListener listener : lifeListeners) {
+            listener.onLifeChanged(life);
+        }
+    }
+
     public void spawnMonster(Monster monster) {
         if (monster == null) {
             Gdx.app.error("GameArea", "❌ Tentative de spawn d'un monstre null");
@@ -182,6 +195,10 @@ public class GameArea extends Prototype {
         isPaused = false;
     }
 
+    public void setPaused(boolean paused) {
+        this.isPaused = paused;
+    }
+
     public boolean isPaused() {
         return isPaused;
     }
@@ -207,6 +224,7 @@ public class GameArea extends Prototype {
                 levelListener.onGameOver();
             }
         }
+        notifyLifeChanged(); // Notify life listeners on every change
     }
 
     public EconomyManager getEconomyManager() {

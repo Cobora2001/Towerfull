@@ -1,4 +1,77 @@
 package io.github.tower_defense.screen.accessories;
 
-public class DestructionMenu {
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
+import io.github.tower_defense.entities.defenses.BuildSpot;
+import io.github.tower_defense.listener.DestructionListener;
+
+public class DestructionMenu extends Table {
+    private final Label infoLabel;
+    private BuildSpot currentSpot;
+
+    private float scale;
+
+    public DestructionMenu(Skin skin, DestructionListener listener, float scale) {
+        super(skin);
+
+        this.scale = scale;
+
+        pad(6);
+        align(Align.topLeft);
+        setBackground("default-round");
+
+        infoLabel = new Label("", skin);
+        add(infoLabel).padBottom(6).row();
+
+        TextButton sell = new TextButton("Sell", skin);
+        sell.getLabel().setFontScale(scale);
+        sell.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                listener.onSellTower(currentSpot); // store it when showing the menu
+            }
+        });
+        add(sell).padBottom(4 * scale).fillX().growX();
+
+        TextButton cancelBtn = new TextButton("Cancel", skin);
+        cancelBtn.getLabel().setFontScale(scale);
+        cancelBtn.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                listener.onCancel();
+                setVisible(false);
+            }
+        });
+        add(cancelBtn).padTop(4 * scale).fillX().growX();
+
+        setTransform(true);
+        setOrigin(Align.topLeft);
+        setVisible(false);
+    }
+
+    public void showForTower(BuildSpot spot, String labelText) {
+        if (spot == null || !spot.isUsed()) {
+            hide();
+            return;
+        }
+        this.currentSpot = spot;
+        this.infoLabel.setText(labelText != null ? labelText : "Tower Selected");
+        setVisible(true);
+    }
+
+    public void hide() {
+        this.currentSpot = null;
+        setVisible(false);
+    }
+
+    public void setScale(float scale) {
+        this.scale = scale;
+        infoLabel.getStyle().font.getData().setScale(scale);
+        for (Actor actor : getChildren()) {
+            if (actor instanceof TextButton) {
+                ((TextButton) actor).getLabel().setFontScale(scale);
+            }
+        }
+        invalidateHierarchy(); // Update layout after scale change
+    }
 }
