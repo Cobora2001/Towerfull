@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import io.github.tower_defense.entities.defenses.BuildSpot;
@@ -60,23 +61,30 @@ public class GameRenderer {
 
         float baseThickness = 0.2f * Math.min(cellWidth, cellHeight);
 
+        // Optional: define min/max thickness scale
+        float minScale = 0.5f;
+        float maxScale = 2.0f;
+
         for (ShotRecord shot : shots) {
             float alpha = shot.getPercentageAlive();
-
-            // Clamp alpha to make shots more visible
-            alpha = Math.max(0.2f, alpha); // always at least 20% visible
+            alpha = Math.max(0.2f, alpha); // Clamp alpha
 
             Vector2 from = logicalToPixel(shot.getFrom());
             Vector2 to = logicalToPixel(shot.getTo());
 
+            int damage = shot.getDamage();
+
+            // Scale thickness by damage (you can normalize if needed)
+            float scale = MathUtils.clamp(damage / 10f, minScale, maxScale); // Example: damage 10 = 1.0x
+            float thickness = baseThickness * scale;
+
             shapeRenderer.setColor(1f, 0.1f, 0.1f, alpha); // rich red
-            shapeRenderer.rectLine(from, to, baseThickness);
+            shapeRenderer.rectLine(from, to, thickness);
         }
 
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
-
 
     private Color getColorForTowerInstance(Tower tower) {
         int hash = System.identityHashCode(tower);

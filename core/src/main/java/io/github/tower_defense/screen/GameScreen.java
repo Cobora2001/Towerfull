@@ -23,8 +23,6 @@ public class GameScreen implements Screen {
 
     private ConstructionController constructionController;
 
-    private static final float UI_RATIO = 1f / 6f;
-
     public GameScreen(Main game, Level level) {
         this.game = game;
         this.gameArea = new GameArea(level);
@@ -74,9 +72,9 @@ public class GameScreen implements Screen {
             gameUI.updateGold(newGold);
         });
 
-        constructionController.setLifeListener(newLife -> {
-            gameUI.updateLife(newLife);
-        });
+        constructionController.setLifeListener(newLife -> gameUI.updateLife(newLife));
+
+
     }
 
     private void checkBuildSpotClick() {
@@ -96,10 +94,12 @@ public class GameScreen implements Screen {
                 if (clickX == spotX && clickY == spotY) {
                     if (!spot.isUsed()) {
                         constructionController.showMenu(gameUI.getConstructionMenu(), spot);
-                        gameUI.getDestructionMenu().setVisible(false);
+                        gameUI.hideDestructionMenu();
+                        gameUI.showConstructionMenu(); // ✅ THIS LINE IS MISSING
                     } else {
                         gameUI.getDestructionMenu().showForTower(spot, null);
-                        constructionController.cancel(gameUI.getConstructionMenu());
+                        gameUI.hideConstructionMenu(); // ✅ RECOMMENDED
+                        gameUI.showDestructionMenu();
                     }
                     break;
                 }
@@ -129,11 +129,10 @@ public class GameScreen implements Screen {
         int cols = gameArea.getCols();
         int rows = gameArea.getRows();
 
-        float uiWidth = (width > height) ? width / 6f : 0;
-        float uiHeight = (width > height) ? 0 : height / 6f;
-
+        // Use fixed sidebar width instead of ratio
+        float uiWidth = GameUI.getSidebarWidth();
         float availableWidth = width - uiWidth;
-        float availableHeight = height - uiHeight;
+        float availableHeight = height;
 
         float levelAspect = (float) cols / rows;
         float screenAspect = availableWidth / availableHeight;
@@ -146,7 +145,7 @@ public class GameScreen implements Screen {
         float totalGameHeight = rows * cellSize;
 
         float gameStartX = (availableWidth - totalGameWidth) / 2f;
-        float gameStartY = (availableHeight - totalGameHeight) / 2f + uiHeight;
+        float gameStartY = (availableHeight - totalGameHeight) / 2f;
 
         gameRenderer = new GameRenderer(
             gameArea,
@@ -154,8 +153,6 @@ public class GameScreen implements Screen {
             cellSize,
             cellSize
         );
-
-        gameUI.layout(width, height);
     }
 
     @Override public void dispose() {

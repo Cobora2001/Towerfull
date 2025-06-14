@@ -11,12 +11,8 @@ public class DestructionMenu extends Table {
     private final Label infoLabel;
     private BuildSpot currentSpot;
 
-    private float scale;
-
-    public DestructionMenu(Skin skin, DestructionListener listener, float scale) {
+    public DestructionMenu(Skin skin, DestructionListener listener) {
         super(skin);
-
-        this.scale = scale;
 
         pad(6);
         align(Align.topLeft);
@@ -26,23 +22,21 @@ public class DestructionMenu extends Table {
         add(infoLabel).padBottom(6).row();
 
         TextButton sell = new TextButton("Sell", skin);
-        sell.getLabel().setFontScale(scale);
         sell.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 listener.onSellTower(currentSpot); // store it when showing the menu
             }
         });
-        add(sell).padBottom(4 * scale).fillX().growX();
+        add(sell).padBottom(4).fillX().growX();
 
         TextButton cancelBtn = new TextButton("Cancel", skin);
-        cancelBtn.getLabel().setFontScale(scale);
         cancelBtn.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 listener.onCancel();
                 setVisible(false);
             }
         });
-        add(cancelBtn).padTop(4 * scale).fillX().growX();
+        add(cancelBtn).padTop(4).fillX().growX();
 
         setTransform(true);
         setOrigin(Align.topLeft);
@@ -65,7 +59,6 @@ public class DestructionMenu extends Table {
     }
 
     public void setScale(float scale) {
-        this.scale = scale;
         infoLabel.getStyle().font.getData().setScale(scale);
         for (Actor actor : getChildren()) {
             if (actor instanceof TextButton) {

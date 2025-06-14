@@ -4,7 +4,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import io.github.tower_defense.gameBoard.EconomyManager;
 import io.github.tower_defense.entities.defenses.Tower;
 import io.github.tower_defense.enumElements.TowerType;
 import io.github.tower_defense.tools.GameAssets;
@@ -19,12 +18,8 @@ public class ConstructionMenu extends Table {
 
     private final EnumMap<TowerType, TextButton> buttons = new EnumMap<>(TowerType.class);
 
-    private float scale;
-
-    public ConstructionMenu(Skin skin, EconomyManager economy, TowerSelectionListener listener, float scale) {
+    public ConstructionMenu(Skin skin, TowerSelectionListener listener) {
         super(skin);
-
-        this.scale = scale;
 
         pad(6);
         align(Align.topLeft);
@@ -41,7 +36,6 @@ public class ConstructionMenu extends Table {
             Tower prototype = GameAssets.get().towerFactory.getPrototype(type);
             String label = type.name() + " (" + prototype.getCost() + "g)";
             TextButton btn = new TextButton(label, skin);
-            btn.getLabel().setFontScale(scale);
             btn.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
                     listener.onTowerSelected(type);
@@ -49,21 +43,20 @@ public class ConstructionMenu extends Table {
                 }
             });
             buttons.put(type, btn);
-            add(btn).padBottom(4 * scale).fillX().growX().row();
+            add(btn).padBottom(4).fillX().growX().row();
         }
 
         setTransform(true); // important !
         setOrigin(Align.topLeft); // origine pour shrink
 
         TextButton cancel = new TextButton("Cancel", skin);
-        cancel.getLabel().setFontScale(scale);
         cancel.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 listener.onCancel();
                 setVisible(false);
             }
         });
-        add(cancel).padTop(8 * scale).fillX().growX();
+        add(cancel).padTop(8).fillX().growX();
         setVisible(false); // par défaut caché
     }
 
@@ -74,7 +67,6 @@ public class ConstructionMenu extends Table {
     }
 
     public void setScale(float scale) {
-        this.scale = scale;
         for (TextButton button : buttons.values()) {
             button.getLabel().setFontScale(scale);
         }
