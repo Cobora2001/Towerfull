@@ -35,7 +35,7 @@ public class LevelSelectScreen implements Screen {
         this.stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-        this.skin = new Skin(Gdx.files.internal("uiskin.json"));
+        this.skin = GameAssets.get().skin;
         this.table = new Table();
         table.setFillParent(true);
         table.center();

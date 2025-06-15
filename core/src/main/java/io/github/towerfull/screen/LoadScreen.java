@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.towerfull.Main;
 import io.github.towerfull.gameBoard.GameArea;
+import io.github.towerfull.tools.GameAssets;
 import io.github.towerfull.tools.SaveManager;
 
 public class LoadScreen extends ScreenAdapter {
@@ -26,7 +27,7 @@ public class LoadScreen extends ScreenAdapter {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-        skin = new Skin(Gdx.files.internal("uiskin.json")); // Ensure this skin file exists
+        skin = GameAssets.get().skin;
 
         Table root = new Table();
         root.setFillParent(true);

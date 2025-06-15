@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -39,6 +40,8 @@ public class GameAssets {
     public final Map<AppearanceId, Appearance> appearances = new HashMap<>();
     public final Map<BackgroundId, Background> backgrounds = new HashMap<>();
 
+    public Skin skin;
+
     private Music bgMusic;
     private boolean muted = false;
 
@@ -56,6 +59,16 @@ public class GameAssets {
         loadBackgrounds(json);
         loadLevels(json);
         loadMusic();
+        loadSkin();
+    }
+
+    private void loadSkin() {
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        if (skin == null) {
+            Gdx.app.error("GameAssets", "Failed to load skin");
+        } else {
+            Gdx.app.log("GameAssets", "Skin loaded successfully");
+        }
     }
 
     private void loadAppearances(Json json) {
@@ -181,6 +194,10 @@ public class GameAssets {
         if (bgMusic != null) {
             bgMusic.stop();
             bgMusic.dispose();
+        }
+
+        if (skin != null) {
+            skin.dispose();
         }
     }
 

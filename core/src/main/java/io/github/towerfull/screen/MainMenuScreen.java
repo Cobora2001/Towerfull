@@ -21,7 +21,7 @@ public class MainMenuScreen implements Screen {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = GameAssets.get().skin;
 
         Table table = new Table();
         table.setFillParent(true);

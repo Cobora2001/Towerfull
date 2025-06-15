@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.towerfull.Main;
+import io.github.towerfull.tools.GameAssets;
 
 public class DefeatScreen implements Screen {
     private final Stage stage;
@@ -21,7 +22,7 @@ public class DefeatScreen implements Screen {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = GameAssets.get().skin;
 
         Table table = new Table();
         table.setFillParent(true);

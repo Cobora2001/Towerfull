@@ -12,6 +12,7 @@ import io.github.towerfull.gameBoard.level.Level;
 import io.github.towerfull.Main;
 import io.github.towerfull.screen.accessories.ConstructionController;
 import io.github.towerfull.screen.accessories.GameUI;
+import io.github.towerfull.tools.GameAssets;
 import io.github.towerfull.tools.GameRenderer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -56,7 +57,7 @@ public class GameScreen implements Screen {
 
         // Create UI with fresh viewport and optional custom skin loader
         gameUI = new GameUI(
-            new Skin(Gdx.files.internal("uiskin.json")),
+                GameAssets.get().skin,
             new ScreenViewport(),
             gameArea.getEconomyManager(),
             constructionController
