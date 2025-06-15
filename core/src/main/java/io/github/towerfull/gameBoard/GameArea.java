@@ -22,9 +22,7 @@ public class GameArea extends Prototype {
 
     private final Array<Monster> monsters = new Array<>();
     private final Array<BuildSpot> buildSpots = new Array<>();
-
-    private PrototypeFactory<MonsterType, Monster> prototypeFactory = new PrototypeFactory<>();
-
+    
     private final PathGraph pathGraph;
     private final Array<Node> spawnPoints = new Array<>();
 
@@ -74,7 +72,6 @@ public class GameArea extends Prototype {
         this.rows = gameArea.rows;
         this.isPaused = gameArea.isPaused;
         this.life = gameArea.life;
-        this.prototypeFactory = gameArea.prototypeFactory.clone();
         this.economyManager = gameArea.economyManager.clone();
         this.pathGraph = gameArea.pathGraph;
         this.spawnPoints.addAll(gameArea.spawnPoints);
