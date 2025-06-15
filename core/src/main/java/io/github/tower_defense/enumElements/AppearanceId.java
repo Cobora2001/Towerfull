@@ -1,21 +1,21 @@
 package io.github.tower_defense.enumElements;
 
 public enum AppearanceId {
-    // 🧱 Mobs de base
+    // 🧱 Mobs
     GOBLIN,
     SKELETON,
     ORC,
     RAT,
-
-    // 🛡️ Résistants
     GOLEM,
-
-    // 💨 Rapides
     WOLF,
-
-    // 🔥 Spéciaux
     SHAMAN,
     WIZARD,
+    THIEF,
+    DRAGON,
+    ZOMBIE,
+    ROBOT,
+    ELEMENTAL,
+    MULE,
 
     // 🏰 Tours
     CASTLE,
@@ -33,9 +33,21 @@ public enum AppearanceId {
     // Background
     GRASS,
     COBBLE,
+    SAND,
+    PATH,
+    ICE,
+    ICE_PATH,
+    DIRT,
+    BRICK,
 
     // Start and End
     PORTAL,
-    TEMPLE
+    TEMPLE,
+    CAVE,
+    DESERT_TEMPLE,
+    ICE_SPAWN,
+    ICE_CASTLE,
+    BROKEN_TOWER,
+    SHACK
 }
 

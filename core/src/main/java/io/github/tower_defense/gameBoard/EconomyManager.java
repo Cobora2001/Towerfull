@@ -35,6 +35,13 @@ public class EconomyManager extends Prototype {
             gold += amount;
             notifyGoldChanged();
         }
+        else {
+            gold -= amount; // Allow negative earnings, e.g., for penalties
+            if (gold < 0) {
+                gold = 0; // Ensure gold doesn't go negative
+            }
+            notifyGoldChanged();
+        }
     }
 
     public void setGold(int amount) {

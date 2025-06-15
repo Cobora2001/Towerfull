@@ -1,18 +1,52 @@
 {
-  "SCENARIO_1": {
-    "waves":
-    [
-      { "wave": "WAVE1", "startTime": 0 },
-      { "wave": "WAVE2", "startTime": 10 }
+  "SCENARIO_TUTORIAL": {
+    "waves": [
+      { "wave": "WAVE1", "startTime": 2 },
+      { "wave": "WAVE2", "startTime": 17 }
     ]
   },
-  "SCENARIO_2": {
-    "waves":
-    [
-      { "wave": "WAVE1", "startTime": 0 },
-      { "wave": "WAVE2", "startTime": 15 },
-      { "wave": "WAVE3", "startTime": 30 }
-      { "wave": "WAVE_BOSS1", "startTime": 45 }
+  "SCENARIO_EASY_1": {
+    "waves": [
+      { "wave": "WAVE1", "startTime": 1 },
+      { "wave": "WAVE2", "startTime": 13 },
+      { "wave": "WAVE3", "startTime": 27 },
+      { "wave": "WAVE_BOSS1", "startTime": 41 }
+    ]
+  },
+  "SCENARIO_MEDIUM_1": {
+    "waves": [
+      { "wave": "WAVE2", "startTime": 1 },
+      { "wave": "WAVE3", "startTime": 11 },
+      { "wave": "WAVE4", "startTime": 23 },
+      { "wave": "WAVE5", "startTime": 36 },
+      { "wave": "WAVE_BOSS1", "startTime": 51 }
+    ]
+  },
+  "SCENARIO_MEDIUM_2": {
+    "waves": [
+      { "wave": "WAVE1", "startTime": 1 },
+      { "wave": "WAVE4", "startTime": 11 },
+      { "wave": "WAVE_ZOMBIES", "startTime": 21 },
+      { "wave": "WAVE6", "startTime": 35 },
+      { "wave": "WAVE_BOSS1", "startTime": 49 }
+    ]
+  },
+  "SCENARIO_HARD_1": {
+    "waves": [
+      { "wave": "WAVE3", "startTime": 1 },
+      { "wave": "WAVE5", "startTime": 9 },
+      { "wave": "WAVE6", "startTime": 17 },
+      { "wave": "WAVE_ESCORT", "startTime": 26 },
+      { "wave": "WAVE_BOSS2", "startTime": 41 }
+    ]
+  },
+  "SCENARIO_HARD_2": {
+    "waves": [
+      { "wave": "WAVE4", "startTime": 1 },
+      { "wave": "WAVE6", "startTime": 11 },
+      { "wave": "WAVE_ZOMBIES", "startTime": 21 },
+      { "wave": "WAVE_ESCORT", "startTime": 33 },
+      { "wave": "WAVE_BOSS2", "startTime": 47 }
     ]
   }
 }

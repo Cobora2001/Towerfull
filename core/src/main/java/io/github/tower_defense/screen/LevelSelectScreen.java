@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.tower_defense.Main;
+import io.github.tower_defense.enumElements.BackgroundId;
 import io.github.tower_defense.gameBoard.level.Level;
 import io.github.tower_defense.enumElements.LevelId;
 import io.github.tower_defense.gameBoard.level.generators.PathGenerator;
@@ -88,7 +89,11 @@ public class LevelSelectScreen implements Screen {
         Array<Vector2> path = PathGenerator.generatePath(cols, rows);
         Scenario scenario = GameAssets.get().scenarioFactory.getRandom();
         Array<Vector2> buildableTiles = TowerPlacementGenerator.generate(cols, rows, path);
-        return new Level(cols, rows, path, scenario, buildableTiles, 100, 20);
+
+        // Get a random value from the BackgroundId enum
+        BackgroundId randomBackground = BackgroundId.values()[new Random().nextInt(BackgroundId.values().length)];
+
+        return new Level(cols, rows, path, scenario, buildableTiles, 100, 20, GameAssets.get().backgrounds.get(randomBackground));
     }
 
     private String formatLevelName(String rawName) {

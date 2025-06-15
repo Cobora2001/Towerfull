@@ -4,7 +4,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import io.github.tower_defense.gameBoard.EconomyManager;
 import io.github.tower_defense.entities.defenses.Tower;
 import io.github.tower_defense.enumElements.TowerType;
 import io.github.tower_defense.tools.GameAssets;
@@ -19,11 +18,7 @@ public class ConstructionMenu extends Table {
 
     private final EnumMap<TowerType, TextButton> buttons = new EnumMap<>(TowerType.class);
 
-    public ConstructionMenu(
-        Skin skin,
-        EconomyManager economy,
-        TowerSelectionListener listener
-    ) {
+    public ConstructionMenu(Skin skin, TowerSelectionListener listener) {
         super(skin);
 
         pad(6);
@@ -41,7 +36,6 @@ public class ConstructionMenu extends Table {
             Tower prototype = GameAssets.get().towerFactory.getPrototype(type);
             String label = type.name() + " (" + prototype.getCost() + "g)";
             TextButton btn = new TextButton(label, skin);
-            btn.getLabel().setFontScale(0.8f);
             btn.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
                     listener.onTowerSelected(type);
@@ -49,21 +43,20 @@ public class ConstructionMenu extends Table {
                 }
             });
             buttons.put(type, btn);
-            add(btn).padBottom(4).width(140).fillX().row();
+            add(btn).padBottom(4).fillX().growX().row();
         }
 
         setTransform(true); // important !
         setOrigin(Align.topLeft); // origine pour shrink
 
         TextButton cancel = new TextButton("Cancel", skin);
-        cancel.getLabel().setFontScale(0.8f);
         cancel.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 listener.onCancel();
                 setVisible(false);
             }
         });
-        add(cancel).padTop(8).width(140).fillX();
+        add(cancel).padTop(8).fillX().growX();
         setVisible(false); // par défaut caché
     }
 
@@ -71,5 +64,12 @@ public class ConstructionMenu extends Table {
         if (buttons.containsKey(type)) {
             buttons.get(type).setDisabled(!enabled);
         }
+    }
+
+    public void setScale(float scale) {
+        for (TextButton button : buttons.values()) {
+            button.getLabel().setFontScale(scale);
+        }
+        invalidateHierarchy(); // Update layout after changing scale
     }
 }

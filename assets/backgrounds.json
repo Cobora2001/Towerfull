@@ -1,0 +1,26 @@
+{
+  "GRASSLAND": {
+    "backgroundAppearance": "GRASS",
+    "pathAppearance": "COBBLE",
+    "pathStartAppearance": "PORTAL",
+    "pathEndAppearance": "TEMPLE"
+  },
+  "DESERT": {
+    "backgroundAppearance": "SAND",
+    "pathAppearance": "PATH",
+    "pathStartAppearance": "CAVE",
+    "pathEndAppearance": "DESERT_TEMPLE"
+  },
+  "ICE": {
+    "backgroundAppearance": "ICE",
+    "pathAppearance": "ICE_PATH",
+    "pathStartAppearance": "ICE_SPAWN",
+    "pathEndAppearance": "ICE_CASTLE"
+  },
+  "DIRT": {
+    "backgroundAppearance": "DIRT",
+    "pathAppearance": "BRICK",
+    "pathStartAppearance": "BROKEN_TOWER",
+    "pathEndAppearance": "SHACK"
+  }
+}

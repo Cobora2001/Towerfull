@@ -1,32 +1,112 @@
 {
   "WAVE1": {
     "data": [
-      { "type": "ORC", "spawnTime": 1 },
-      { "type": "WOLF", "spawnTime": 1 },
-      { "type": "GOBLIN", "spawnTime": 2 }
+      { "type": "GOBLIN", "spawnTime": 0.0 },
+      { "type": "WOLF", "spawnTime": 0.2 },
+      { "type": "ORC", "spawnTime": 0.4 },
+      { "type": "SKELETON", "spawnTime": 0.6 }
     ]
   },
   "WAVE2": {
     "data": [
-      { "type": "SHAMAN", "spawnTime": 0 },
-      { "type": "SKELETON", "spawnTime": 1 },
-      { "type": "GOLEM", "spawnTime": 2 }
+      { "type": "SHAMAN", "spawnTime": 0.0 },
+      { "type": "GOBLIN", "spawnTime": 0.2 },
+      { "type": "SKELETON", "spawnTime": 0.4 },
+      { "type": "GOLEM", "spawnTime": 0.6 }
     ]
   },
   "WAVE3": {
     "data": [
-      { "type": "SKELETON", "spawnTime": 0 },
-      { "type": "ORC", "spawnTime": 0.7 },
-      { "type": "GOBLIN", "spawnTime": 1.0 },
-      { "type": "WOLF", "spawnTime": 1.5 },
-      { "type": "SHAMAN", "spawnTime": 2.2 }
+      { "type": "GOBLIN", "spawnTime": 0.0 },
+      { "type": "WOLF", "spawnTime": 0.1 },
+      { "type": "SHAMAN", "spawnTime": 0.3 },
+      { "type": "ORC", "spawnTime": 0.5 },
+      { "type": "SKELETON", "spawnTime": 0.7 }
+    ]
+  },
+  "WAVE4": {
+    "data": [
+      { "type": "WIZARD", "spawnTime": 0.0 },
+      { "type": "WOLF", "spawnTime": 0.2 },
+      { "type": "ROBOT", "spawnTime": 0.4 },
+      { "type": "GOBLIN", "spawnTime": 0.6 },
+      { "type": "SKELETON", "spawnTime": 0.8 },
+      { "type": "ROBOT", "spawnTime": 1.0 },
+      { "type": "SHAMAN", "spawnTime": 1.2 }
+    ]
+  },
+  "WAVE_ZOMBIES": {
+    "data": [
+      { "type": "ZOMBIE", "spawnTime": 0.0 },
+      { "type": "ZOMBIE", "spawnTime": 0.3 },
+      { "type": "ZOMBIE", "spawnTime": 0.6 },
+      { "type": "ZOMBIE", "spawnTime": 0.9 },
+      { "type": "ZOMBIE", "spawnTime": 1.2 },
+      { "type": "ZOMBIE", "spawnTime": 1.5 },
+      { "type": "ZOMBIE", "spawnTime": 1.8 },
+      { "type": "ZOMBIE", "spawnTime": 2.1 },
+      { "type": "ZOMBIE", "spawnTime": 2.4 },
+      { "type": "ZOMBIE", "spawnTime": 2.7 }
+    ]
+  },
+  "WAVE5": {
+    "data": [
+      { "type": "ELEMENTAL", "spawnTime": 0.0 },
+      { "type": "GOBLIN", "spawnTime": 0.1 },
+      { "type": "SKELETON", "spawnTime": 0.2 },
+      { "type": "WOLF", "spawnTime": 0.3 },
+      { "type": "ORC", "spawnTime": 0.4 },
+      { "type": "SHAMAN", "spawnTime": 0.5 },
+      { "type": "ELEMENTAL", "spawnTime": 0.6 },
+      { "type": "ROBOT", "spawnTime": 0.8 }
+    ]
+  },
+  "WAVE_ESCORT": {
+    "data": [
+      { "type": "MULE", "spawnTime": 0.0 },
+      { "type": "SKELETON", "spawnTime": 0.1 },
+      { "type": "WOLF", "spawnTime": 0.2 },
+      { "type": "SHAMAN", "spawnTime": 0.3 },
+      { "type": "ORC", "spawnTime": 0.4 },
+      { "type": "GOBLIN", "spawnTime": 0.5 },
+      { "type": "ROBOT", "spawnTime": 0.7 },
+      { "type": "ELEMENTAL", "spawnTime": 0.9 }
+    ]
+  },
+  "WAVE6": {
+    "data": [
+      { "type": "WIZARD", "spawnTime": 0.0 },
+      { "type": "ELEMENTAL", "spawnTime": 0.1 },
+      { "type": "ROBOT", "spawnTime": 0.2 },
+      { "type": "GOBLIN", "spawnTime": 0.3 },
+      { "type": "WOLF", "spawnTime": 0.4 },
+      { "type": "SHAMAN", "spawnTime": 0.5 },
+      { "type": "ROBOT", "spawnTime": 0.6 },
+      { "type": "ELEMENTAL", "spawnTime": 0.8 },
+      { "type": "DRAGON", "spawnTime": 1.2 }
     ]
   },
   "WAVE_BOSS1": {
     "data": [
-      { "type": "GOLEM", "spawnTime": 0 },
-      { "type": "WIZARD", "spawnTime": 1.0 },
-      { "type": "WIZARD", "spawnTime": 2.0 }
+      { "type": "GOLEM", "spawnTime": 0.0 },
+      { "type": "WIZARD", "spawnTime": 0.6 },
+      { "type": "WIZARD", "spawnTime": 1.2 },
+      { "type": "SHAMAN", "spawnTime": 1.8 },
+      { "type": "SKELETON", "spawnTime": 2.4 },
+      { "type": "ELEMENTAL", "spawnTime": 3.0 },
+      { "type": "ROBOT", "spawnTime": 3.6 }
+    ]
+  },
+  "WAVE_BOSS2": {
+    "data": [
+      { "type": "DRAGON", "spawnTime": 0.0 },
+      { "type": "GOLEM", "spawnTime": 0.8 },
+      { "type": "GOLEM", "spawnTime": 1.6 },
+      { "type": "ELEMENTAL", "spawnTime": 2.2 },
+      { "type": "SKELETON", "spawnTime": 2.7 },
+      { "type": "SHAMAN", "spawnTime": 3.2 },
+      { "type": "ROBOT", "spawnTime": 3.7 },
+      { "type": "DRAGON", "spawnTime": 4.5 }
     ]
   }
 }
