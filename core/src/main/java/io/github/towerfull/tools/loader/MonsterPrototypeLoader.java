@@ -1,0 +1,22 @@
+package io.github.towerfull.tools.loader;
+
+import io.github.towerfull.entities.ennemies.Monster;
+import io.github.towerfull.enumElements.MonsterType;
+import io.github.towerfull.tools.GameAssets;
+import io.github.towerfull.tools.data.MonsterData;
+
+public class MonsterPrototypeLoader extends AbstractPrototypeLoader<Monster, MonsterData, MonsterType> {
+    @Override
+    protected Monster createInstance(MonsterType type, MonsterData data) {
+        return new Monster(
+                data.hp,
+                data.hp,
+                null, // logicalPos (sera set plus tard)
+                data.speed,
+                data.damage,
+                data.reward,
+                GameAssets.get().appearances.get(data.appearance)
+        );
+    }
+}
+
