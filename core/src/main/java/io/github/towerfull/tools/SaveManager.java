@@ -13,7 +13,7 @@ public class SaveManager {
     private SaveManager() {}
 
     public static SaveManager getInstance() {
-        if (instance == null) {
+        if(instance == null) {
             instance = new SaveManager();
         }
         return instance;
