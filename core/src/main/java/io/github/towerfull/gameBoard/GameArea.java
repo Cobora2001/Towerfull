@@ -13,16 +13,14 @@ import io.github.towerfull.entities.defenses.BuildSpot;
 import io.github.towerfull.entities.defenses.Tower;
 import io.github.towerfull.entities.ennemies.Monster;
 import io.github.towerfull.entities.ennemies.Scenario;
-import io.github.towerfull.enumElements.MonsterType;
 import io.github.towerfull.gameBoard.level.Level;
 import io.github.towerfull.listener.LevelListener;
-import io.github.towerfull.tools.PrototypeFactory;
 
 public class GameArea extends Prototype {
 
     private final Array<Monster> monsters = new Array<>();
     private final Array<BuildSpot> buildSpots = new Array<>();
-    
+
     private final PathGraph pathGraph;
     private final Array<Node> spawnPoints = new Array<>();
 
