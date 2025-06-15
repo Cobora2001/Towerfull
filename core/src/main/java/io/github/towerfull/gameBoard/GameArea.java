@@ -148,7 +148,7 @@ public class GameArea extends Prototype {
             if(monster.hasReachedEnd()) {
                 monsters.removeIndex(i);
                 loseLife(monster.getDamage());
-            } else if (monster.isDead()) {
+            } else if(monster.isDead()) {
                 monsters.removeIndex(i);
                 economyManager.earnGold(monster.getReward());
             }

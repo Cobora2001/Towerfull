@@ -39,7 +39,7 @@ public class PathGenerator {
             int horSteps;
             if(maxHorSteps >= 2) {
                 horSteps = MathUtils.random(2, maxHorSteps);
-            } else if (maxHorSteps >= 1) {
+            } else if(maxHorSteps >= 1) {
                 horSteps = 1;
             } else {
                 break; // no room to move

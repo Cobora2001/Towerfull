@@ -1,3 +1,8 @@
+// Authors: Thomas Vuilleumier, Sebastian Diaz, Lionel Pollien
+// Date of creation: 2025-06-15
+// Aim: Class to load monster prototypes from data files
+// -------------------------------------------------------------------------------------
+
 package io.github.towerfull.tools.loader;
 
 import io.github.towerfull.entities.ennemies.Monster;

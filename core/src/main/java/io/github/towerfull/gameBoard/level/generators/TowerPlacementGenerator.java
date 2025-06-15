@@ -28,7 +28,7 @@ public class TowerPlacementGenerator {
     public static Array<Vector2> generate(int width, int height, Array<Vector2> path) {
         // Collect all path cells
         HashSet<Vector2> pathCells = new HashSet<>();
-        for(int i = 0; i < path.size - 1; i++) {
+        for(int i = 0; i < path.size - 1; ++i) {
             Vector2 start = path.get(i);
             Vector2 end = path.get(i + 1);
 
@@ -43,8 +43,8 @@ public class TowerPlacementGenerator {
             int x = x1, y = y1;
             while(x != x2 || y != y2) {
                 pathCells.add(new Vector2(x, y));
-                if (x != x2) x += dx;
-                if (y != y2) y += dy;
+                if(x != x2) x += dx;
+                if(y != y2) y += dy;
             }
             pathCells.add(new Vector2(x2, y2)); // include the final point
         }
@@ -54,8 +54,8 @@ public class TowerPlacementGenerator {
         Vector2 start = path.first();
         Vector2 end = path.peek();
 
-        for(int dx = -1; dx <= 1; dx++) {
-            for(int dy = -1; dy <= 1; dy++) {
+        for(int dx = -1; dx <= 1; ++dx) {
+            for(int dy = -1; dy <= 1; ++dy) {
                 entryExit.add(new Vector2((int) start.x + dx, (int) start.y + dy));
                 entryExit.add(new Vector2((int) end.x + dx, (int) end.y + dy));
             }
@@ -68,9 +68,9 @@ public class TowerPlacementGenerator {
             int x = (int) point.x;
             int y = (int) point.y;
 
-            for(int dx = -1; dx <= 1; dx++) {
-                for(int dy = -1; dy <= 1; dy++) {
-                    if (dx == 0 && dy == 0) continue;
+            for(int dx = -1; dx <= 1; ++dx) {
+                for(int dy = -1; dy <= 1; ++dy) {
+                    if(dx == 0 && dy == 0) continue;
 
                     int nx = x + dx;
                     int ny = y + dy;

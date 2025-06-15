@@ -84,7 +84,7 @@ public class Level {
 
         Node prevNode = null;
         for(Vector2 pos : path) {
-            String id = String.valueOf(currentId++);
+            String id = String.valueOf(++currentId);
             Node currentNode = new Node(id, pos);
 
             graphMap.put(id, currentNode);

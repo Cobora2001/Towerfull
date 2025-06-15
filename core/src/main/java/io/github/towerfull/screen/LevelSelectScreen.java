@@ -66,14 +66,14 @@ public class LevelSelectScreen implements Screen {
 
         // Prepare and sort levels by display label
         Map<String, Level> displayNameToLevel = new TreeMap<>();
-        for (LevelId levelId : GameAssets.get().levels.keySet()) {
+        for(LevelId levelId : GameAssets.get().levels.keySet()) {
             Level level = GameAssets.get().levels.get(levelId);
             String displayName = formatLevelName(levelId.name());
             displayNameToLevel.put(displayName, level);
         }
 
         // Add sorted buttons
-        for (Map.Entry<String, Level> entry : displayNameToLevel.entrySet()) {
+        for(Map.Entry<String, Level> entry : displayNameToLevel.entrySet()) {
             addLevelButton(entry.getKey(), entry.getValue());
         }
 
