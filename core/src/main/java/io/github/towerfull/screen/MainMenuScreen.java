@@ -1,3 +1,9 @@
+// Authors: Thomas Vuilleumier, Sebastian Diaz, Lionel Pollien
+// Date of creation: 2025-06-15
+// Aim: The main screen of the game, where players can start a new game, load a saved game,
+//      mute/unmute music, or quit the game.
+// -------------------------------------------------------------------------------------
+
 package io.github.towerfull.screen;
 
 import com.badlogic.gdx.Gdx;
@@ -11,17 +17,26 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.towerfull.Main;
 import io.github.towerfull.tools.GameAssets;
 
+/**
+ * The main menu screen of the game.
+ * This screen allows players to start a new game, load a saved game,
+ * mute/unmute music, or quit the game.
+ */
 public class MainMenuScreen implements Screen {
-
+    // The stage for rendering UI elements
     private final Stage stage;
-    private final Skin skin;
 
+    /**
+     * Constructor for the MainMenuScreen.
+     * Initializes the stage and sets up the UI elements.
+     *
+     * @param game The main game instance.
+     */
     public MainMenuScreen(Main game) {
-
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-        skin = GameAssets.get().skin;
+        Skin skin = GameAssets.get().skin;
 
         Table table = new Table();
         table.setFillParent(true);
@@ -72,9 +87,19 @@ public class MainMenuScreen implements Screen {
         stage.addActor(table);
     }
 
+    /**
+     * Called when the screen is first shown.
+     * This method is empty as we don't need to perform any actions on show.
+     */
     @Override
     public void show() {}
 
+    /**
+     * Renders the screen.
+     * Clears the screen and draws the stage.
+     *
+     * @param delta The time since the last render.
+     */
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
@@ -84,18 +109,41 @@ public class MainMenuScreen implements Screen {
         stage.draw();
     }
 
+    /**
+     * Called when the screen is resized.
+     * Updates the viewport of the stage.
+     *
+     * @param width  The new width of the screen.
+     * @param height The new height of the screen.
+     */
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
 
+    /**
+     * Called when we close the screen.
+     */
     @Override
     public void dispose() {
         stage.dispose();
-        skin.dispose();
     }
 
+    /**
+     * Called when the screen is paused.
+     * This method is empty as we don't need to perform any actions on pause.
+     */
     @Override public void pause() {}
+
+    /**
+     * Called when the screen is resumed.
+     * This method is empty as we don't need to perform any actions on resume.
+     */
     @Override public void resume() {}
+
+    /**
+     * Called when the screen is hidden.
+     * This method is empty as we don't need to perform any actions on hide.
+     */
     @Override public void hide() {}
 }

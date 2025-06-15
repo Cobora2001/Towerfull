@@ -1,3 +1,8 @@
+// Authors: Thomas Vuilleumier, Sebastian Diaz, Lionel Pollien
+// Date of creation: 2025-06-15
+// Aim: Is the screen displayed when the player plays a level.
+// -------------------------------------------------------------------------------------
+
 package io.github.towerfull.screen;
 
 import com.badlogic.gdx.*;
@@ -16,14 +21,33 @@ import io.github.towerfull.tools.GameAssets;
 import io.github.towerfull.tools.GameRenderer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+/**
+ * GameScreen is the main screen where the game is played.
+ * It handles rendering the game area, user interface, and interactions.
+ */
 public class GameScreen implements Screen {
+    // The main game instance
     private final Main game;
+
+    // The game area containing the level, monsters, towers, etc.
     private final GameArea gameArea;
+
+    // Renderer for the game area
     private GameRenderer gameRenderer;
+
+    // The user interface for the game, including construction menus and HUD
     private GameUI gameUI;
 
+    // Controller for handling construction actions like building towers
     private ConstructionController constructionController;
 
+    /**
+     * Constructor for GameScreen with a specific level.
+     * Initializes the game area and sets up the UI.
+     *
+     * @param game The main game instance
+     * @param level The level to be played
+     */
     public GameScreen(Main game, Level level) {
         this.game = game;
         this.gameArea = new GameArea(level);
@@ -44,6 +68,13 @@ public class GameScreen implements Screen {
         });
     }
 
+    /**
+     * Constructor for GameScreen with an existing game area.
+     * Initializes the UI and renderer based on the provided game area.
+     *
+     * @param game The main game instance
+     * @param gameArea The existing game area to be displayed
+     */
     public GameScreen(Main game, GameArea gameArea) {
         this.game = game;
         this.gameArea = gameArea;
@@ -52,6 +83,10 @@ public class GameScreen implements Screen {
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
+    /**
+     * Sets up the user interface for the game screen.
+     * Initializes the construction controller and UI elements.
+     */
     private void setupUI() {
         constructionController = new ConstructionController(gameArea, game);
 
@@ -73,12 +108,14 @@ public class GameScreen implements Screen {
         });
 
         constructionController.setLifeListener(newLife -> gameUI.updateLife(newLife));
-
-
     }
 
+    /**
+     * Checks if a build spot was clicked and handles the interaction.
+     * If a build spot is clicked, it shows the construction or destruction menu.
+     */
     private void checkBuildSpotClick() {
-        if (Gdx.input.justTouched()) {
+        if(Gdx.input.justTouched()) {
             Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
             gameUI.getStage().screenToStageCoordinates(mouse);
 
@@ -86,13 +123,13 @@ public class GameScreen implements Screen {
             int clickX = (int) logical.x;
             int clickY = (int) logical.y;
 
-            for (BuildSpot spot : gameArea.getBuildSpots()) {
+            for(BuildSpot spot : gameArea.getBuildSpots()) {
                 Vector2 spotPos = spot.getLogicalPos();
                 int spotX = (int) spotPos.x;
                 int spotY = (int) spotPos.y;
 
-                if (clickX == spotX && clickY == spotY) {
-                    if (!spot.isUsed()) {
+                if(clickX == spotX && clickY == spotY) {
+                    if(!spot.isUsed()) {
                         constructionController.showMenu(gameUI.getConstructionMenu(), spot);
                         gameUI.hideDestructionMenu();
                         gameUI.showConstructionMenu(); // ✅ THIS LINE IS MISSING
@@ -107,6 +144,12 @@ public class GameScreen implements Screen {
         }
     }
 
+    /**
+     * Renders the game screen.
+     * Clears the screen, updates the game area, and renders the game and UI.
+     *
+     * @param delta Time since the last frame
+     */
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -122,6 +165,12 @@ public class GameScreen implements Screen {
         gameUI.draw();
     }
 
+    /**
+     * This method is called when the screen is resized.
+     * It recalculates the game area dimensions and updates the renderer accordingly.
+     * @param width The new width of the screen
+     * @param height The new height of the screen
+     */
     @Override
     public void resize(int width, int height) {
         gameUI.resize(width, height);
@@ -155,12 +204,34 @@ public class GameScreen implements Screen {
         );
     }
 
+    /**
+     * Disposes of the resources used by the game screen.
+     * This method is called when the screen is no longer needed.
+     */
     @Override public void dispose() {
         gameUI.dispose();
     }
 
+
+    /**
+     * This method is called when the screen is shown.
+     */
     @Override public void show() {}
+
+    /**
+     * This method is called when the screen is hidden.
+     * It can be used to pause the game or release resources.
+     */
     @Override public void hide() {}
+
+    /**
+     * This method is called when the game is paused.
+     */
     @Override public void pause() {}
+
+    /**
+     * This method is called when the game is resumed.
+     * It can be used to restore the game state after a pause.
+     */
     @Override public void resume() {}
 }
