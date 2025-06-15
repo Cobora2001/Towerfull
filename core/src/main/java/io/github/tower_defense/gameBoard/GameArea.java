@@ -51,7 +51,7 @@ public class GameArea extends Prototype {
 
         this.pathGraph = level.getPathGraph();
         this.spawnPoints.addAll(pathGraph.getSpawns());
-        this.scenario = level.getScenario();
+        this.scenario = level.getScenario().clone();
 
         this.cols = level.getCols();
         this.rows = level.getRows();
