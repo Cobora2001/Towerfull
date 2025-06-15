@@ -59,7 +59,6 @@ public class GameScreen implements Screen {
         gameUI = new GameUI(
                 GameAssets.get().skin,
             new ScreenViewport(),
-            gameArea.getEconomyManager(),
             constructionController
         );
 

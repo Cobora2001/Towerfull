@@ -1,3 +1,8 @@
+// Authors: Thomas Vuilleumier, Sebastian Diaz, Lionel Pollien
+// Date of creation: 2025-06-15
+// Aim: Allows the UI to display a menu for tower destruction.
+// -------------------------------------------------------------------------------------
+
 package io.github.towerfull.screen.accessories;
 
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -7,10 +12,22 @@ import com.badlogic.gdx.utils.Align;
 import io.github.towerfull.entities.defenses.BuildSpot;
 import io.github.towerfull.listener.DestructionListener;
 
+/**
+ * A menu for tower destruction, allowing players to sell towers.
+ * It provides a label for information and buttons for selling or canceling.
+ */
 public class DestructionMenu extends Table {
+    // Label to display information about the selected tower
     private final Label infoLabel;
+
+    // The current build spot that the menu is associated with
     private BuildSpot currentSpot;
 
+    /**
+     * The constructor for the DestructionMenu.
+     * @param skin the skin to style the menu
+     * @param listener the listener to handle destruction events
+     */
     public DestructionMenu(Skin skin, DestructionListener listener) {
         super(skin);
 
@@ -44,8 +61,13 @@ public class DestructionMenu extends Table {
         setVisible(false);
     }
 
+    /**
+     * Shows the destruction menu for a specific tower at the given build spot.
+     * @param spot the build spot where the tower is located
+     * @param labelText optional label text to display
+     */
     public void showForTower(BuildSpot spot, String labelText) {
-        if (spot == null || !spot.isUsed()) {
+        if(spot == null || !spot.isUsed()) {
             hide();
             return;
         }
@@ -54,15 +76,22 @@ public class DestructionMenu extends Table {
         setVisible(true);
     }
 
+    /**
+     * Hides the destruction menu.
+     */
     public void hide() {
         this.currentSpot = null;
         setVisible(false);
     }
 
+    /**
+     * Sets the scale of the menu and its components.
+     * @param scale the scale factor to apply
+     */
     public void setScale(float scale) {
         infoLabel.getStyle().font.getData().setScale(scale);
-        for (Actor actor : getChildren()) {
-            if (actor instanceof TextButton) {
+        for(Actor actor : getChildren()) {
+            if(actor instanceof TextButton) {
                 ((TextButton) actor).getLabel().setFontScale(scale);
             }
         }
