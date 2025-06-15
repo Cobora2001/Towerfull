@@ -132,7 +132,7 @@ public class BuildSpot extends Printable {
     public Appearance getAppearance() {
         Appearance appearance = isUsed() ? tower.getAppearance() : super.getAppearance();
         if(appearance == null) {
-            Gdx.app.error("BuildSpot", "❌ Apparence manquante pour " + (isUsed() ? "la tour" : "SPOT") + " au spot " + logicalPos);
+            Gdx.app.error("BuildSpot", "Apparence manquante pour " + (isUsed() ? "la tour" : "SPOT") + " au spot " + logicalPos);
         }
         return appearance;
     }
