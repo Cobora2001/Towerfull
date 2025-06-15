@@ -33,21 +33,21 @@ public class Level {
         this.cols = cols;
         this.rows = rows;
 
-        ObjectMap<String, Axis> graphMap = new ObjectMap<>();
+        ObjectMap<String, Node> graphMap = new ObjectMap<>();
         char currentId = 'A';
 
-        Axis prevAxis = null;
+        Node prevNode = null;
         for (Vector2 pos : path) {
             String id = String.valueOf(currentId++);
-            Axis currentAxis = new Axis(id, pos);
+            Node currentNode = new Node(id, pos);
 
-            graphMap.put(id, currentAxis);
+            graphMap.put(id, currentNode);
 
-            if (prevAxis != null) {
-                prevAxis.addNextAxis(currentAxis);
+            if (prevNode != null) {
+                prevNode.addNextAxis(currentNode);
             }
 
-            prevAxis = currentAxis;
+            prevNode = currentNode;
         }
 
         this.pathGraph = new PathGraph(graphMap);

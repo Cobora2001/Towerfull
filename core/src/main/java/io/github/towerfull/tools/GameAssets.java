@@ -12,7 +12,7 @@ import io.github.towerfull.entities.ennemies.Monster;
 import io.github.towerfull.entities.ennemies.Scenario;
 import io.github.towerfull.entities.ennemies.WaveSchedule;
 import io.github.towerfull.enumElements.*;
-import io.github.towerfull.gameBoard.level.Axis;
+import io.github.towerfull.gameBoard.level.Node;
 import io.github.towerfull.gameBoard.level.Background;
 import io.github.towerfull.gameBoard.level.Level;
 import io.github.towerfull.gameBoard.level.PathGraph;
@@ -25,7 +25,6 @@ import io.github.towerfull.entities.*;
 import io.github.towerfull.tools.data.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GameAssets {
@@ -124,7 +123,7 @@ public class GameAssets {
             LevelId id = LevelId.valueOf(entry.key);
             LevelData data = entry.value;
 
-            ObjectMap<String, Axis> pathGraph;
+            ObjectMap<String, Node> pathGraph;
             if (data.pathNodes != null && !data.pathNodes.isEmpty()) {
                 pathGraph = GraphUtilities.buildPathGraph(data.pathNodes);
             } else if (data.path != null && !data.path.isEmpty()) {

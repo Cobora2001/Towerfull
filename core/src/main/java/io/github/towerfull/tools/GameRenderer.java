@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import io.github.towerfull.entities.defenses.BuildSpot;
 import io.github.towerfull.entities.defenses.Tower;
 import io.github.towerfull.gameBoard.GameArea;
-import io.github.towerfull.gameBoard.level.Axis;
+import io.github.towerfull.gameBoard.level.Node;
 import io.github.towerfull.screen.accessories.AssetRenderer;
 import io.github.towerfull.entities.defenses.ShotRecord;
 import io.github.towerfull.entities.*;
@@ -177,12 +177,12 @@ public class GameRenderer {
 
         spriteBatch.begin();
 
-        for (Axis spawn : gameArea.getPathGraph().getSpawns()) {
+        for (Node spawn : gameArea.getPathGraph().getSpawns()) {
             Vector2 pos = logicalToPixelCenter(spawn.getPosition());
             assetRenderer.renderAppearance(start, pos);
         }
 
-        for (Axis endNode : gameArea.getPathGraph().getEnds()) {
+        for (Node endNode : gameArea.getPathGraph().getEnds()) {
             Vector2 pos = logicalToPixelCenter(endNode.getPosition());
             assetRenderer.renderAppearance(end, pos);
         }
@@ -196,12 +196,12 @@ public class GameRenderer {
 
         spriteBatch.begin();
 
-        ObjectMap<String, Axis> nodes = gameArea.getPathGraph().getNodes();
+        ObjectMap<String, Node> nodes = gameArea.getPathGraph().getNodes();
 
-        for (Axis from : nodes.values()) {
+        for (Node from : nodes.values()) {
             Vector2 start = from.getPosition();
 
-            for (Axis to : from.getNextAxes()) {
+            for (Node to : from.getNextAxes()) {
                 Vector2 end = to.getPosition();
 
                 int x0 = (int) start.x;

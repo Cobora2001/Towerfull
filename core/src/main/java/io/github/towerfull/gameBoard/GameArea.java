@@ -3,7 +3,7 @@ package io.github.towerfull.gameBoard;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import io.github.towerfull.gameBoard.level.Axis;
+import io.github.towerfull.gameBoard.level.Node;
 import io.github.towerfull.gameBoard.level.Background;
 import io.github.towerfull.gameBoard.level.PathGraph;
 import io.github.towerfull.listener.LifeListener;
@@ -26,7 +26,7 @@ public class GameArea extends Prototype {
     private PrototypeFactory<MonsterType, Monster> prototypeFactory = new PrototypeFactory<>();
 
     private final PathGraph pathGraph;
-    private final Array<Axis> spawnPoints = new Array<>();
+    private final Array<Node> spawnPoints = new Array<>();
 
     private final EconomyManager economyManager;
     private final Scenario scenario;
@@ -168,7 +168,7 @@ public class GameArea extends Prototype {
             return;
         }
 
-        Axis spawnPoint = spawnPoints.random();
+        Node spawnPoint = spawnPoints.random();
 
         monster.setLogicalPos(spawnPoint.getPosition().cpy());
 

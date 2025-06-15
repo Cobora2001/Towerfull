@@ -3,12 +3,12 @@ package io.github.towerfull.gameBoard.level;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-public class Axis {
+public class Node {
     private final String id;
     private final Vector2 position;
-    private final Array<Axis> nextAxes = new Array<>();
+    private final Array<Node> nextAxes = new Array<>();
 
-    public Axis(String id, Vector2 position) {
+    public Node(String id, Vector2 position) {
         this.id = id;
         this.position = position;
     }
@@ -21,11 +21,11 @@ public class Axis {
         return position;
     }
 
-    public Array<Axis> getNextAxes() {
+    public Array<Node> getNextAxes() {
         return nextAxes;
     }
 
-    public void addNextAxis(Axis axis) {
-        nextAxes.add(axis);
+    public void addNextAxis(Node node) {
+        nextAxes.add(node);
     }
 }
