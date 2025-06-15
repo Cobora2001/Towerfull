@@ -10,8 +10,6 @@ public class MonsterPrototypeLoader extends AbstractPrototypeLoader<Monster, Mon
     protected Monster createInstance(MonsterType type, MonsterData data) {
         return new Monster(
                 data.hp,
-                data.hp,
-                null, // logicalPos (sera set plus tard)
                 data.speed,
                 data.damage,
                 data.reward,

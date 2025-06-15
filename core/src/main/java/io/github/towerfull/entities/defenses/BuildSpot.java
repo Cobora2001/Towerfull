@@ -83,7 +83,7 @@ public class BuildSpot extends Printable {
      * @param used true to mark the spot as used (keeping the tower), false to mark it as unused (removing the tower).
      */
     public void setUsed(boolean used) {
-        if (!used) {
+        if(!used) {
             removeTower();
         }
         // If used is true, we do nothing as the tower remains unchanged.
@@ -97,7 +97,7 @@ public class BuildSpot extends Printable {
     @Override
     public BuildSpot clone() {
         BuildSpot clone = new BuildSpot(new Vector2(logicalPos));
-        if (tower != null) {
+        if(tower != null) {
             clone.tower = tower.clone();
         }
         return clone;
@@ -131,7 +131,7 @@ public class BuildSpot extends Printable {
     @Override
     public Appearance getAppearance() {
         Appearance appearance = isUsed() ? tower.getAppearance() : super.getAppearance();
-        if (appearance == null) {
+        if(appearance == null) {
             Gdx.app.error("BuildSpot", "❌ Apparence manquante pour " + (isUsed() ? "la tour" : "SPOT") + " au spot " + logicalPos);
         }
         return appearance;

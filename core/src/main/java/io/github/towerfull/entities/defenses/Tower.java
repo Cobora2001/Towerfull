@@ -88,14 +88,14 @@ public class Tower extends Prototype {
      */
     public void update(float delta, Array<Monster> monsters, GameArea area, Vector2 logicalPos) {
         timeSinceLastShot += delta;
-        if (timeSinceLastShot < cooldown) return;
+        if(timeSinceLastShot < cooldown) return;
 
-        for (Monster monster : monsters) {
+        for(Monster monster : monsters) {
             Vector2 monsterPosition = monster.getLogicalPos();
             // We use the logical position of the monster to calculate if the tower can hit it
             float distance = monsterPosition.dst(logicalPos);
             // The "strategy" here is that it shoots at the first monster that's alive and within range
-            if (distance <= range && !monster.isDead()) {
+            if(distance <= range && !monster.isDead()) {
                 monster.takeDamage(damage);
                 timeSinceLastShot = 0;
 
