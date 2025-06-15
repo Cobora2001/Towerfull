@@ -2,7 +2,7 @@
   "CASTLE": {
     "damage": 7,
     "range": 3,
-    "cost": 50,
+    "cost": 40,
     "cooldown": 2.0,
     "appearance": "CASTLE"
   },
