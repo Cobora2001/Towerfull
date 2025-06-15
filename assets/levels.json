@@ -6,12 +6,12 @@
       "A": { "pos": [1, 1], "next": ["B"] },
       "B": { "pos": [8, 1], "next": [] }
     },
-    "scenario": "SCENARIO_1",
+    "scenario": "SCENARIO_TUTORIAL",
     "buildableTiles": [
       [2, 2],
       [5, 0]
     ],
-    "startingGold": 100,
+    "startingGold": 200,
     "startingLife": 20,
     "background": "DIRT"
   },
@@ -28,7 +28,7 @@
       "G": { "pos": [5, 6], "next": ["H"] },
       "H": { "pos": [5, 5], "next": [] }
     },
-    "scenario": "SCENARIO_1",
+    "scenario": "SCENARIO_EASY_1",
     "buildableTiles": [
       [7, 2],
       [4, 4],
@@ -36,7 +36,7 @@
       [6, 6],
       [7, 9]
     ],
-    "startingGold": 100,
+    "startingGold": 60,
     "startingLife": 20,
     "background": "GRASSLAND"
   },
@@ -62,7 +62,7 @@
       "O": { "pos": [2, 18], "next": ["P"] },
       "P": { "pos": [2, 7], "next": [] }
     },
-    "scenario": "SCENARIO_2",
+    "scenario": "SCENARIO_MEDIUM_1",
     "buildableTiles": [
       [2, 3],
       [5, 4],
@@ -75,8 +75,8 @@
       [9, 13],
       [6, 17]
     ],
-    "startingGold": 150,
-    "startingLife": 25,
+    "startingGold": 70,
+    "startingLife": 10,
     "background": "DESERT"
   },
   "LEVEL_3": {
@@ -143,7 +143,7 @@
       "57": { "pos": [9,  3],  "next": ["58"] },
       "58": { "pos": [9,  1],  "next": ["45"] }
     },
-    "scenario": "SCENARIO_2",
+    "scenario": "SCENARIO_HARD_1",
     "buildableTiles": [
       [18, 7],
       [17, 16],
@@ -162,8 +162,8 @@
       [5, 15],
       [2, 17]
     ],
-    "startingGold": 100,
-    "startingLife": 15,
+    "startingGold": 300,
+    "startingLife": 20,
     "background": "ICE"
   }
 }

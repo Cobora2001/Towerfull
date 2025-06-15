@@ -3,7 +3,7 @@
     "damage": 7,
     "range": 3,
     "cost": 50,
-    "cooldown": 1.2,
+    "cooldown": 2.0,
     "appearance": "CASTLE"
   },
   "SNIPER": {
@@ -14,42 +14,42 @@
     "appearance": "SNIPER"
   },
   "CRYSTAL": {
-    "damage": 9,
+    "damage": 5,
     "range": 5,
     "cost": 80,
     "cooldown": 1.1,
     "appearance": "CRYSTAL"
   },
   "CATAPULT": {
-    "damage": 30,
+    "damage": 25,
     "range": 4,
     "cost": 120,
     "cooldown": 3.0,
     "appearance": "CATAPULT"
   },
   "LONGBOW": {
-    "damage": 12,
+    "damage": 6,
     "range": 6,
     "cost": 60,
     "cooldown": 1.6,
     "appearance": "LONGBOW"
   },
   "SLINGSHOT": {
-    "damage": 4,
+    "damage": 2,
     "range": 2.5,
     "cost": 30,
     "cooldown": 0.5,
     "appearance": "SLINGSHOT"
   },
   "MAGE": {
-    "damage": 10,
+    "damage": 12,
     "range": 3.5,
     "cost": 90,
     "cooldown": 0.8,
     "appearance": "MAGE"
   },
   "GOLD_ARROW": {
-    "damage": 50,
+    "damage": 30,
     "range": 2,
     "cost": 90,
     "cooldown": 5.0,

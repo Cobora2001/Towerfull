@@ -1,21 +1,21 @@
 package io.github.tower_defense.enumElements;
 
 public enum AppearanceId {
-    // 🧱 Mobs de base
+    // 🧱 Mobs
     GOBLIN,
     SKELETON,
     ORC,
     RAT,
-
-    // 🛡️ Résistants
     GOLEM,
-
-    // 💨 Rapides
     WOLF,
-
-    // 🔥 Spéciaux
     SHAMAN,
     WIZARD,
+    THIEF,
+    DRAGON,
+    ZOMBIE,
+    ROBOT,
+    ELEMENTAL,
+    MULE,
 
     // 🏰 Tours
     CASTLE,
