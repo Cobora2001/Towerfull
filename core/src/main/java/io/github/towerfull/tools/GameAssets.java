@@ -126,11 +126,11 @@ public class GameAssets {
 
             ObjectMap<String, Axis> pathGraph;
             if (data.pathNodes != null && !data.pathNodes.isEmpty()) {
-                pathGraph = buildPathGraph(data.pathNodes);
+                pathGraph = GraphUtilities.buildPathGraph(data.pathNodes);
             } else if (data.path != null && !data.path.isEmpty()) {
-                pathGraph = buildLinearPathGraph(data.path);
+                pathGraph = GraphUtilities.buildLinearPathGraph(data.path);
             } else {
-                pathGraph = generateDefaultPathGraph(data.cols, data.rows);
+                pathGraph = GraphUtilities.generateDefaultPathGraph(data.cols, data.rows);
             }
 
             Scenario scenario = (data.scenario != null)
@@ -144,7 +144,7 @@ public class GameAssets {
                 }
             } else {
                 buildableTiles = TowerPlacementGenerator.generate(
-                    data.cols, data.rows, flattenPathGraph(pathGraph));
+                    data.cols, data.rows, GraphUtilities.flattenPathGraph(pathGraph));
             }
 
             Background background = backgrounds.get(data.background);
@@ -158,86 +158,6 @@ public class GameAssets {
 
             levels.put(id, level);
         }
-    }
-
-    private ObjectMap<String, Axis> buildPathGraph(ObjectMap<String, LevelData.PathNode> pathNodes) {
-        ObjectMap<String, Axis> graph = new ObjectMap<>();
-
-        // First pass: create Axis nodes without connections
-        for (ObjectMap.Entry<String, LevelData.PathNode> entry : pathNodes.entries()) {
-            String nodeId = entry.key;
-            float x = entry.value.pos[0];
-            float y = entry.value.pos[1];
-            graph.put(nodeId, new Axis(nodeId, new Vector2(x, y)));
-        }
-
-        // Second pass: add connections
-        for (ObjectMap.Entry<String, LevelData.PathNode> entry : pathNodes.entries()) {
-            Axis axis = graph.get(entry.key);
-            for (String nextId : entry.value.next) {
-                Axis nextAxis = graph.get(nextId);
-                if (nextAxis != null) {
-                    axis.addNextAxis(nextAxis);
-                } else {
-                    Gdx.app.error("GameAssets", "Path node '" + nextId + "' not found for connection from '" + entry.key + "'");
-                }
-            }
-        }
-        return graph;
-    }
-
-    private ObjectMap<String, Axis> buildLinearPathGraph(List<float[]> path) {
-        ObjectMap<String, Axis> graph = new ObjectMap<>();
-        Axis prevAxis = null;
-        int idx = 0;
-
-        for (float[] point : path) {
-            String id = "P" + idx++;
-            Axis axis = new Axis(id, new Vector2(point[0], point[1]));
-            graph.put(id, axis);
-            if (prevAxis != null) {
-                prevAxis.addNextAxis(axis);
-            }
-            prevAxis = axis;
-        }
-
-        return graph;
-    }
-
-    private ObjectMap<String, Axis> generateDefaultPathGraph(int cols, int rows) {
-        // Simple stub for default path graph
-        ObjectMap<String, Axis> graph = new ObjectMap<>();
-        Axis start = new Axis("Start", new Vector2(0, rows / 2));
-        Axis end = new Axis("End", new Vector2(cols - 1, rows / 2));
-        start.addNextAxis(end);
-        graph.put("Start", start);
-        graph.put("End", end);
-        return graph;
-    }
-
-    private Array<Vector2> flattenPathGraph(ObjectMap<String, Axis> graph) {
-        // Flatten graph nodes into ordered path points for things like tower placement generator fallback
-        Array<Vector2> pathPoints = new Array<>();
-        // Simple BFS or DFS to list all nodes in order (choose BFS for example)
-        Array<String> visited = new Array<>();
-        Array<Axis> queue = new Array<>();
-        Axis start = graph.get("A"); // or first key? You may want to store a designated start node ID in LevelData
-        if (start == null && graph.size > 0) start = graph.values().iterator().next();
-        if (start == null) return pathPoints;
-
-        queue.add(start);
-        while (queue.size > 0) {
-            Axis current = queue.removeIndex(0);
-            if (visited.contains(current.getId(), false)) continue;
-            visited.add(current.getId());
-            pathPoints.add(current.getPosition());
-            for (Axis next : current.getNextAxes()) {
-                if (!visited.contains(next.getId(), false)) {
-                    queue.add(next);
-                }
-            }
-        }
-        return pathPoints;
     }
 
     private void loadMusic() {
