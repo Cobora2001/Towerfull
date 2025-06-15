@@ -23,7 +23,7 @@ import static java.lang.Math.max;
  * A central controller for managing the construction and destruction of towers,
  * as well as handling game state changes like gold and life updates.
  */
-public class ConstructionController {
+public class UiController {
     // The spot where the current tower is being built or managed.
     private BuildSpot currentSpot;
 
@@ -43,7 +43,7 @@ public class ConstructionController {
      * @param gameArea The game area where towers can be constructed.
      * @param game The main game instance for screen management and other actions.
      */
-    public ConstructionController(GameArea gameArea, Main game) {
+    public UiController(GameArea gameArea, Main game) {
         this.gameArea = gameArea;
         this.game = game;
 

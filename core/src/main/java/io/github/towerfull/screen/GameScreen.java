@@ -9,13 +9,12 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Vector2;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import io.github.towerfull.entities.defenses.BuildSpot;
 import io.github.towerfull.gameBoard.GameArea;
 import io.github.towerfull.listener.LevelListener;
 import io.github.towerfull.gameBoard.level.Level;
 import io.github.towerfull.Main;
-import io.github.towerfull.screen.accessories.ConstructionController;
+import io.github.towerfull.screen.accessories.UiController;
 import io.github.towerfull.screen.accessories.GameUI;
 import io.github.towerfull.tools.GameAssets;
 import io.github.towerfull.tools.GameRenderer;
@@ -39,7 +38,7 @@ public class GameScreen implements Screen {
     private GameUI gameUI;
 
     // Controller for handling construction actions like building towers
-    private ConstructionController constructionController;
+    private UiController constructionController;
 
     /**
      * Constructor for GameScreen with a specific level.
@@ -88,7 +87,7 @@ public class GameScreen implements Screen {
      * Initializes the construction controller and UI elements.
      */
     private void setupUI() {
-        constructionController = new ConstructionController(gameArea, game);
+        constructionController = new UiController(gameArea, game);
 
         // Create UI with fresh viewport and optional custom skin loader
         gameUI = new GameUI(

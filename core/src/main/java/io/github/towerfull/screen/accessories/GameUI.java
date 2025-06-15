@@ -14,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.towerfull.entities.defenses.BuildSpot;
 import io.github.towerfull.enumElements.TowerType;
-import io.github.towerfull.gameBoard.EconomyManager;
 import io.github.towerfull.listener.DestructionListener;
 import io.github.towerfull.tools.SaveManager;
 
@@ -42,7 +41,7 @@ public class GameUI {
     private final Skin skin;
 
     // The controller that manages game logic and interactions
-    private final ConstructionController controller;
+    private final UiController controller;
 
     // Labels for displaying gold and life information
     private final Label goldLabel;
@@ -71,7 +70,7 @@ public class GameUI {
      * @param viewport   The viewport for the stage.
      * @param controller The controller that manages game logic and interactions.
      */
-    public GameUI(Skin skin, Viewport viewport, ConstructionController controller) {
+    public GameUI(Skin skin, Viewport viewport, UiController controller) {
         this.stage = new Stage(viewport);
         this.root = new Table();
         this.root.setFillParent(true);
